@@ -1,0 +1,22 @@
+{
+  "name": "dida/framework",
+  "description": "Dida Framework",
+  "type": "library",
+  "license": "MIT",
+  "homepage": "https://github.com/zeupin/dida",
+  "authors": [
+    {
+      "name": "Macc Liu",
+      "email": "mail@maccliu.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": "^5.5 || ^7.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Dida\\": "src/Dida"
+    }
+  }
+}
