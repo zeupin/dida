@@ -38,5 +38,4 @@ class ContainerException extends \Exception
      * 无效的服务类型。
      */
     const INVALID_SERVICE_TYPE = 1004;
-
 }
