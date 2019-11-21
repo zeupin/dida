@@ -309,19 +309,6 @@ class Request
 
 
     /**
-     * 获取指定的header
-     */
-    public static function getHeader($name)
-    {
-        if (self::$headers === null) {
-            self::getHeadersInit();
-        }
-
-        return self::arrayValue($name, self::$headers);
-    }
-
-
-    /**
      * 获取所有headers列表
      */
     public static function getHeaders()
@@ -331,6 +318,19 @@ class Request
         }
 
         return self::$headers;
+    }
+
+
+    /**
+     * 获取指定的header
+     */
+    public static function getHeader($name)
+    {
+        if (self::$headers === null) {
+            self::getHeadersInit();
+        }
+
+        return self::arrayValue($name, self::$headers);
     }
 
 
@@ -380,12 +380,12 @@ class Request
             self::getUrlInfoInit();
         }
 
-        // 如果init()时，parse_url()时失败
+        // 如果 getUrlInfoInit() 失败
         if (self::$urlinfo === false) {
             return false;
         }
 
-        return isset(self::$urlinfo['path']) ? self::$urlinfo['path'] : null;
+        return (array_key_exists('path', self::$urlinfo)) ? self::$urlinfo['path'] : null;
     }
 
 
@@ -401,12 +401,12 @@ class Request
             self::getUrlInfoInit();
         }
 
-        // 如果init()时，parse_url()时失败
+        // 如果 getUrlInfoInit() 失败
         if (self::$urlinfo === false) {
             return false;
         }
 
-        return isset(self::$urlinfo['query']) ? self::$urlinfo['query'] : null;
+        return (array_key_exists('query', self::$urlinfo)) ? self::$urlinfo['query'] : null;
     }
 
 
@@ -422,12 +422,12 @@ class Request
             self::getUrlInfoInit();
         }
 
-        // 如果init()时，parse_url()时失败
+        // 如果 getUrlInfoInit() 失败
         if (self::$urlinfo === false) {
             return false;
         }
 
-        return isset(self::$urlinfo['fragment']) ? self::$urlinfo['fragment'] : null;
+        return (array_key_exists('fragment', self::$urlinfo)) ? self::$urlinfo['fragment'] : null;
     }
 
 
