@@ -1,0 +1,19 @@
+# see http://editorconfig.org
+
+root = true
+
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+trim_trailing_whitespace = true
+
+[*.{php,js,json,html,css,twig}]
+charset = utf-8
+
+[*.php]
+indent_size = 4
+insert_final_newline = true
+
+[*.bat]
+end_of_line = crlf
