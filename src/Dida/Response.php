@@ -17,7 +17,7 @@ class Response
     /**
      * Version
      */
-    const VERSION = '20191121';
+    const VERSION = '20191122';
 
 
     /**
@@ -32,16 +32,42 @@ class Response
 
 
     /**
+     * 批量设置应答的 HTTP Header
+     *
+     * @param array $headers
+     */
+    public static function setHeaders(array $headers)
+    {
+        foreach ($cacheSetting as $key => $header) {
+            if (is_int($key)) {
+                header($header);
+            } else {
+                header("$key: $header");
+            }
+        }
+    }
+
+
+    /**
      * 输出一个json应答
      *
      * @param mixed $data
+     * @param array|null $cacheSetting 缓存设置
      */
-    public static function json($data)
+    public static function json($data, $cacheSetting = null)
     {
-        self::setNoCache();
+        // 缓存设置
+        if ($cacheSetting === null) {
+            self::setNoCache();
+        } elseif (is_array($cacheSetting)) {
+            self::setHeaders($cacheSetting);
+        }
 
+        // 输出 json
         header('Content-Type:application/json; charset=utf-8');
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
+
+        // 完成
         die();
     }
 
@@ -50,10 +76,16 @@ class Response
      * 重定向
      *
      * @param string $url
+     * @param array|null $cacheSetting 缓存设置
      */
-    public static function redirect($url)
+    public static function redirect($url, $cacheSetting = null)
     {
-        self::setNoCache();
+        // 缓存设置
+        if ($cacheSetting === null) {
+            self::setNoCache();
+        } elseif (is_array($cacheSetting)) {
+            self::setHeaders($cacheSetting);
+        }
 
         header("Location: $url");
         die();
@@ -66,10 +98,11 @@ class Response
      * @param string $srcfile   服务器上源文件的文件名。
      * @param string $name      下载时的文件名。如果为null，则默认使用srcfile的文件名。
      * @param boolean $mime     是否需要设置文件的mime。
-     *
+     * @param array|null $cacheSetting 缓存设置
+     * 
      * @return boolean
      */
-    public static function download($srcfile, $name = null, $mime = false)
+    public static function download($srcfile, $name = null, $mime = false, $cacheSetting = null)
     {
         // 检查待下载的源文件是否存在。
         if (file_exists($srcfile)) {
@@ -111,17 +144,24 @@ class Response
         // 文件大小
         $filesize = filesize($realfile);
 
-        // 不要缓存
-        self::setNoCache();
+        // 缓存设置
+        if ($cacheSetting === null) {
+            self::setNoCache();
+        } elseif (is_array($cacheSetting)) {
+            self::setHeaders($cacheSetting);
+        }
 
-        // 输出
+        // 设置输出报头
         header("Content-Type: $mimetype");
         header("Content-Disposition: attachment; filename*=\"$name\"");
         header("Content-Length: $filesize");
 
+        // 输出内容
         ob_clean();
         flush();
         readfile($realfile);
-        exit();
+
+        // 结束
+        return true;
     }
 }
