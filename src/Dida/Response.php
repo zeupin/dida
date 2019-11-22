@@ -99,7 +99,7 @@ class Response
      * @param string $name      下载时的文件名。如果为null，则默认使用srcfile的文件名。
      * @param boolean $mime     是否需要设置文件的mime。
      * @param array|null $cacheSetting 缓存设置
-     * 
+     *
      * @return boolean
      */
     public static function download($srcfile, $name = null, $mime = false, $cacheSetting = null)
