@@ -25,7 +25,7 @@ class Response
      */
     public static function setNoCache()
     {
-        header("Cache-Control: no-store"); // HTTP 1.1
+        header("Cache-Control: no-store, no-cache, must-revalidate"); // HTTP 1.1
         header("Pragma: no-cache"); // HTTP 1.0
         header("Expires: 0");
     }
