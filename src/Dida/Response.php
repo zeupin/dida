@@ -32,6 +32,16 @@ class Response
 
 
     /**
+     * 设置允许跨域资源共享(CORS)
+     */
+    public static function setAllowCORS()
+    {
+        header('Access-Control-Allow-Origin:*');
+        header('Access-Control-Allow-Methods:*');
+    }
+
+
+    /**
      * 批量设置应答的 HTTP Header
      *
      * @param array $headers
