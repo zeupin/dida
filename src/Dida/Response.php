@@ -97,7 +97,10 @@ class Response
             self::setHeaders($cacheSetting);
         }
 
+        // 执行
         header("Location: $url");
+        
+        // 完成
         die();
     }
 
