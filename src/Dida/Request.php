@@ -74,10 +74,10 @@ class Request
     public static function COOKIE($name = null)
     {
         if (is_null($name)) {
-            return $_COOKIE;
+            return Cookie::getAll();
         }
 
-        return self::arrayValue($name, $_COOKIE);
+        return Cookie::get($name);
     }
 
 
@@ -558,7 +558,8 @@ class Request
                     $array = $_GET;
                     break;
                 case 'cookie':
-                    $array = $_COOKIE;
+                case 'cookies':
+                    $array = self::COOKIE();
                     break;
                 case 'session':
                     $array = self::SESSION();
