@@ -27,12 +27,12 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} ^/oa(.*)$
 RewriteRule ^(.*)$ /oa/index.php [QSA]
 
-## wx
-RewriteBase /wx
+## crm
+RewriteBase /crm
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_URI} ^/wx(.*)$
-RewriteRule ^(.*)$ /wx/index.php [QSA]
+RewriteCond %{REQUEST_URI} ^/crm(.*)$
+RewriteRule ^(.*)$ /crm/index.php [QSA]
 ```
 
 ## 版权和著作权
