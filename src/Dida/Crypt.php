@@ -37,6 +37,8 @@ class Crypt
      *
      * @param string $srcData    要加密的数据
      * @param string|null $key   密钥
+     *
+     * @return string|false   成功返回加密后的值，失败返回false
      */
     public static function encrypt($srcData, $key = null, $iv = null)
     {
@@ -48,9 +50,15 @@ class Crypt
             $iv = self::$defaultIV;
         }
 
+        // 用 openssl_encrypt() 加密
         $bytes = openssl_encrypt($srcData, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
 
-        return base64_encode($bytes);
+        // 成功返回加密后的值，失败返回false
+        if ($bytes === false) {
+            return false;
+        } else {
+            return base64_encode($bytes);
+        }
     }
 
 
@@ -59,6 +67,8 @@ class Crypt
      *
      * @param string $encData    要解密的数据
      * @param string|null $key   密钥
+     *
+     * @return string|false   成功返回解密后的值，失败返回false
      */
     public static function decrypt($encData, $key = null, $iv = null)
     {
@@ -70,8 +80,13 @@ class Crypt
             $iv = self::$defaultIV;
         }
 
+        // 先进行 base64 解码，解码失败直接返回 false
         $bytes = base64_decode($encData);
+        if ($bytes === false) {
+            return false;
+        }
 
+        // 用 openssl_encrypt() 加密，成功返回解密后的值，失败返回false
         return openssl_decrypt($bytes, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
     }
 }
