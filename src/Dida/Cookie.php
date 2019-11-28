@@ -20,7 +20,7 @@ class Cookie
     const VERSION = '20191127';
 
     /**
-     * cookie项目名的前缀，方便区分不同App所属的cookie
+     * cookie分组的前缀，方便区分不同App所属的cookie
      *
      * @var string
      */
@@ -33,24 +33,44 @@ class Cookie
      */
     protected static $cookieKey = null;
 
+    /**
+     * cookie分组的有效网址路径
+     *
+     * 设置成 '/' 时，Cookie 对整个域名 domain 有效。
+     * 如果设置成 '/foo/'， Cookie 仅仅对 domain 中 /foo/ 目录及其子目录有效（比如 /foo/bar/）。
+     * 设置为空时，默认是设置 Cookie 时的当前目录。
+     *
+     * @var string 默认有效网址路径
+     */
+    protected static $validPath = '';
+
 
     /**
      * 初始化
      *
      * @param string $prefix
      * @param string $cryptkey
+     * @param string $defaultPath
      */
-    public static function init($prefix = '', $cookieKey = null)
+    public static function init($prefix = '', $cookieKey = null, $validPath = '')
     {
+        // cookie分组前缀名
         if (!is_string($prefix)) {
             throw new InvalidArgumentException('COOKIE分组前缀必须为字符串类型');
         }
         self::$prefix = $prefix;
 
+        // 加密密钥
         if (!is_null($cookieKey) && !is_string($cookieKey)) {
             throw new InvalidArgumentException('COOKIE加密密钥必须为字符串类型');
         }
         self::$cookieKey = $cookieKey;
+
+        // cookie分组的有效网址路径
+        if (!is_string($validPath)) {
+            throw new InvalidArgumentException('COOKIE有效路径必须为字符串类型');
+        }
+        self::$validPath = $validPath;
     }
 
 
@@ -68,7 +88,7 @@ class Cookie
      *
      * @return bool
      */
-    public static function set($name, $value, $expire = 0, $path = '', $domain = '', $secure = false, $httponly = false)
+    public static function set($name, $value, $expire = 0, $path = null, $domain = '', $secure = false, $httponly = false)
     {
         // 加上分组处理
         $name = self::$prefix . $name;
@@ -81,6 +101,17 @@ class Cookie
             if ($value === false) {
                 return false;
             }
+        }
+
+        // 对cookie的有效网址路径进行设置
+        //
+        // 如果为null，设为缺省的网址路径；
+        // 如果已设置，则为设置值；
+        // 如果不为字符串，视为错误，返回false
+        if (is_null($path)) {
+            $path = self::$validPath;
+        } elseif (!is_string($path)) {
+            return false;
         }
 
         // 设置
