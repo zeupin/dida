@@ -27,11 +27,11 @@ class Cookie
     protected static $prefix = '';
 
     /**
-     * 对cookie的值进行加密处理的加密密钥
+     * 对cookie的值进行安全加密的加密密钥。为空串表示不需要加密。
      *
-     * @var string|null
+     * @var string
      */
-    protected static $cookieKey = null;
+    protected static $safeKey = '';
 
     /**
      * cookie分组的有效网址路径
@@ -46,37 +46,65 @@ class Cookie
 
 
     /**
-     * 初始化
+     * 设置cookie的分组前缀名
      *
      * @param string $prefix
-     * @param string $cryptkey
-     * @param string $defaultPath
+     *
+     * @throws InvalidArgumentException
+     *
+     * @return void
      */
-    public static function init($prefix = '', $cookieKey = null, $validPath = '')
+    public static function setPrefix($prefix)
     {
-        // cookie分组前缀名
         if (!is_string($prefix)) {
             throw new InvalidArgumentException('COOKIE分组前缀必须为字符串类型');
         }
-        self::$prefix = $prefix;
 
-        // 加密密钥
-        if (!is_null($cookieKey) && !is_string($cookieKey)) {
+        self::$prefix = $prefix;
+    }
+
+
+    /**
+     * 设置安全密钥
+     *
+     * @param string $safeKey
+     *
+     * @throws InvalidArgumentException
+     *
+     * @return void
+     */
+    public static function setSafeKey($safeKey)
+    {
+        if (!is_string($safeKey)) {
             throw new InvalidArgumentException('COOKIE加密密钥必须为字符串类型');
         }
-        self::$cookieKey = $cookieKey;
 
-        // cookie分组的有效网址路径
+        self::$safeKey = $safeKey;
+    }
+
+
+    /**
+     * 设置cookie分组的有效网址路径
+     *
+     * @param type $validPath
+     *
+     * @throws InvalidArgumentException
+     *
+     * @return void
+     */
+    public static function setValidPath($validPath)
+    {
         if (!is_string($validPath)) {
             throw new InvalidArgumentException('COOKIE有效路径必须为字符串类型');
         }
+
         self::$validPath = $validPath;
     }
 
 
     /**
      * 设置一个cookie
-     * 各参数设置同 PHP 的 setcookie 函数
+     * 各参数设置参见 PHP 的 setcookie 函数
      *
      * @param string $name
      * @param string $value
@@ -90,12 +118,17 @@ class Cookie
      */
     public static function set($name, $value, $expire = 0, $path = null, $domain = '', $secure = false, $httponly = false)
     {
-        // 加上分组处理
-        $name = self::$prefix . $name;
+        // Cookie名字不可为空
+        if (!is_string($name) || $name === '') {
+            return false;
+        }
 
-        // 如果启用了安全模式
-        if (self::$cookieKey !== null) {
-            $value = Crypt::encrypt($value, self::$cookieKey);
+        // 加上分组处理
+        $fullname = self::$prefix . $name;
+
+        // 如果启用了安全加密模式
+        if (self::$safeKey) {
+            $value = Crypt::encrypt($value, self::$safeKey);
 
             // 如果加密失败，返回false
             if ($value === false) {
@@ -115,7 +148,7 @@ class Cookie
         }
 
         // 设置
-        return setcookie($realname, $value, $expire, $path, $domain, $secure, $httponly);
+        return setcookie($fullname, $value, $expire, $path, $domain, $secure, $httponly);
     }
 
 
@@ -144,12 +177,12 @@ class Cookie
         }
 
         // 如果不需要解密，直接返回结果
-        if (self::$cookieKey === null) {
+        if (self::$safeKey === '') {
             return $_COOKIE[$fullname];
         }
 
         // 先解密
-        $result = Crypt::decrypt($_COOKIE[$fullname], self::$cookieKey);
+        $result = Crypt::decrypt($_COOKIE[$fullname], self::$safeKey);
 
         // 解密失败，返回null
         if ($result === false) {
@@ -167,7 +200,7 @@ class Cookie
     public static function getAll()
     {
         // 快速处理这种特殊情况
-        if ((self::$cookieKey === null) && (self::prefix === '')) {
+        if ((self::$safeKey === '') && (self::prefix === '')) {
             return $_COOKIE;
         }
 
@@ -178,7 +211,7 @@ class Cookie
         $names = self::getNames();
 
         // 逐个处理
-        if (self::$cookieKey === null) {
+        if (self::$safeKey === '') {
             foreach ($names as $name) {
                 $fullname = self::$prefix . $name;
                 $cookies[$name] = $_COOKIE[$fullname];
@@ -186,7 +219,7 @@ class Cookie
         } else {
             foreach ($names as $name) {
                 $fullname = self::$prefix . $name;
-                $value = Crypt::decrypt($_COOKIE[$fullname], self::$cookieKey);
+                $value = Crypt::decrypt($_COOKIE[$fullname], self::$safeKey);
                 if ($value === false) {
                     // 解密失败，返回null
                     $cookies[$name] = null;
