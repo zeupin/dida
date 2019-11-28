@@ -128,7 +128,7 @@ class Cookie
 
         // 如果启用了安全加密模式
         if (self::$safeKey) {
-            $value = Crypt::encrypt($value, self::$safeKey);
+            $value = Crypt::encrypt($value, self::$safeKey . $fullname);
 
             // 如果加密失败，返回false
             if ($value === false) {
@@ -182,7 +182,7 @@ class Cookie
         }
 
         // 先解密
-        $result = Crypt::decrypt($_COOKIE[$fullname], self::$safeKey);
+        $result = Crypt::decrypt($_COOKIE[$fullname], self::$safeKey . $fullname);
 
         // 解密失败，返回null
         if ($result === false) {
@@ -219,7 +219,7 @@ class Cookie
         } else {
             foreach ($names as $name) {
                 $fullname = self::$prefix . $name;
-                $value = Crypt::decrypt($_COOKIE[$fullname], self::$safeKey);
+                $value = Crypt::decrypt($_COOKIE[$fullname], self::$safeKey . $fullname);
                 if ($value === false) {
                     // 解密失败，返回null
                     $cookies[$name] = null;
@@ -289,14 +289,14 @@ class Cookie
      */
     public static function remove($name)
     {
-        $name = self::$prefix . $name;
+        $fullname = self::$prefix . $name;
 
         // 如果cookie存在
-        if (array_key_exists($name, $_COOKIE)) {
-            unset($_COOKIE[$name]);
+        if (array_key_exists($fullname, $_COOKIE)) {
+            unset($_COOKIE[$fullname]);
 
             // 让浏览器端也删除cookie
-            setcookie($name, '', 1);
+            setcookie($fullname, '', 1, '/');
         }
     }
 
@@ -306,11 +306,13 @@ class Cookie
      */
     public static function clear()
     {
-        $name = self::getAllFullNames();
+        $fullnames = self::getAllFullNames();
 
-        foreach ($names as $name) {
-            unset($_COOKIE[$name]);
-            setcookie($name, '', 1);
+        foreach ($fullnames as $fullname) {
+            unset($_COOKIE[$fullname]);
+            setcookie($fullname, '', 1, '/');
         }
+        
+        var_dump($fullnames);
     }
 }
