@@ -1,0 +1,23 @@
+[v0.1.1]
+改进：
+    重构 Cookie 类
+
+
+[v0.1.0]
+新增：
+    Crypt 类
+    Cookie 类
+改进：
+    Request 模块对 Cookie 的处理
+
+
+[v0.0.2]
+新增：
+    新增 Autoloader 类
+    新增 Config 类
+    新增 Container 类
+    新增 Request 类
+    新增 Routing 类
+    新增 SingletonTrait 特征
+改进：
+    改进 Response 类
