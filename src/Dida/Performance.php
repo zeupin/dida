@@ -115,12 +115,12 @@ class Performance
      * 可读性的时间间隔
      *
      * 【1秒以上】
-     *    大于100天，返回 xxx.x天
-     *     大于10天，返回 xx.xx天
-     *  1小时到10天，返回 xxx天xx小时xx分xx秒
-     * 1分钟到1小时，返回 xx分xx.xxx秒
-     *       整数秒，返回 xx秒
-     *  整数+小数秒，返回 xx.xxx秒
+     *     大于100天，返回 xxx.x天
+     *      大于10天，返回 xx.xx天
+     *   1小时到10天，返回 xxx天xx小时xx分xx秒
+     *  2分钟到1小时，返回 xx分xx.x秒
+     * 1-120秒整数秒，返回 xx秒
+     * 1-120秒小数秒，返回 xx.xxx秒
      *
      * 【1秒以内】
      *  毫秒级，返回 xxx毫秒
@@ -138,7 +138,7 @@ class Performance
                 $days = $num / 86400;
                 return sprintf("%.1f天", $days);
             }
-            
+
             // 大于10天
             if ($num >= 864000) {
                 $days = $num / 86400;
@@ -176,25 +176,29 @@ class Performance
                 return implode('', $r);
             }
 
-            // 大于1分钟
-            if ($num > 60) {
-                $int = floor($num);
+            // 大于2分钟
+            if ($num >= 120) {
+                $int = round($num, 0);
                 $secs = $int % 60;
-                $mins = $int - $secs * 60;
-                if (is_int($num)) {
-                    return sprintf("%d分%d秒", $mins, $secs);
+                $mins = ($int - $secs) / 60;
+                if (is_int($num) || ($int == $num)) {
+                    if ($secs) {
+                        return sprintf("%d分%d秒", $mins, $secs);
+                    } else {
+                        return "{$mins}分";
+                    }
                 } else {
                     $secs = $num - $mins * 60; // 带小数的
-                    return sprintf("%d分%.3f秒", $mins, $secs);
+                    return sprintf("%d分%.1f秒", $mins, $secs);
                 }
             }
 
-            // 整数秒
-            if (is_int($num)) {
+            // 1-120秒以内，整数秒
+            if (is_int($num) || (intval($num) == $num)) {
                 return sprintf("%d秒", $num);
             }
 
-            // 大于1的秒数
+            // 1-120秒以内，有小数的秒
             return sprintf("%.3f秒", $num);
         } else {
             // 把小数位放大
