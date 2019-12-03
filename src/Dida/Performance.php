@@ -22,14 +22,14 @@ class Performance
     /**
      * 计算两个microtime的间隔
      *
-     * @param string $start   microtime()生成的开始时间
-     * @param string $end     microtime()生成的结束时间
+     * @param string $start   用microtime()生成的开始时间
+     * @param string $end     用microtime()生成的结束时间
      *
      * @return float   时间间隔(单位s)
      */
     public static function microtimeDiff($start, $end)
     {
-        list($sm, $ss) = explode(" ", $start);
+        list($sm, $ss) = explode(' ', $start);
         list($em, $es) = explode(' ', $end);
 
         $sm = floatval($sm);
@@ -63,40 +63,139 @@ class Performance
 
 
     /**
-     * 将一个以字节为单位的内存尺寸格式化成可读字符串
+     * 可读性的字节数
      *
-     * @param int $int   内存数
+     * 小于1KB，返回 xxx B
+     * 1KB-1MB，返回 xxx KB 或 xxx.xx KB
+     * 1MB-1GB，返回 xxx MB 或 xxx.xx MB
+     * 1GB以上，返回 xxx GB
+     *
+     * @param int $num   字节数
      *
      * @return string 以B,KB,MB,GB为单位返回
      */
-    public static function readableBytes($int)
+    public static function readableBytes($num)
     {
         // 小于1KB
-        if ($int < 1024) {
-            return "{$int} B";
+        if ($num < 1024) {
+            return "{$num} B";
         }
 
         // 1KB 到 1MB
-        if ($int < 1048576) {
-            $m = $int / 1024;
-            if ($int % 1024 == 0) {
-                return sprintf("%d KB", $m);
+        if ($num < 1048576) {
+            $r = $num / 1024;
+            if ($num % 1024 == 0) {
+                return sprintf("%d KB", $r);
             } else {
-                return sprintf("%.2f KB", $m);
+                return sprintf("%.2f KB", $r);
             }
         }
 
         // 1MB 到 1GB
-        if ($int < 1073741824) {
-            $m = $int / 1048576;
-            if ($int % 1048576 == 0) {
-                return sprintf("%d MB", $m);
+        if ($num < 1073741824) {
+            $r = $num / 1048576;
+            if ($num % 1048576 == 0) {
+                return sprintf("%d MB", $r);
             } else {
-                return sprintf("%.2f MB", $m);
+                return sprintf("%.2f MB", $r);
             }
         }
 
         // 更大的，以GB为单位返回
-        return sprintf("%.2f GB", $int / 1073741824);
+        $r = $num / 1073741824;
+        if ($num % 1073741824 == 0) {
+            return sprintf("%d GB", $r);
+        } else {
+            return sprintf("%.2f GB", $r);
+        }
+    }
+
+
+    /**
+     * 可读性的时间间隔
+     *
+     *     大于10天，返回 xxx.xx天
+     *  1小时到10天，返回 xxx天xx小时xx分xx秒
+     * 1分钟到1小时，返回 xx分xx.xxx秒
+     *       整数秒，返回 xx秒
+     *  整数+小数秒，返回 xx.xxx秒
+     *       毫秒级，返回 xxx毫秒
+     *       微秒级，返回 xxx微秒
+     *
+     * @param int|float $num   时间间隔，以秒为单位
+     *
+     * @return string
+     */
+    public static function readableInterval($num)
+    {
+        if ($num >= 1) {
+            // 大于10天
+            if ($num > 864000) {
+                $r = $num / 86400;
+                return sprintf("%.2f天", $r);
+            }
+
+            // 大于1小时
+            if ($num >= 3600) {
+                $rest = floor($num);
+
+                $days = ($rest - $rest % 86400) / 86400;
+                $rest = $rest - $days * 86400;
+
+                $hours = ($rest - $rest % 3600) / 3600;
+                $rest = $rest - $hours * 3600;
+
+                $mins = ($rest - $rest % 60) / 60;
+                $secs = $rest - $mins * 60;
+
+                $r = [];
+                if ($days > 0) {
+                    $r[] = "{$days}天";
+                }
+                if ($hours > 0 || $r) {
+                    $r[] = sprintf("%d小时", $hours);
+                }
+                if ($mins > 0 || $r) {
+                    $r[] = sprintf("%d分", $mins);
+                }
+                $r[] = sprintf("%d秒", $secs);
+
+                return implode('', $r);
+            }
+
+            // 大于1分钟
+            if ($num > 60) {
+                $int = floor($num);
+                $secs = $int % 60;
+                $mins = $int - $secs * 60;
+                if (is_int($num)) {
+                    return sprintf("%d分%d秒", $mins, $secs);
+                } else {
+                    $secs = $num - $mins * 60; // 带小数的
+                    return sprintf("%d分%.3f秒", $mins, $secs);
+                }
+            }
+
+            // 整数秒
+            if (is_int($num)) {
+                return sprintf("%d秒", $num);
+            }
+
+            // 大于10秒
+            if ($num >= 1) {
+                return sprintf("%.3f秒", $num);
+            }
+
+            // 把小数位放大
+            $dec = intval($num * 1000000);
+
+            // 毫秒级
+            if ($dec >= 1000) {
+                return sprintf("%d毫秒", $dec / 1000);
+            }
+
+            // 微秒级
+            return sprintf("%d微秒", $dec);
+        }
     }
 }
