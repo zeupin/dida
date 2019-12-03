@@ -27,7 +27,7 @@ class Performance
      *
      * @return float   时间间隔(单位s)
      */
-    public static function microtimeDiff($start, $end)
+    public static function diffMicroTime($start, $end)
     {
         list($sm, $ss) = explode(' ', $start);
         list($em, $es) = explode(' ', $end);
@@ -114,13 +114,17 @@ class Performance
     /**
      * 可读性的时间间隔
      *
-     *     大于10天，返回 xxx.xx天
+     * 【1秒以上】
+     *    大于100天，返回 xxx.x天
+     *     大于10天，返回 xx.xx天
      *  1小时到10天，返回 xxx天xx小时xx分xx秒
      * 1分钟到1小时，返回 xx分xx.xxx秒
      *       整数秒，返回 xx秒
      *  整数+小数秒，返回 xx.xxx秒
-     *       毫秒级，返回 xxx毫秒
-     *       微秒级，返回 xxx微秒
+     *
+     * 【1秒以内】
+     *  毫秒级，返回 xxx毫秒
+     *  微秒级，返回 xxx微秒
      *
      * @param int|float $num   时间间隔，以秒为单位
      *
@@ -129,10 +133,16 @@ class Performance
     public static function readableInterval($num)
     {
         if ($num >= 1) {
+            // 大于100天
+            if ($num >= 8640000) {
+                $days = $num / 86400;
+                return sprintf("%.1f天", $days);
+            }
+            
             // 大于10天
-            if ($num > 864000) {
-                $r = $num / 86400;
-                return sprintf("%.2f天", $r);
+            if ($num >= 864000) {
+                $days = $num / 86400;
+                return sprintf("%.2f天", $days);
             }
 
             // 大于1小时
@@ -141,6 +151,9 @@ class Performance
 
                 $days = ($rest - $rest % 86400) / 86400;
                 $rest = $rest - $days * 86400;
+                if (!$rest) {
+                    return "{$days}天";
+                }
 
                 $hours = ($rest - $rest % 3600) / 3600;
                 $rest = $rest - $hours * 3600;
@@ -181,21 +194,19 @@ class Performance
                 return sprintf("%d秒", $num);
             }
 
-            // 大于10秒
-            if ($num >= 1) {
-                return sprintf("%.3f秒", $num);
-            }
-
+            // 大于1的秒数
+            return sprintf("%.3f秒", $num);
+        } else {
             // 把小数位放大
-            $dec = intval($num * 1000000);
+            $dec = $num * 1000000;
 
             // 毫秒级
             if ($dec >= 1000) {
-                return sprintf("%d毫秒", $dec / 1000);
+                return sprintf("%.0f毫秒", $dec / 1000);
             }
 
             // 微秒级
-            return sprintf("%d微秒", $dec);
+            return sprintf("%.0f微秒", $dec);
         }
     }
 }
