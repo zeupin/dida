@@ -11,6 +11,10 @@ Dida Framework，一个 PHP 轻量级快速开发框架。
 - PHP v5.5 及以上。推荐 PHP v7.0 及以上。
 - 开启 `mb_string` 组件。
 
+## 遵循规范
+
+- [x] `PSR-4` 类自动加载规范。
+
 ## Web 服务器配置
 
 ### Apache 配置
