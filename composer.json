@@ -4,6 +4,10 @@
   "type": "library",
   "license": "MIT",
   "homepage": "https://github.com/zeupin/dida",
+  "keywords": [
+    "Dida",
+    "Framework"
+  ],
   "authors": [
     {
       "name": "Macc Liu",
@@ -13,11 +17,15 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": "^5.5 || ^7.0"
+    "php": "^5.5 || ^7.0",
+    "psr/container": "^1.0"
   },
   "autoload": {
     "psr-4": {
       "Dida\\": "src/Dida"
     }
+  },
+  "provide": {
+    "psr/container-implementation": "^1.0"
   }
 }
