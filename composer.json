@@ -19,14 +19,11 @@
   "require": {
     "php": "^5.5 || ^7.0",
     "dida/autoloader": "^1.0",
-    "psr/container": "^1.0"
+    "dida/container": "^0.1"
   },
   "autoload": {
     "psr-4": {
       "Dida\\": "src/Dida"
     }
-  },
-  "provide": {
-    "psr/container-implementation": "^1.0"
   }
 }
