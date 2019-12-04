@@ -11,9 +11,8 @@ namespace Dida;
 use \ArrayAccess;
 use \Closure;
 use \Dida\Container\ContainerException;
-use \Psr\Container\ContainerExceptionInterface;
+use \Dida\Container\NotFoundException;
 use \Psr\Container\ContainerInterface;
-use \Psr\Container\NotFoundExceptionInterface;
 use \ReflectionClass;
 
 /**
@@ -167,7 +166,7 @@ class Container implements ArrayAccess, ContainerInterface
      *
      * @return mixed
      *
-     * @throws ContainerException
+     * @throws NotFoundException
      */
     public function get($id)
     {
@@ -176,8 +175,8 @@ class Container implements ArrayAccess, ContainerInterface
             return $this->getShared($id);
         }
 
-        // id不存在，抛出异常
-        throw new ContainerException(null, ContainerException::ID_NOT_FOUND);
+        // PSR-11规范: id不存在时，抛出一个实现NotFoundExceptionInterface的异常
+        throw new NotFoundException($id);
     }
 
 
@@ -190,12 +189,14 @@ class Container implements ArrayAccess, ContainerInterface
      * @param array $parameters   待传入的参数数组，可选
      *
      * @return mixed
+     *
+     * @throws NotFoundException
      */
     public function getShared($id, array $parameters = [])
     {
         if (!$this->has($id)) {
-            // 容器中不存在指定id的服务
-            throw new ContainerException(null, ContainerException::ID_NOT_FOUND);
+            // PSR-11规范: id不存在时，抛出一个实现NotFoundExceptionInterface的异常
+            throw new NotFoundException($id);
         }
 
         $obj = null;
@@ -240,12 +241,15 @@ class Container implements ArrayAccess, ContainerInterface
      * @param array $parameters   待传入的参数数组，可选
      *
      * @return mixed
+     *
+     * @throws NotFoundException
+     * @throws ContainerException
      */
     public function getNew($id, array $parameters = [])
     {
         if (!$this->has($id)) {
-            // 容器中不存在指定id的服务
-            throw new ContainerException(null, ContainerException::ID_NOT_FOUND);
+            // PSR-11规范: id不存在时，抛出一个实现NotFoundExceptionInterface的异常
+            throw new NotFoundException($id);
         }
 
         if (isset($this->_singletons[$id])) {
@@ -278,7 +282,7 @@ class Container implements ArrayAccess, ContainerInterface
      * 删除指定的服务
      *
      * @param string $id
-     * 
+     *
      * @return void
      */
     public function remove($id)
