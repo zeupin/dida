@@ -6,7 +6,6 @@
  * 官网: <https://github.com/zeupin/dida>
  * Gitee: <https://gitee.com/zeupin/dida>
  */
-
 namespace Dida;
 
 /**
@@ -462,6 +461,37 @@ class Request
         $len = mb_strlen($basePath);
         if (mb_substr($path, 0, $len) === $basePath) {
             return mb_substr($path, $len);
+        } else {
+            return false;
+        }
+    }
+
+
+    /**
+     * 获取页面的来源网址。
+     *
+     * 注意：
+     * 1、HTTP的Referer是浏览器发出的，所以有可能被伪造，一般仅作为辅助判断使用。
+     *
+     * 正常时，以下情况会取到页面Referer：
+     * 1、直接用
+     * 2、Form提交的表单(POST或GET)
+     * 3、含有src的请求（如js的script标签及html中img标签的src属性）
+     *
+     * 以下情况不会取到页面Referer：
+     * 1、从浏览器内书签打开的页面
+     * 2、在浏览器地址栏直接输入URL
+     * 3、windows桌面上的超链接图标
+     * 4、使用JavaScript的Location.href或者是Location.replace()
+     * 5、页头中用<mete http-equiv="refresh">形式的页面转向
+     * 6、用XML加载地址
+     *
+     * @return string|false 正常返回取到的HTTP_REFERER。无法获取时，返回false
+     */
+    public static function getReferer()
+    {
+        if (array_key_exists('HTTP_REFERER', $_SERVER)) {
+            return $_SERVER['HTTP_REFERER'];
         } else {
             return false;
         }
