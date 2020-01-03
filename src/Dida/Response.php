@@ -6,7 +6,6 @@
  * 官网: <https://github.com/zeupin/dida>
  * Gitee: <https://gitee.com/zeupin/dida>
  */
-
 namespace Dida;
 
 /**
@@ -17,7 +16,7 @@ class Response
     /**
      * Version
      */
-    const VERSION = '20191122';
+    const VERSION = '20200103';
 
 
     /**
@@ -26,6 +25,7 @@ class Response
     public static function setNoCache()
     {
         header("Cache-Control: no-store, no-cache, must-revalidate"); // HTTP 1.1
+        header("Cache-Control: post-check=0, pre-check=0"); // HTTP 1.1
         header("Pragma: no-cache"); // HTTP 1.0
         header("Expires: 0");
     }
@@ -99,7 +99,7 @@ class Response
 
         // 执行
         header("Location: $url");
-        
+
         // 完成
         die();
     }
