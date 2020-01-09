@@ -196,11 +196,20 @@ class Request
 
     /**
      * 初始化 self::$method
+     *
+     * 按照如下优先级：
+     * 1、如果$_POST包含 DIDA_REQUEST_METHOD 字段，则以它的值做为请求方式。
+     * 2、如果$_POST包含 _METHOD 字段，则以它的值做为请求方式。
+     * 3、$_SERVER['REQUEST_METHOD']的值。
+     *
+     * @return void
      */
     protected static function getMethodInit()
     {
         if (isset($_POST['DIDA_REQUEST_METHOD'])) {
             $method = strtolower($_POST['DIDA_REQUEST_METHOD']);
+        } elseif (isset($_POST['_METHOD'])) {
+            $method = strtolower($_POST['_METHOD']);
         } elseif (isset($_SERVER['REQUEST_METHOD'])) {
             $method = strtolower($_SERVER['REQUEST_METHOD']);
         }
@@ -228,7 +237,8 @@ class Request
      *
      * 如果有POST的DIDA_REQUEST_METHOD字段，则以此字段为准。
      * 没有这个字段，则看是普通的get还是post。
-     * 正常返回get，post，put，patch，delete，head，options之一；如果非法，返回false。
+     * 正常返回get，post，put，patch，delete，head，options之一。
+     * 如果是非正常值，返回false。
      *
      * @return string|false
      */
