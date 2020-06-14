@@ -29,7 +29,7 @@ class Cookie
     /**
      * 版本号
      */
-    const VERSION = '20191130';
+    const VERSION = '20200614';
 
     /**
      * 内部cookies数据。
@@ -91,7 +91,7 @@ class Cookie
         foreach ($items as $item) {
             try {
                 list($name, $value) = explode('=', $item, 2);
-            } catch (Exception $ex) {
+            } catch (\Exception $ex) {
                 // 解析出来有问题的，直接丢弃
                 continue;
             }
@@ -110,14 +110,14 @@ class Cookie
      *
      * @param string $key
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return void
      */
     public static function setKey($key)
     {
         if (!is_string($key)) {
-            throw new InvalidArgumentException('Dida: Cookie加密密钥必须为字符串类型');
+            throw new \InvalidArgumentException('Dida: Cookie加密密钥必须为字符串类型');
         }
 
         self::$key = $key;
@@ -129,14 +129,14 @@ class Cookie
      *
      * @param string $path
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return void
      */
     public static function setPath($path)
     {
         if (!is_string($path)) {
-            throw new InvalidArgumentException('Dida: Cookie有效路径必须为字符串类型');
+            throw new \InvalidArgumentException('Dida: Cookie有效路径必须为字符串类型');
         }
 
         self::$path = $path;
@@ -148,14 +148,14 @@ class Cookie
      *
      * @param string $domain
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return void
      */
     public static function setDomain($domain)
     {
         if (!is_string($domain)) {
-            throw new InvalidArgumentException('Dida: Cookie有效域名必须为字符串类型');
+            throw new \InvalidArgumentException('Dida: Cookie有效域名必须为字符串类型');
         }
 
         self::$domain = $domain;
