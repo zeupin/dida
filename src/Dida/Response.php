@@ -50,7 +50,7 @@ class Response
      */
     public static function setHeaders(array $headers)
     {
-        foreach ($cacheSetting as $key => $header) {
+        foreach ($headers as $key => $header) {
             if (is_int($key)) {
                 header($header);
             } else {
@@ -64,12 +64,14 @@ class Response
      * 输出一个json应答
      *
      * @param mixed $data
-     * @param array|null $cacheSetting 缓存设置
+     * @param array|string $cacheSetting 缓存设置
+     * 
+     * @return bool
      */
-    public static function json($data, $cacheSetting = null)
+    public static function json($data, $cacheSetting = 'no-cache')
     {
         // 缓存设置
-        if ($cacheSetting === null) {
+        if ($cacheSetting === 'no-cache') {
             self::setNoCache();
         } elseif (is_array($cacheSetting)) {
             self::setHeaders($cacheSetting);
@@ -79,8 +81,8 @@ class Response
         header('Content-Type:application/json; charset=utf-8');
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
 
-        // 完成
-        die();
+        // 成功
+        return true;
     }
 
 
