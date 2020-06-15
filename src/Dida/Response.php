@@ -16,18 +16,20 @@ class Response
     /**
      * Version
      */
-    const VERSION = '20200103';
+    const VERSION = '20200615';
 
 
     /**
      * 告知浏览器不要缓存
+     *
+     * 1. 如果在 Cache-Control 响应头设置了 "max-age" 或者 "s-max-age" 指令，那么 Expires 头会被忽略。
+     *    <https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Expires>
      */
     public static function setNoCache()
     {
-        header("Cache-Control: no-store, no-cache, must-revalidate"); // HTTP 1.1
-        header("Cache-Control: post-check=0, pre-check=0"); // HTTP 1.1
+        header("Cache-Control: private, max-age=0, no-store, no-cache, must-revalidate"); // HTTP 1.1
         header("Pragma: no-cache"); // HTTP 1.0
-        header("Expires: 0");
+        header("Expires: 0"); // see 1
     }
 
 
@@ -36,8 +38,8 @@ class Response
      */
     public static function setAllowCORS()
     {
-        header('Access-Control-Allow-Origin:*');
-        header('Access-Control-Allow-Methods:*');
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Methods: *');
     }
 
 
