@@ -22,6 +22,7 @@ $parts = [
     ['dida-log', 'https://github.com/zeupin/dida-log.git'],
     ['dida-console', 'https://gitee.com/zeupin/dida-console.git'],
     ['dida-routing', 'https://gitee.com/zeupin/dida-routing.git'],
+    ['dida-event', 'https://github.com/zeupin/dida-event.git'],
 ];
 
 // repo的根目录
