@@ -69,3 +69,61 @@ function copydir($src, $dest)
     // 成功
     return true;
 }
+
+/**
+ * 删除指定目录
+ *
+ * @param string $dir
+ *
+ * @return bool 成功返回true,失败返回false
+ */
+function removedir($dir)
+{
+    // 如果目录不存在,返回false
+    if (!file_exists($dir) || !is_dir($dir)) {
+        return false;
+    }
+
+    // 返回真实路径
+    $path = realpath($dir);
+
+    // 禁止删除高危系统目录
+    if (DIRECTORY_SEPARATOR === '/') {
+        // unix环境,要删除的目录路径必须6个(含6个)字符以上
+        if (mb_strlen($path) < 6) {
+            return false;
+        }
+    } else {
+        // windows环境,要删除的目录路径必须4个(含4个)字符以上
+        if (mb_strlen($path) < 4) {
+            return false;
+        }
+    }
+
+    // 递归处理文件和子目录
+    $files = scandir($path);
+    foreach ($files as $file) {
+        if ($file === '.' || $file === '..') {
+            continue;
+        }
+
+        $sub = "$path/$file";
+        if (is_dir($sub)) {
+            if (!removedir($sub)) {
+                return false;
+            }
+        } else {
+            if (!unlink($sub)) {
+                return false;
+            }
+        }
+    }
+
+    // 删除自己
+    if (!rmdir($path)) {
+        return false;
+    }
+
+    // 返回
+    return true;
+}
