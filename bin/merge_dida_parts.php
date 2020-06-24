@@ -16,6 +16,11 @@ require __DIR__ . '/func.filesystem.php';
 
 // Dida的各个零件
 $parts = [
+    ['dida-application', 'https://gitee.com/zeupin/dida-application.git'],
+    ['dida-config', 'https://github.com/zeupin/dida-config.git'],
+    ['dida-container', 'https://github.com/zeupin/dida-container.git'],
+    ['dida-log', 'https://github.com/zeupin/dida-log.git'],
+    ['dida-console', 'https://gitee.com/zeupin/dida-console.git'],
     ['dida-routing', 'https://gitee.com/zeupin/dida-routing.git'],
 ];
 
@@ -26,19 +31,28 @@ $rootdir = dirname(__DIR__);
 $thisdida = realpath("$rootdir/src/Dida");
 
 // 把零件拼起来
-foreach ($parts as $part) {
+foreach ($parts as $index => $part) {
     list($name, $giturl) = $part;
 
     // temp中的临时目录
     $dest = "$rootdir/temp/$name";
 
+    // 横线
+    echo sprintf("%s %d %s\n\n", str_repeat('-', 30), $index + 1, str_repeat('-', 30));
+
     // 如果临时目录已经存在,先删除
     if (file_exists($dest)) {
-        pr_info("\nRemove '$dest' ... ");
+        pr_info("Remove '$dest' ...\n\n");
+        $result = false;
         if (is_dir($dest)) {
-            echo removedir($dest) ? 'Done.' : 'Fail.';
+            $result = removedir($dest) ;
         } else {
-            echo unlink($dest) ? 'Done.' : 'Fail.';
+            $result = unlink($dest);
+        }
+        if ($result) {
+            echo 'Done.';
+        } else {
+            pr_err('Fail.');
         }
         echo "\n\n";
     }
@@ -47,6 +61,7 @@ foreach ($parts as $part) {
     $cmd = "git clone --depth=1 '$giturl' '$dest'";
     pr_info("$cmd\n\n");
     passthru($cmd);
+    echo "\n";
 
     // 检查 `git clone` 是否成功
     $srcdida = "$dest/src/Dida";
@@ -57,6 +72,13 @@ foreach ($parts as $part) {
     }
 
     // 拷贝组件的src目录到本repo
-    copydir($srcdida, $thisdida);
+    $cmd = 'Copying files ... ';
+    pr_info("$cmd\n\n");
+    echo copydir($srcdida, $thisdida) ? 'Done.' : 'Fail.';
+    echo "\n\n";
 }
 
+$cmd = "php-cs-fixer fix '$rootdir'";
+pr_info("$cmd\n\n");
+passthru($cmd);
+echo "\n\n";

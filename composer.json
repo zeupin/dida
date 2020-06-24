@@ -36,6 +36,6 @@
   },
   "scripts": {
     "cs": "php-cs-fixer fix .",
-    "rebuild": "php bin/rebuild.php"
+    "merge:parts": "php bin/merge_dida_parts.php"
   }
 }
