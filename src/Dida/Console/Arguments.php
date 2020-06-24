@@ -180,8 +180,8 @@ class Arguments
      *
      * @param string $parameter
      *    没有特殊字符  返回 $parameter
-     *    有"          返回 '$parameter'
-     *    没有"        返回 "$parameter"
+     *    有"         返回 '$parameter'
+     *    没有"       返回 "$parameter"
      *
      * @return string
      */
@@ -202,10 +202,10 @@ class Arguments
      * 返回一个转义后的option
      *
      * @param string|null $option
-     *    null         返回 ''
+     *    null        返回 ''
      *    没有特殊字符  返回 =option
-     *    有"          返回 ='$option'
-     *    没有"        返回 ="$option"
+     *    有"         返回 ='$option'
+     *    没有"       返回 ="$option"
      *
      * @return string
      */
