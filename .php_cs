@@ -85,7 +85,7 @@ return PhpCsFixer\Config::create()
          * php文件头
          * ------------------------------------------------------------
          */
-        'phpdoc_align' => true,
+        // 'phpdoc_align' => true,
         // 'phpdoc_annotation_without_dot' => true,
         // 'phpdoc_indent' => true,
         // 'phpdoc_inline_tag' => true,

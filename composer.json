@@ -35,7 +35,7 @@
     }
   },
   "scripts": {
-    "phpcs": "php-cs-fixer fix .",
+    "cs": "php-cs-fixer fix .",
     "rebuild": "php bin/rebuild.php"
   }
 }
