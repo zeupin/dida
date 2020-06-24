@@ -7,7 +7,7 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
-namespace Dida;
+namespace Dida\Traits;
 
 /**
  * SingletonTrait 单例模式特性
