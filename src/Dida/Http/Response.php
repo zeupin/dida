@@ -6,7 +6,7 @@
  * Github: <https://github.com/zeupin/dida>
  * Gitee: <https://gitee.com/zeupin/dida>
  */
-namespace Dida;
+namespace Dida\Http;
 
 /**
  * Response
@@ -65,7 +65,7 @@ class Response
      *
      * @param mixed $data
      * @param array|string $cacheSetting 缓存设置
-     * 
+     *
      * @return bool
      */
     public static function json($data, $cacheSetting = 'no-cache')
