@@ -6,6 +6,7 @@
  * Github: <https://github.com/zeupin/dida>
  * Gitee: <https://gitee.com/zeupin/dida>
  */
+
 namespace Dida;
 
 /**
@@ -18,14 +19,13 @@ class Performance
      */
     const VERSION = '20191202';
 
-
     /**
      * 计算两个microtime的间隔
      *
-     * @param string $start   用microtime()生成的开始时间
-     * @param string $end     用microtime()生成的结束时间
+     * @param string $start 用microtime()生成的开始时间
+     * @param string $end   用microtime()生成的结束时间
      *
-     * @return float   时间间隔(单位s)
+     * @return float 时间间隔(单位s)
      */
     public static function diffMicroTime($start, $end)
     {
@@ -41,11 +41,10 @@ class Performance
         return ($es - $ss) + ($em - $sm);
     }
 
-
     /**
      * 内存使用情况
      *
-     * @return array  单位为字节
+     * @return array 单位为字节
      */
     public static function memoryUsage()
     {
@@ -54,13 +53,12 @@ class Performance
         $c = memory_get_usage(true);
         $d = memory_get_peak_usage(true);
         return [
-            "usage"      => self::readableBytes($a), // 实际使用的内存大小
-            "peak_usage" => self::readableBytes($b), // 实际使用的峰值内存大小
-            "alloc"      => self::readableBytes($c), // 分配到的内存大小
-            "alloc_peak" => self::readableBytes($d), // 分配到的峰值内存大小
+            'usage'      => self::readableBytes($a), // 实际使用的内存大小
+            'peak_usage' => self::readableBytes($b), // 实际使用的峰值内存大小
+            'alloc'      => self::readableBytes($c), // 分配到的内存大小
+            'alloc_peak' => self::readableBytes($d), // 分配到的峰值内存大小
         ];
     }
-
 
     /**
      * 可读性的字节数
@@ -70,7 +68,7 @@ class Performance
      * 1MB-1GB，返回 xxx MB 或 xxx.xx MB
      * 1GB以上，返回 xxx GB
      *
-     * @param int $num   字节数
+     * @param int $num 字节数
      *
      * @return string 以B,KB,MB,GB为单位返回
      */
@@ -85,9 +83,9 @@ class Performance
         if ($num < 1048576) {
             $r = $num / 1024;
             if ($num % 1024 == 0) {
-                return sprintf("%d KB", $r);
+                return sprintf('%d KB', $r);
             } else {
-                return sprintf("%.2f KB", $r);
+                return sprintf('%.2f KB', $r);
             }
         }
 
@@ -95,21 +93,20 @@ class Performance
         if ($num < 1073741824) {
             $r = $num / 1048576;
             if ($num % 1048576 == 0) {
-                return sprintf("%d MB", $r);
+                return sprintf('%d MB', $r);
             } else {
-                return sprintf("%.2f MB", $r);
+                return sprintf('%.2f MB', $r);
             }
         }
 
         // 更大的，以GB为单位返回
         $r = $num / 1073741824;
         if ($num % 1073741824 == 0) {
-            return sprintf("%d GB", $r);
+            return sprintf('%d GB', $r);
         } else {
-            return sprintf("%.2f GB", $r);
+            return sprintf('%.2f GB', $r);
         }
     }
-
 
     /**
      * 可读性的时间间隔
@@ -126,7 +123,7 @@ class Performance
      *  毫秒级，返回 xxx毫秒
      *  微秒级，返回 xxx微秒
      *
-     * @param int|float $num   时间间隔，以秒为单位
+     * @param int|float $num 时间间隔，以秒为单位
      *
      * @return string
      */
@@ -136,13 +133,13 @@ class Performance
             // 大于100天
             if ($num >= 8640000) {
                 $days = $num / 86400;
-                return sprintf("%.1f天", $days);
+                return sprintf('%.1f天', $days);
             }
 
             // 大于10天
             if ($num >= 864000) {
                 $days = $num / 86400;
-                return sprintf("%.2f天", $days);
+                return sprintf('%.2f天', $days);
             }
 
             // 大于1小时
@@ -166,12 +163,12 @@ class Performance
                     $r[] = "{$days}天";
                 }
                 if ($hours > 0 || $r) {
-                    $r[] = sprintf("%d小时", $hours);
+                    $r[] = sprintf('%d小时', $hours);
                 }
                 if ($mins > 0 || $r) {
-                    $r[] = sprintf("%d分", $mins);
+                    $r[] = sprintf('%d分', $mins);
                 }
-                $r[] = sprintf("%d秒", $secs);
+                $r[] = sprintf('%d秒', $secs);
 
                 return implode('', $r);
             }
@@ -183,34 +180,34 @@ class Performance
                 $mins = ($int - $secs) / 60;
                 if (is_int($num) || ($int == $num)) {
                     if ($secs) {
-                        return sprintf("%d分%d秒", $mins, $secs);
+                        return sprintf('%d分%d秒', $mins, $secs);
                     } else {
                         return "{$mins}分";
                     }
                 } else {
                     $secs = $num - $mins * 60; // 带小数的
-                    return sprintf("%d分%.1f秒", $mins, $secs);
+                    return sprintf('%d分%.1f秒', $mins, $secs);
                 }
             }
 
             // 1-120秒以内，整数秒
             if (is_int($num) || (intval($num) == $num)) {
-                return sprintf("%d秒", $num);
+                return sprintf('%d秒', $num);
             }
 
             // 1-120秒以内，有小数的秒
-            return sprintf("%.3f秒", $num);
+            return sprintf('%.3f秒', $num);
         } else {
             // 把小数位放大
             $dec = $num * 1000000;
 
             // 毫秒级
             if ($dec >= 1000) {
-                return sprintf("%.0f毫秒", $dec / 1000);
+                return sprintf('%.0f毫秒', $dec / 1000);
             }
 
             // 微秒级
-            return sprintf("%.0f微秒", $dec);
+            return sprintf('%.0f微秒', $dec);
         }
     }
 }
