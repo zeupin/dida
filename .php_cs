@@ -1,19 +1,21 @@
 <?php
 /**
- * @see https://github.com/junstyle/vscode-php-cs-fixer
+ * @see https://cs.symfony.com/
+ * @see https://github.com/junstyle/vscode-php-cs-fixer/
  */
 return PhpCsFixer\Config::create()
     ->setRules([
         '@PSR2' => true,
+
         'array_indentation' => true,
         'array_syntax' => ['syntax' => 'short'],
         'combine_consecutive_unsets' => true,
         'method_separation' => true,
         'no_multiline_whitespace_before_semicolons' => true,
-        'single_quote' => true,
+        'single_quote' => true, // 字符串尽可能用单引号
         'binary_operator_spaces' => [
-            'align_double_arrow' => true,
-            'align_equals' => false,
+            'align_double_arrow' => true,  // 关联数组的箭头对齐
+            'align_equals' => false, // 等号对齐
         ],
         // 'blank_line_after_opening_tag' => true,
         // 'blank_line_before_return' => true,
