@@ -15,10 +15,14 @@
     }
   ],
   "minimum-stability": "dev",
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "optimize-autoloader": true
+  },
   "prefer-stable": true,
   "require": {
     "php": "^5.5 || ^7.0",
-    "dida/autoloader": "^1.0",
     "dida/config": "^0.1.0",
     "dida/container": "^0.1",
     "dida/log": "^0.1.0",
@@ -29,5 +33,9 @@
     "psr-4": {
       "Dida\\": "src/Dida"
     }
+  },
+  "scripts": {
+    "phpcs": "php-cs-fixer fix .",
+    "rebuild": "php bin/rebuild.php"
   }
 }
