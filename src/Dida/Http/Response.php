@@ -6,6 +6,7 @@
  * Github: <https://github.com/zeupin/dida>
  * Gitee: <https://gitee.com/zeupin/dida>
  */
+
 namespace Dida\Http;
 
 /**
@@ -17,7 +18,6 @@ class Response
      * Version
      */
     const VERSION = '20200615';
-
 
     /**
      * 告知浏览器不要缓存
@@ -32,7 +32,6 @@ class Response
         header("Expires: 0"); // see 1
     }
 
-
     /**
      * 设置允许跨域资源共享(CORS)
      */
@@ -41,7 +40,6 @@ class Response
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Methods: *');
     }
-
 
     /**
      * 批量设置应答的 HTTP Header
@@ -59,11 +57,10 @@ class Response
         }
     }
 
-
     /**
      * 输出一个json应答
      *
-     * @param mixed $data
+     * @param mixed        $data
      * @param array|string $cacheSetting 缓存设置
      *
      * @return bool
@@ -85,11 +82,10 @@ class Response
         return true;
     }
 
-
     /**
      * 重定向
      *
-     * @param string $url
+     * @param string     $url
      * @param array|null $cacheSetting 缓存设置
      */
     public static function redirect($url, $cacheSetting = null)
@@ -108,13 +104,12 @@ class Response
         die();
     }
 
-
     /**
      * 输出一个文件下载。
      *
-     * @param string $srcfile   服务器上源文件的文件名。
-     * @param string $name      下载时的文件名。如果为null，则默认使用srcfile的文件名。
-     * @param boolean $mime     是否需要设置文件的mime。
+     * @param string     $srcfile      服务器上源文件的文件名。
+     * @param string     $name         下载时的文件名。如果为null，则默认使用srcfile的文件名。
+     * @param boolean    $mime         是否需要设置文件的MIME。
      * @param array|null $cacheSetting 缓存设置
      *
      * @return boolean

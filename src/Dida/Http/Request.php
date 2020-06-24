@@ -6,6 +6,7 @@
  * Github: <https://github.com/zeupin/dida>
  * Gitee: <https://gitee.com/zeupin/dida>
  */
+
 namespace Dida\Http;
 
 /**
@@ -28,14 +29,13 @@ class Request
 
     /**
      * @var array 对请求URL的解析
-     * [
-     *    'path'     =>
-     *    'query'    =>
-     *    'fragment' =>
-     * ]
+     *            [
+     *            'path'     =>
+     *            'query'    =>
+     *            'fragment' =>
+     *            ]
      */
     protected static $urlinfo = null;
-
 
     /**
      * $_GET
@@ -51,7 +51,6 @@ class Request
         return self::arrayValue($name, $_GET);
     }
 
-
     /**
      * $_POST
      *
@@ -66,7 +65,6 @@ class Request
         return self::arrayValue($name, $_POST);
     }
 
-
     /**
      * $_COOKIE
      */
@@ -78,7 +76,6 @@ class Request
 
         return Cookie::get($name);
     }
-
 
     /**
      * $_REQUEST
@@ -92,7 +89,6 @@ class Request
         return self::arrayValue($name, $_REQUEST);
     }
 
-
     /**
      * $_SERVER
      */
@@ -105,7 +101,6 @@ class Request
         return self::arrayValue($name, $_SERVER);
     }
 
-
     /**
      * $_ENV
      */
@@ -117,7 +112,6 @@ class Request
 
         return self::arrayValue($name, $_ENV);
     }
-
 
     /**
      * $_SESSION
@@ -141,7 +135,6 @@ class Request
         return self::arrayValue($name, $_SESSION);
     }
 
-
     /**
      * $_FILES
      *
@@ -164,7 +157,6 @@ class Request
         return self::arrayValue($name, $_FILES);
     }
 
-
     /**
      * 初始化 self::$isAjax
      */
@@ -177,7 +169,6 @@ class Request
 
         self::$isAjax = (strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
     }
-
 
     /**
      * 是否是Ajax请求。
@@ -192,7 +183,6 @@ class Request
 
         return self::$isAjax;
     }
-
 
     /**
      * 初始化 self::$method
@@ -231,7 +221,6 @@ class Request
         }
     }
 
-
     /**
      * 获取Request的method。
      *
@@ -249,7 +238,6 @@ class Request
         }
         return self::$method;
     }
-
 
     /**
      * 初始化 self::$clientIP
@@ -273,7 +261,6 @@ class Request
         self::$clientIP = $ip;
     }
 
-
     /**
      * 获取客户端IP。
      *
@@ -287,7 +274,6 @@ class Request
         return self::$clientIP;
     }
 
-
     /**
      * 获取Request的协议名(http/https)。
      *
@@ -297,7 +283,6 @@ class Request
     {
         return (array_key_exists('REQUEST_SCHEME', $_SERVER)) ? $_SERVER['REQUEST_SCHEME'] : false;
     }
-
 
     /**
      * 初始化 self::$headers
@@ -317,7 +302,6 @@ class Request
         }
     }
 
-
     /**
      * 获取所有headers列表
      */
@@ -330,7 +314,6 @@ class Request
         return self::$headers;
     }
 
-
     /**
      * 获取指定的header
      */
@@ -342,7 +325,6 @@ class Request
 
         return self::arrayValue($name, self::$headers);
     }
-
 
     /**
      * 初始化 self::$urlinfo
@@ -361,7 +343,6 @@ class Request
         }
     }
 
-
     /**
      * 请求的路径解析
      *
@@ -377,11 +358,10 @@ class Request
         return self::$urlinfo;
     }
 
-
     /**
      * Request的url路径。
      *
-     * @return string|null|false   正常返回path，没有path则返回null，出错返回false
+     * @return string|null|false 正常返回path，没有path则返回null，出错返回false
      */
     public static function getPath()
     {
@@ -398,11 +378,10 @@ class Request
         return (array_key_exists('path', self::$urlinfo)) ? self::$urlinfo['path'] : null;
     }
 
-
     /**
      * Request的查询串。
      *
-     * @return string|null|false   正常返回查询串，没有则返回null，出错返回false
+     * @return string|null|false 正常返回查询串，没有则返回null，出错返回false
      */
     public static function getQueryString()
     {
@@ -419,11 +398,10 @@ class Request
         return (array_key_exists('query', self::$urlinfo)) ? self::$urlinfo['query'] : null;
     }
 
-
     /**
      * Request的页面书签。
      *
-     * @return string|null|false   正常返回fragment，没有则返回null，出错返回false
+     * @return string|null|false 正常返回fragment，没有则返回null，出错返回false
      */
     public static function getFragment()
     {
@@ -440,16 +418,15 @@ class Request
         return (array_key_exists('fragment', self::$urlinfo)) ? self::$urlinfo['fragment'] : null;
     }
 
-
     /**
      * 获取路径中去除了基准路径后的剩余部分。
      *
      * @param string $basePath 基准路径
      *
      * @return false|string
-     *      URL路径不是以基准路径开头的，返回false。
-     *      返回去除基准路径后的剩余部分。
-     *      URL路径等于基准路径，返回空串。
+     *                      URL路径不是以基准路径开头的，返回false。
+     *                      返回去除基准路径后的剩余部分。
+     *                      URL路径等于基准路径，返回空串。
      */
     public static function getPathOffset($basePath)
     {
@@ -475,7 +452,6 @@ class Request
             return false;
         }
     }
-
 
     /**
      * 获取页面的来源网址。
@@ -507,14 +483,13 @@ class Request
         }
     }
 
-
     /**
      * 从指定数组中挑出给定的单元。
      *
      * @param string|array $array
-     * @param string $keyN
+     * @param string       $keyN
      *
-     * @return array|false   正常返回一个数组，有错返回false。
+     * @return array|false 正常返回一个数组，有错返回false。
      *
      * @example
      * \Dida\Request::pick("post","user","pwd")
@@ -548,14 +523,13 @@ class Request
         return $result;
     }
 
-
     /**
      * 从指定数组中挑出除给定的单元以外的所有单元。
      *
      * @param string|array $array
-     * @param string $keyN
+     * @param string       $keyN
      *
-     * @return array|false   正常返回一个数组，有错返回false。
+     * @return array|false 正常返回一个数组，有错返回false。
      */
     public static function pickExcept($array, $keyN)
     {
@@ -579,11 +553,10 @@ class Request
         return $result;
     }
 
-
     /**
-     *
      * @param array|string $array
      * @param string|array $keyN
+     *
      * @return boolean
      */
     protected static function pickPrepare($array, $keyN)
@@ -649,13 +622,12 @@ class Request
         return [$array, $keys];
     }
 
-
     /**
      * 一个工具函数。
      * 如果数组中key存在，则返回对应的value，否则返回null。
      *
      * @param int|string $key
-     * @param array $array
+     * @param array      $array
      *
      * @return mixed
      */

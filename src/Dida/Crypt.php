@@ -31,14 +31,13 @@ class Crypt
      */
     public static $defaultIV = "Dida, Well done!";
 
-
     /**
      * 加密
      *
-     * @param string $srcData    要加密的数据
-     * @param string|null $key   密钥
+     * @param string      $srcData 要加密的数据
+     * @param string|null $key     密钥
      *
-     * @return string|false   成功返回加密后的值，失败返回false
+     * @return string|false 成功返回加密后的值，失败返回false
      */
     public static function encrypt($srcData, $key = null, $iv = null)
     {
@@ -61,14 +60,13 @@ class Crypt
         }
     }
 
-
     /**
      * 解密
      *
-     * @param string $encData    要解密的数据
-     * @param string|null $key   密钥
+     * @param string      $encData 要解密的数据
+     * @param string|null $key     密钥
      *
-     * @return string|false   成功返回解密后的值，失败返回false
+     * @return string|false 成功返回解密后的值，失败返回false
      */
     public static function decrypt($encData, $key = null, $iv = null)
     {

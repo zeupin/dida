@@ -62,10 +62,9 @@ class Cookie
     /**
      * cookie的有效域名
      *
-     * @var string   有效域名，默认为''
+     * @var string 有效域名，默认为''
      */
     protected static $domain = '';
-
 
     /**
      * 解析HTTP请求的HTTP_COOKIE字段，获取cookies数据
@@ -104,7 +103,6 @@ class Cookie
         self::$cookies = $cookies;
     }
 
-
     /**
      * 设置安全密钥
      *
@@ -122,7 +120,6 @@ class Cookie
 
         self::$key = $key;
     }
-
 
     /**
      * 设置cookie的有效网址路径
@@ -142,7 +139,6 @@ class Cookie
         self::$path = $path;
     }
 
-
     /**
      * 设置cookie的有效网址路径
      *
@@ -161,16 +157,15 @@ class Cookie
         self::$domain = $domain;
     }
 
-
     /**
      * 设置一个cookie。
      * 各参数设置参见 PHP 的 setcookie 函数。
      *
      * @param string $name
      * @param string $value
-     * @param int $expires
-     * @param bool $secure
-     * @param bool $httponly
+     * @param int    $expires
+     * @param bool   $secure
+     * @param bool   $httponly
      *
      * @return bool
      */
@@ -188,16 +183,15 @@ class Cookie
         return setcookie($name, $value, $expires, self::$path, self::$domain, $secure, $httponly);
     }
 
-
     /**
      * 设置一个加密cookie。
      * 加密用类设置的加密key。
      *
      * @param string $name
      * @param string $value
-     * @param int $expires
-     * @param bool $secure
-     * @param bool $httponly
+     * @param int    $expires
+     * @param bool   $secure
+     * @param bool   $httponly
      *
      * @return bool
      */
@@ -226,15 +220,14 @@ class Cookie
         return setcookie($name, $value, $expires, self::$path, self::$domain, $secure, $httponly);
     }
 
-
     /**
      * 获取指定的cookie的值
      *
      * @param string $name
      *
      * @return string|null|false
-     *     正常返回 cookie 值
-     *     cookie不存在，返回 null
+     *                           正常返回 cookie 值
+     *                           cookie不存在，返回 null
      */
     public static function get($name)
     {
@@ -247,13 +240,12 @@ class Cookie
         return self::$cookies[$name];
     }
 
-
     /**
      * 获取一个加密的cookie值。
      *
      * @param string $name
      *
-     * @return string|null   成功返回值，失败返回null
+     * @return string|null 成功返回值，失败返回null
      */
     public static function getSafe($name)
     {
@@ -280,7 +272,6 @@ class Cookie
         return $result;
     }
 
-
     /**
      * 获取所有 cookies
      */
@@ -288,7 +279,6 @@ class Cookie
     {
         return self::$cookies;
     }
-
 
     /**
      * 获取cookies的所有键名
@@ -299,7 +289,6 @@ class Cookie
     {
         return array_keys(self::$cookies);
     }
-
 
     /**
      * 删除指定的cookie。
