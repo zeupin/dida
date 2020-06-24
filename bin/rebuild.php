@@ -1,6 +1,10 @@
 <?php
 /**
- * 把vendor里面所有的dida/*组件的源代码合并到本repo里面来
+ * Dida Framework  -- PHP轻量级快速开发框架
+ * 版权所有 (c) 上海宙品信息科技有限公司
+ *
+ * Github: <https://github.com/zeupin/dida>
+ * Gitee: <https://gitee.com/zeupin/dida>
  */
 
 require __DIR__ . '/func.filesystem.php';

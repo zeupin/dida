@@ -72,19 +72,19 @@ class Cookie
     public static function init()
     {
         // 如果请求没有带cookie，直接返回
-        if (!array_key_exists("HTTP_COOKIE", $_SERVER)) {
+        if (!array_key_exists('HTTP_COOKIE', $_SERVER)) {
             self::$cookies = [];
             return;
         }
 
         // HTTP_COOKIE
-        $hc = $_SERVER["HTTP_COOKIE"];
+        $hc = $_SERVER['HTTP_COOKIE'];
 
         // 解析出来的cookies
         $cookies = [];
 
         // 第一次分割
-        $items = explode("; ", $hc);
+        $items = explode('; ', $hc);
 
         // 第二次分割
         foreach ($items as $item) {

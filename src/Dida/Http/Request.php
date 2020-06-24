@@ -244,16 +244,16 @@ class Request
      */
     protected static function getClientIPInit()
     {
-        if (isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
-            $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
-        } elseif (isset($_SERVER["HTTP_CLIENT_IP"])) {
-            $ip = $_SERVER["HTTP_CLIENT_IP"];
-        } elseif (isset($_SERVER["HTTP_X_CLIENT_IP"])) {
-            $ip = $_SERVER["HTTP_X_CLIENT_IP"];
-        } elseif (isset($_SERVER["HTTP_X_CLUSTER_CLIENT_IP"])) {
-            $ip = $_SERVER["HTTP_X_CLUSTER_CLIENT_IP"];
-        } elseif (isset($_SERVER["REMOTE_ADDR"])) {
-            $ip = $_SERVER["REMOTE_ADDR"];
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } elseif (isset($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (isset($_SERVER['HTTP_X_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_X_CLIENT_IP'];
+        } elseif (isset($_SERVER['HTTP_X_CLUSTER_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_X_CLUSTER_CLIENT_IP'];
+        } elseif (isset($_SERVER['REMOTE_ADDR'])) {
+            $ip = $_SERVER['REMOTE_ADDR'];
         } else {
             $ip = false; // ip未定义
         }
@@ -289,7 +289,7 @@ class Request
      */
     protected static function getHeadersInit()
     {
-        if (function_exists("apache_request_headers")) {
+        if (function_exists('apache_request_headers')) {
             $headers = apache_request_headers();
             if (is_array($headers)) {
                 self::$headers = $headers;
@@ -334,12 +334,12 @@ class Request
         // 解析 path，query，fragment
         // 成功，返回一个关联数组。
         // 失败，self::$urlinfo = false。
-        self::$urlinfo = parse_url($_SERVER["REQUEST_URI"]);
+        self::$urlinfo = parse_url($_SERVER['REQUEST_URI']);
 
         // 成功后，做下标准化处理
         if (self::$urlinfo) {
             // 统一移除path末尾的/，以便对 “.../foo” 和 “.../foo/” 处理一致。
-            self::$urlinfo["path"] = rtrim(self::$urlinfo['path'], "/\\");
+            self::$urlinfo['path'] = rtrim(self::$urlinfo['path'], '/\\');
         }
     }
 

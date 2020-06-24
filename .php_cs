@@ -1,21 +1,26 @@
 <?php
 /**
- * @see https://cs.symfony.com/
- * @see https://github.com/junstyle/vscode-php-cs-fixer/
+ * Dida Framework  -- PHP轻量级快速开发框架
+ * 版权所有 (c) 上海宙品信息科技有限公司
+ *
+ * Github: <https://github.com/zeupin/dida>
+ * Gitee: <https://gitee.com/zeupin/dida>
  */
+
 return PhpCsFixer\Config::create()
     ->setRules([
         '@PSR2' => true,
 
         'array_indentation' => true,
-        'array_syntax' => ['syntax' => 'short'],
-        'combine_consecutive_unsets' => true,
-        'method_separation' => true,
+        'array_syntax'      => ['syntax' => 'short'],
+
+        'combine_consecutive_unsets'                => true,
+        'method_separation'                         => true,
         'no_multiline_whitespace_before_semicolons' => true,
-        'single_quote' => true, // 字符串尽可能用单引号
-        'binary_operator_spaces' => [
+        'single_quote'                              => true, // 字符串尽可能用单引号
+        'binary_operator_spaces'                    => [
             'align_double_arrow' => true,  // 关联数组的箭头对齐
-            'align_equals' => false, // 等号对齐
+            'align_equals'       => false, // 等号对齐
         ],
         // 'blank_line_after_opening_tag' => true,
         // 'blank_line_before_return' => true,
@@ -24,12 +29,12 @@ return PhpCsFixer\Config::create()
         ],
         // 'cast_spaces' => true,
         // 'class_definition' => array('singleLine' => true),
-        'concat_space' => ['spacing' => 'one'],
+        'concat_space'            => ['spacing' => 'one'],
         'declare_equal_normalize' => true,
         'function_typehint_space' => true,
-        'hash_to_slash_comment' => true,
-        'include' => true,
-        'lowercase_cast' => true,
+        'hash_to_slash_comment'   => true,
+        'include'                 => true,
+        'lowercase_cast'          => true,
         // 'native_function_casing' => true,
         // 'new_with_braces' => true,
         // 'no_blank_lines_after_class_opening' => true,
@@ -57,7 +62,7 @@ return PhpCsFixer\Config::create()
         // 'no_unneeded_control_parentheses' => true,
         // 'no_unused_imports' => true,
         'no_whitespace_before_comma_in_array' => true,
-        'no_whitespace_in_blank_line' => true,
+        'no_whitespace_in_blank_line'         => true,
         // 'normalize_index_brace' => true,
         'object_operator_without_whitespace' => true,
         // 'php_unit_fqcn_annotation' => true,
@@ -71,10 +76,15 @@ return PhpCsFixer\Config::create()
         // 'standardize_not_equals' => true,
         'ternary_operator_spaces' => true,
         // 'trailing_comma_in_multiline_array' => true,
-        'trim_array_spaces' => true,
-        'unary_operator_spaces' => true,
+        'trim_array_spaces'               => true,
+        'unary_operator_spaces'           => true,
         'whitespace_after_comma_in_array' => true,
 
+        /**
+         * ------------------------------------------------------------
+         * php文件头
+         * ------------------------------------------------------------
+         */
         'phpdoc_align' => true,
         // 'phpdoc_annotation_without_dot' => true,
         // 'phpdoc_indent' => true,
@@ -90,8 +100,27 @@ return PhpCsFixer\Config::create()
         // 'phpdoc_single_line_var_spacing' => true,
         // 'phpdoc_summary' => true,
         // 'phpdoc_to_comment' => true,
-        'phpdoc_trim' => true,
+        'phpdoc_trim'  => true,
         'phpdoc_types' => true,
         // 'phpdoc_var_without_name' => true,
+
+        /**
+         * ------------------------------------------------------------
+         * php文件头
+         * ------------------------------------------------------------
+         */
+        'header_comment' => [
+            'comment_type' => 'PHPDoc',
+            'separate'     => 'bottom',
+            'location'     => 'after_open',
+            'header'       => <<<TEXT
+Dida Framework  -- PHP轻量级快速开发框架
+版权所有 (c) 上海宙品信息科技有限公司
+
+Github: <https://github.com/zeupin/dida>
+Gitee: <https://gitee.com/zeupin/dida>
+TEXT
+            ,
+        ],
     ])
     ->setLineEnding("\n");

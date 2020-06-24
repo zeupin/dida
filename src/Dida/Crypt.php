@@ -24,12 +24,12 @@ class Crypt
      *
      * @var string
      */
-    public static $defaultKey = "Dida is a lightweight rapid development framework!";
+    public static $defaultKey = 'Dida is a lightweight rapid development framework!';
 
     /**
      * 默认初始向量（IV）
      */
-    public static $defaultIV = "Dida, Well done!";
+    public static $defaultIV = 'Dida, Well done!';
 
     /**
      * 加密

@@ -1,6 +1,14 @@
 <?php
 /**
- * 拷贝目录
+ * Dida Framework  -- PHP轻量级快速开发框架
+ * 版权所有 (c) 上海宙品信息科技有限公司
+ *
+ * Github: <https://github.com/zeupin/dida>
+ * Gitee: <https://gitee.com/zeupin/dida>
+ */
+
+/**
+ * 拷贝目录.
  *
  * 把 src/ 目录的所有内容拷贝到的 dest/ 目录.
  *
