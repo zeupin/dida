@@ -7,7 +7,7 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
-namespace Dida;
+namespace Dida\Util;
 
 /**
  * Performance 性能测试

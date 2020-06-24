@@ -7,7 +7,7 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
-namespace Dida;
+namespace Dida\Util;
 
 /**
  * Crypt 加密解密
