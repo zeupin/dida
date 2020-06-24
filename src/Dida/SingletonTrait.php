@@ -19,7 +19,6 @@ trait SingletonTrait
      */
     private static $_instance = null;
 
-
     /**
      * 获取类的实例，在首次访问时，生成一个新实例
      */
@@ -31,14 +30,12 @@ trait SingletonTrait
         return self::$_instance;
     }
 
-
     /**
      * 禁用 new 操作
      */
     private function __construct()
     {
     }
-
 
     /**
      * 禁用 clone 操作
