@@ -7,6 +7,10 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
+$finder = PhpCsFixer\Finder::create()
+    ->exclude('temp')
+    ;
+
 return PhpCsFixer\Config::create()
     ->setRules([
         '@PSR2' => true,
@@ -123,4 +127,5 @@ TEXT
             ,
         ],
     ])
-    ->setLineEnding("\n");
+    ->setLineEnding("\n")
+    ->setFinder($finder);
