@@ -89,7 +89,7 @@ return PhpCsFixer\Config::create()
          * php文件头
          * ------------------------------------------------------------
          */
-        // 'phpdoc_align' => true, // 不要打开,效果很难看
+        'phpdoc_align' => true,
         // 'phpdoc_annotation_without_dot' => true,
         'phpdoc_indent' => true,
         // 'phpdoc_inline_tag' => true,
@@ -101,7 +101,7 @@ return PhpCsFixer\Config::create()
         // 'phpdoc_return_self_reference' => true,
         // 'phpdoc_scalar' => true,
         'phpdoc_separation' => true,
-        // 'phpdoc_single_line_var_spacing' => true,
+        'phpdoc_single_line_var_spacing' => true,
         // 'phpdoc_summary' => true,
         // 'phpdoc_to_comment' => true,
         'phpdoc_trim'  => true,

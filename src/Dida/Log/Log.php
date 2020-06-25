@@ -48,10 +48,10 @@ class Log
     /**
      * 初始化
      *
-     * @param array $settings   设置项数组
-     * [
-     *     "classname" => Logger类的类名, // 此日志类需要实现 \Psr\Log\LoggerInterface 接口
-     * ]
+     * @param array $settings 设置项数组
+     *                        [
+     *                        "classname" => Logger类的类名, // 此日志类需要实现 \Psr\Log\LoggerInterface 接口
+     *                        ]
      */
     public static function init(array $settings)
     {

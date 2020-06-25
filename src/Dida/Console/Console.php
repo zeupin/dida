@@ -66,7 +66,7 @@ class Console
     /**
      * 返回一个已被样式格式化的字符串(Styled String)
      *
-     * @param string $msg 要显示的字符串
+     * @param string $msg   要显示的字符串
      * @param string $style 样式
      *
      * @return string 样式格式化后的字符串

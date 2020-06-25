@@ -40,7 +40,7 @@ class Config
      * 设置一个配置。
      *
      * @param string $key
-     * @param mixed $value
+     * @param mixed  $value
      */
     public static function set($key, $value)
     {
@@ -51,7 +51,7 @@ class Config
      * 获取一个配置。
      *
      * @param string $key
-     * @param mixed $default
+     * @param mixed  $default
      */
     public static function get($key, $default = null)
     {
@@ -187,8 +187,8 @@ class Config
     /**
      * 扩展出一个配置组。
      *
-     * @param string $group   组名
-     * @param array $items    配置项列表
+     * @param string $group 组名
+     * @param array  $items 配置项列表
      *
      * @example
      * $a = [""=>0, "a"=>1, "b"=>2, "c"=>3];
@@ -261,7 +261,7 @@ class Config
      * @param string $filepath
      * @param string $group
      *
-     * @return bool   成功/失败
+     * @return bool 成功/失败
      */
     public static function load($filepath, $group = null)
     {

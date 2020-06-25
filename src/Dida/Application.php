@@ -20,7 +20,7 @@ class Application
     const VERSION = '20200624';
 
     /**
-     * @var string  存放配置文件的路径
+     * @var string 存放配置文件的路径
      */
     protected $confdir;
 

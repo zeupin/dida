@@ -49,7 +49,7 @@ class FileLogger extends Logger
     /**
      * 初始化
      *
-     * @param array $conf   配置项
+     * @param array $conf 配置项
      */
     public function init(array $conf)
     {

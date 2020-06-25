@@ -88,9 +88,9 @@ class Router
      * 从路由表中匹配路由
      *
      * @return array|string|false
-     *    匹配成功, 返回匹配的callback(一般是以 [controller, action] 形式)
-     *    匹配成功但有错, 返回错误原因说明. 更详细信息可用 Router::errorInfo() 获取.
-     *    失败, 返回 false.
+     *                            匹配成功, 返回匹配的callback(一般是以 [controller, action] 形式)
+     *                            匹配成功但有错, 返回错误原因说明. 更详细信息可用 Router::errorInfo() 获取.
+     *                            失败, 返回 false.
      */
     public static function match($path)
     {
@@ -156,11 +156,11 @@ class Router
      * 返回最后一次错误信息
      *
      * @return array 错误信息
-     * [
-     *   'code' => xxx,
-     *   'msg'  => 'xxxxx',
-     *   'data' => mixed
-     * ]
+     *               [
+     *               'code' => xxx,
+     *               'msg'  => 'xxxxx',
+     *               'data' => mixed
+     *               ]
      */
     public static function errorInfo()
     {
@@ -171,9 +171,9 @@ class Router
      * 执行指定的 callback_array
      *
      * @param array $callback_array 回调数组
-     *    $callback_array 的形式为 ['controllerName', 'actionName', param1, param2, ...], 其中:
-     *    controllerName, actionName 是必须的.
-     *    param1, param2, ... 是可选的, 如果有的话, 会传给 action 作为参数.
+     *                              $callback_array 的形式为 ['controllerName', 'actionName', param1, param2, ...], 其中:
+     *                              controllerName, actionName 是必须的.
+     *                              param1, param2, ... 是可选的, 如果有的话, 会传给 action 作为参数.
      *
      * @return false|mixed 调用失败返回 false, 成功返回 action 的执行结果.
      *

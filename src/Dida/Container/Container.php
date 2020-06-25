@@ -69,7 +69,7 @@ class Container implements ArrayAccess, ContainerInterface
     /**
      * ArrayAccess: 注册一个服务。
      *
-     * @param string $id
+     * @param string                $id
      * @param string|closure|object $service
      */
     public function offsetSet($id, $service)
@@ -102,7 +102,7 @@ class Container implements ArrayAccess, ContainerInterface
     /**
      * 注册一个服务
      *
-     * @param string $id
+     * @param string                $id
      * @param string|closure|object $service
      *
      * @return Container $this   链式调用
@@ -140,7 +140,7 @@ class Container implements ArrayAccess, ContainerInterface
     /**
      * 注册一个单例服务
      *
-     * @param string $id
+     * @param string                $id
      * @param string|closure|object $service
      *
      * @return Container $this   链式调用
@@ -177,8 +177,8 @@ class Container implements ArrayAccess, ContainerInterface
      *
      * 如果需要返回新的服务实例，需要用getNew()方法来完成。
      *
-     * @param string $id          服务id
-     * @param array $parameters   待传入的参数数组，可选
+     * @param string $id         服务id
+     * @param array  $parameters 待传入的参数数组，可选
      *
      * @return mixed
      *
@@ -228,8 +228,8 @@ class Container implements ArrayAccess, ContainerInterface
     /**
      * 返回一个新的服务实例
      *
-     * @param string $id          服务id
-     * @param array $parameters   待传入的参数数组，可选
+     * @param string $id         服务id
+     * @param array  $parameters 待传入的参数数组，可选
      *
      * @return mixed
      *
