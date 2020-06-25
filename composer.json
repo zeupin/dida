@@ -2,40 +2,37 @@
   "name": "dida/framework",
   "description": "Dida Framework",
   "type": "library",
-  "license": "MIT",
   "homepage": "https://github.com/zeupin/dida",
   "keywords": [
     "Dida",
     "Framework"
   ],
+  "require": {
+    "php": "^5.5 || ^7.0",
+    "ext-json": "*",
+    "ext-mbstring": "*"
+  },
+  "require-dev": {},
+  "autoload": {
+    "psr-4": {
+      "Dida\\": "src/Dida"
+    }
+  },
+  "autoload-dev": {},
+  "scripts": {
+    "cs": "php-cs-fixer fix .",
+    "dida:merge": "php bin/merge_dida_parts.php"
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "optimize-autoloader": true
+  },
   "authors": [
     {
       "name": "Macc Liu",
       "email": "mail@maccliu.com"
     }
   ],
-  "minimum-stability": "dev",
-  "config": {
-    "preferred-install": "dist",
-    "sort-packages": true,
-    "optimize-autoloader": true
-  },
-  "prefer-stable": true,
-  "require": {
-    "php": "^5.5 || ^7.0",
-    "dida/config": "^0.1.0",
-    "dida/container": "^0.1",
-    "dida/log": "^0.1.0",
-    "dida/console": "^0.0.3",
-    "dida/routing": "^0.1.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "Dida\\": "src/Dida"
-    }
-  },
-  "scripts": {
-    "cs": "php-cs-fixer fix .",
-    "merge:parts": "php bin/merge_dida_parts.php"
-  }
+  "license": "MIT"
 }
