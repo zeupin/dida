@@ -10,4 +10,16 @@
 return [
     // 默认时区
     'default_timezone' => 'Asia/Shanghai',
+
+    // app name
+    'app_name' => '',
+
+    // DIDA_APP_URL
+    'app_url' => '',
+
+    // DIDA_APP_DIR
+    'app_dir' => dirname(__DIR__),
+
+    // DIDA_ROOT
+    'app_root' => '',
 ];

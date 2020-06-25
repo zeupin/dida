@@ -12,6 +12,30 @@ namespace Dida;
 /**
  * Facade 基类
  */
-class Facade
+abstract class Facade
 {
+    /**
+     * 版本号
+     */
+    const VERSION = '20200625';
+
+    /**
+     * @var string 绑定的Facade服务名称
+     */
+    protected static $didaFacadeServiceName = '';
+
+    /**
+     * 绑定Facade的service名称
+     */
+    abstract protected static function bindFacadeServiceName();
+
+    /**
+     * 调用魔术方法
+     */
+    public static function __callStatic($name, $arguments)
+    {
+        $callback = [self::$didaFacadeServiceName, $name];
+
+        return call_user_func_array($callback, $arguments);
+    }
 }
