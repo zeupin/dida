@@ -6,6 +6,7 @@
  * Github: <https://github.com/zeupin/dida>
  * Gitee: <https://gitee.com/zeupin/dida>
  */
+
 require __DIR__ . '/../_base.php';
 
 use PHPUnit\Framework\TestCase;
@@ -13,7 +14,6 @@ use Dida\Application;
 
 class ApplicationTest extends TestCase
 {
-
     /**
      * 如果配置目录不存在,应该抛异常
      *
@@ -55,7 +55,7 @@ class ApplicationTest extends TestCase
 
     /**
      * 如果还没有进行init()就执行run(),抛异常
-     * 
+     *
      * @expectedException \Exception
      */
     public function testRun1()
@@ -75,7 +75,6 @@ class ApplicationTest extends TestCase
  */
 class MyApp extends Application
 {
-
     /**
      * 强行修改$confdir的值
      */
