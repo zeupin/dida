@@ -27,7 +27,9 @@ class Application
     /**
      * 初始化App
      *
-     * @param $confdir string
+     * @param string $confdir 配置文件目录
+     *
+     * @throws \Exception
      */
     public static function init($confdir)
     {
@@ -77,5 +79,13 @@ class Application
 
         // 载入 app.php
         require self::$confdir . DS . 'app.php';
+    }
+
+    /**
+     * 返回配置目录的值
+     */
+    public static function confDir()
+    {
+        return self::$confdir;
     }
 }
