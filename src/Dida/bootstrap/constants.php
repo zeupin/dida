@@ -7,6 +7,9 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
+/**
+ * DIRECTORY_SEPARATOR 的简写形式
+ */
 if (!defined('DS')) {
     define('DS', DIRECTORY_SEPARATOR);
 }
