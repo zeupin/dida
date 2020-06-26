@@ -7,7 +7,7 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
-require __DIR__ . '/../_base.php';
+require __DIR__ . '/_base.php';
 
 use PHPUnit\Framework\TestCase;
 use Dida\Application;
