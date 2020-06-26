@@ -2,16 +2,28 @@
 
 Routing 的主要工作是：
 
-1. 把给出的 `path` ，按照路由表(Routing Table)，解析为 `[controller, action]`。
-2. 检查 `controller->action` 是否存在？
-3. 如果 `controller->action` 存在，则执行 `controller->action` 操作。
+1. **match()**
 
-`Routing` 只负责从 `path` 中解析出 `controller` 和 `action` ，而：
+    把给出的 `pathinfo`，按照自定义的路由规则(Routing Rules), 解析为一个action (一般形式为 `[controller, action]`)。 
+    路由规则一般是一个路由表, 也可以是自定义的任何形式, 只要最终能得到一个特定的action就行.
+
+2. **check()**
+
+    形式检查action是否存在以及是否可执行.
+    检查 `controller->action` 是否存在？ 是否合法?
+
+3. **execute()**
+
+    执行指定的action.
+
+`Routing` 只负责从 `pathinfo` 中解析出 `controller` 和 `action` ，而：
 
 1. 不负责读取或者处理 `controller` 或者 `action` 的具体执行参数（`parameters`）。
    > 读取和处理 `parameters` 属于业务代码范畴，应该在 `controller` 或者 `action` 里面去完成。
+
 2. 不负责检查用户的执行权限。
    > 检查执行权限属于业务代码范畴，应该在 `controller` 或者 `action` 里面中去完成。
+
 3. 不负责从 `$_SERVER["REQUEST_URI"]` 解析出 `path`。
    > 这么做主要是为了兼容命令行模式(Console)。
    > Web 模式下，把 `$_SERVER["REQUEST_URI"]` 解析出 Routing 需要的 `path`，一般是在 `DIDA_APP_DIR` 的入口程序中完成，方法是调用 `Request::getPathOffset()`。
@@ -44,7 +56,7 @@ return [
 ```php
 return [
     /* Home */
-    ""          => ["\\Biz\\HomeController", "index"], // 兜底，一般显示命令帮助
+    "" => ["\\Biz\\HomeController", "index"], // 兜底，一般显示命令帮助
 
     /* User 管理 */
     "user add"     => ["\\Biz\\UserController", "add"],
