@@ -9,6 +9,9 @@
 
 namespace Dida\Service;
 
-class ServiceHub
+/**
+ * 服务总线
+ */
+class ServiceBus
 {
 }
