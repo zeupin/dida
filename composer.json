@@ -24,8 +24,9 @@
   "autoload-dev": {},
   "scripts": {
     "cs": "php-cs-fixer fix .",
-    "dida:merge": "php bin/merge_dida_parts.php",
-    "test": "vendor/bin/phpunit tests"
+    "test": "vendor/bin/phpunit tests",
+    "dida:merge": "php bin/merge_dida_part.php",
+    "dida:mergeall": "php bin/merge_dida_parts.php"
   },
   "config": {
     "preferred-install": "dist",
