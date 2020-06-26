@@ -68,6 +68,15 @@ class ApplicationTest extends TestCase
         // run()
         Application::run();
     }
+
+    /**
+     * 正常运行run()
+     */
+    public function testRun()
+    {
+        Application::init(TESTS . '/conf-test');
+        Application::run();
+    }
 }
 
 /**
