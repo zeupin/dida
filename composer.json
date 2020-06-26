@@ -10,7 +10,8 @@
   "require": {
     "php": "^5.5 || ^7.0",
     "ext-json": "*",
-    "ext-mbstring": "*"
+    "ext-mbstring": "*",
+    "psr/container": "^1.0"
   },
   "require-dev": {},
   "autoload": {
