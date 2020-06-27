@@ -9,191 +9,304 @@
 
 namespace Dida\Routing;
 
-class Router
+abstract class Router
 {
     /**
      * 版本号
      */
-    const VERSION = '20200621';
+    const VERSION = '20200627';
 
     /**
-     * 错误常数
+     * 异常代码
      */
-    const ERROR_NOT_MATCHED = -1; // 没有匹配到任何路由
-    const ERROR_CALLBACK_INVALID_TYPE = 1; // callback的类型无效(应该是一个数组)
-    const ERROR_CALLBACK_INVALID = 2; // callback无效
-    const ERROR_CONTROLLER_INVALID = 3; // 控制器无效
+    const MATCH_EXCEPTION = 1000;
+    const CHECK_EXCEPTION = 1001;
+    const EXECUTE_EXCEPTION = 1002;
 
     /**
-     * @var array 路由表
+     * macth()的错误常数
      */
-    protected static $routes = [];
+    const ERROR_MATCH_FAIL = 1000; // 没有匹配到任何路由
 
     /**
-     * 出错信息
+     * check()的错误常数
      */
-    protected static $errorInfo = [
-        'code' => 0,
-        'msg'  => '',
-        'data' => null
+    const ERROR_CALLBACK_INVALID = 2000; // callback无效
+    const ERROR_CALLBACK_INVALID_TYPE = 2001; // callable类型无效
+    const ERROR_CALLBACK_CONTROLLER_INVALID = 2002; // callback的controller无效
+    const ERROR_CALLBACK_ACTION_INVALID = 2003; // callback的action无效
+
+    /**
+     * @var mixed 路径信息
+     */
+    protected $pathinfo = null;
+
+    /**
+     * 上一次match成功的路由详细信息
+     */
+    protected $matchInfo = [
+        'path'       => null, // 可选,对应的path仅供提示用
+        'callback'   => null, // 必填
+        'parameters' => [], // 可选,如果需要额外参数,可以放到这里
     ];
 
     /**
-     * @param array $routes 初始化路由器
+     * 上一次match失败的详细信息
      */
-    public static function init(array $routes)
-    {
-        self::$routes = $routes;
-    }
+    protected $matchError = [
+        'code' => 0,
+        'msg'  => '',
+    ];
 
     /**
-     * 获取路由表
+     * 上一次execute失败的详细信息
      */
-    public static function getRoutes()
-    {
-        return self::$routes;
-    }
+    protected $executeError = [
+        'code' => 0,
+        'msg'  => '',
+    ];
 
     /**
-     * 新增路由表
+     * 类的初始化
      */
-    public static function addRoutes(array $routes)
-    {
-        self::$routes = array_merge(self::$routes, $routes);
-    }
+    abstract public function __construct();
 
     /**
-     * 从文件中新增路由表
+     * 匹配路由.
      *
-     * @param string $filepath 路由表文件路径
+     * 如果匹配成功
+     *      $this->matchError = ['code'=>0, 'msg'=>'']
+     *      $this->matchInfo  = 匹配到的路由
+     * 如果匹配失败
+     *      $this->matchError = ['code'=>错误码, 'msg'=>'错误原因']
+     *      $this->matchInfo  = $this->resetMatchInfo()
      *
-     * @return true|string 成功返回true, 失败返回错误原因.
+     * @param mixed $pathinfo 路径信息
+     *
+     * @return bool 匹配成功,返回true; 匹配失败,返回false.
      */
-    public static function addRoutesFromFile($filepath)
+    abstract public function match($pathinfo);
+
+    /**
+     * 手动设置pathinfo
+     *
+     * @param $pathinfo 路径信息
+     *
+     * @return void
+     */
+    public function setPathInfo($pathinfo)
     {
-        if (file_exists($filepath) && is_file($filepath)) {
-            $table = include $filepath;
-            if (is_array($table)) {
-                self::$routes = array_merge(self::$routes, $table);
-                return true;
-            } else {
-                return 'Invalid route table.';
-            }
-        } else {
-            return 'File not exists.';
+        $this->pathinfo = $pathinfo;
+    }
+
+    /**
+     * 开始进行路由流程
+     */
+    public function start()
+    {
+        // 开始
+        if ($this->pathinfo === null) {
+            $this->setDefaultPathInfo();
         }
+
+        // 如果match()失败
+        if ($this->match() === false) {
+            throw new Exception('Router match() fail.', Router::MATCH_EXCEPTION);
+        }
+
+        // 如果check()失败
+        if ($this->check() === false) {
+            throw new Exception('Router match() fail.', Router::CHECK_EXCEPTION);
+        }
+
+        // 如果execute()失败
+        if ($this->execute() === false && $this->executeError['code'] !== 0) {
+            throw new Exception('Router match() fail.', Router::EXECUTE_EXCEPTION);
+        }
+
+        // 成功
+        return true;
     }
 
     /**
-     * 从路由表中匹配路由
+     * 检查matchInfo的callback是否可以执行
      *
-     * @return array|string|false
-     *                            匹配成功, 返回匹配的callback(一般是以 [controller, action] 形式)
-     *                            匹配成功但有错, 返回错误原因说明. 更详细信息可用 Router::errorInfo() 获取.
-     *                            失败, 返回 false.
+     * @return array ['code'=>xxx, 'msg'=>'xxxx']
      */
-    public static function match($path)
+    public function check()
     {
-        if (array_key_exists($path, self::$routes)) {
-            // 找到定义的回调函数
-            $callback = self::$routes[$path];
+        // callback
+        $callback = $this->matchInfo['callback'];
 
-            // 路由成功, 但是callback不是约定的数组形式
-            if (!\is_array($callback)) {
-                self::$errorInfo = [
-                    'code' => Router::ERROR_CALLBACK_INVALID_TYPE,
-                    'msg'  => "The path `$path` matched, but the callback is not an array.",
-                    'data' => [
-                        'path'     => $path,
-                        'callback' => $callback,
-                    ]
-                ];
-                return self::$errorInfo['msg'];
-            }
-
-            // 路由成功, 但是callback非法
-            if (count($callback) < 2) {
-                self::$errorInfo = [
-                    'code' => Router::ERROR_CALLBACK_INVALID,
-                    'msg'  => "The path `$path` matched, but the callback array is invalid.",
-                    'data' => [
-                        'path'     => $path,
-                        'callback' => $callback,
-                    ]
-                ];
-                return self::$errorInfo['msg'];
-            }
-
-            // 获取controller和action
-            list($controller, $action) = $callback;
-
-            // 如果controller不存在，则返回错误信息
-            if (!class_exists($controller)) {
-                self::$errorInfo = [
-                    'code' => Router::ERROR_CONTROLLER_INVALID,
-                    'msg'  => "The path `$path` matched, but the controller `$controller` is not found.",
-                    'data' => [
-                        'path'     => $path,
-                        'callback' => $callback,
-                    ]
-                ];
-                return self::$errorInfo['msg'];
-            }
-
-            // 返回正常的callback
-            return $callback;
-        } else {
-            // 没有匹配到任何路由
-            self::$errorInfo = [
-                'code' => Router::ERROR_NOT_MATCHED,
-                'msg'  => "The path `$path` is not matched.",
+        // callback 未设置,返回失败
+        if (!$callback) {
+            return [
+                'code' => Router::ERROR_CALLBACK_INVALID,
+                'msg'  => 'Invalid callback.',
             ];
-            return false;
         }
-    }
 
-    /**
-     * 返回最后一次错误信息
-     *
-     * @return array 错误信息
-     *               [
-     *               'code' => xxx,
-     *               'msg'  => 'xxxxx',
-     *               'data' => mixed
-     *               ]
-     */
-    public static function errorInfo()
-    {
-        return self::$errorInfo;
-    }
+        // 普通的callable,正常返回
+        if (is_callable($callback)) {
+            return [
+                'code' => 0,
+                'msg'  => '',
+            ];
+        }
 
-    /**
-     * 执行指定的 callback_array
-     *
-     * @param array $callback_array 回调数组
-     *                              $callback_array 的形式为 ['controllerName', 'actionName', param1, param2, ...], 其中:
-     *                              controllerName, actionName 是必须的.
-     *                              param1, param2, ... 是可选的, 如果有的话, 会传给 action 作为参数.
-     *
-     * @return false|mixed 调用失败返回 false, 成功返回 action 的执行结果.
-     *
-     * @throws \Exception controller类不存在
-     */
-    public static function execute(array $callback_array)
-    {
+        // 类型不是数组,返回失败
+        if (!is_array($callback)) {
+            return [
+                'code' => Router::ERROR_CALLBACK_INVALID_TYPE,
+                'msg'  => 'Invalid callback type.',
+            ];
+        }
+
+        // 数组的个数不对
+        if (count($callback) < 2) {
+            return [
+                'code' => Router::ERROR_CALLBACK_INVALID,
+                'msg'  => 'Invalid callback.',
+            ];
+        }
+
         // 获取controller和action
-        $controller = array_shift($callback_array);
-        $action = array_shift($callback_array);
-        $params = $callback_array;
+        list($controller, $action) = $callback;
 
-        // 检查类是否存在
-        if (class_exists($controller)) {
-            $con = new $controller;
-
-            // 执行方法
-            return \call_user_func_array([$con, $action], $params);
-        } else {
-            throw new \Exception("Class `$controller` not exists.");
+        // controller和action不是字符串
+        if (!is_string($controller) || !is_string($action)) {
+            return [
+                'code' => Router::ERROR_CALLBACK_INVALID,
+                'msg'  => 'Invalid callback.',
+            ];
         }
+
+        // 如果controller不存在，则返回错误信息
+        if (!class_exists($controller)) {
+            return [
+                'code' => Router::ERROR_CALLBACK_CONTROLLER_INVALID,
+                'msg'  => "Invalid callback controller '$controller'.",
+            ];
+        }
+
+        // 如果action不存在,也没有使用__call()魔术方法
+        if (!method_exists($controller, $action)) {
+            if (method_exists($controller, '__call')) {
+                return [
+                    'code' => 0,
+                    'msg'  => '',
+                ];
+            } else {
+                return [
+                    'code' => Router::ERROR_CALLBACK_ACTION_INVALID,
+                    'msg'  => "Invalid callback action '$controller::$action'",
+                ];
+            }
+        }
+
+        // 正常返回
+        return [
+            'code' => 0,
+            'msg'  => '',
+        ];
+    }
+
+    /**
+     * 执行
+     *
+     * 执行之前,应该先用check()检查callback,确保其能正常执行
+     *
+     * @return mixed|false 返回执行结果,出错返回false
+     */
+    public function execute()
+    {
+        // 重置executeError
+        $this->resetExecuteError();
+
+        // callback
+        $callback = $this->matchInfo['callback'];
+
+        // callback是数组格式,先生成实例
+        if (is_array($callback)) {
+            list($controller, $action) = $callback;
+            $con = new $controller;
+            $callback = [$con, $action];
+        }
+
+        // callback的参数
+        $params = $this->matchInfo['parameters'];
+
+        // 如果params不是数组, 先把其转换为数组
+        if (!is_array($params)) {
+            $params = [$params];
+        }
+
+        // 执行
+        // 成功返回执行结果, 出错返回false
+        return call_user_func_array($callback, $params);
+    }
+
+    /**
+     * 获取 matchInfo
+     *
+     * @return array
+     */
+    public function getMatchInfo()
+    {
+        return $this->matchInfo;
+    }
+
+    /**
+     * 获取 matchError
+     *
+     * @return array
+     */
+    public function getMatchError()
+    {
+        return $this->matchError;
+    }
+
+    /**
+     * 获取 executeError
+     *
+     * @return array
+     */
+    public function getExecuteError()
+    {
+        return $this->executeError;
+    }
+
+    /**
+     * 重置 matchInfo
+     */
+    protected function resetMatchInfo()
+    {
+        $this->matchInfo = [
+            'callback'   => null,
+            'parameters' => [],
+            'path'       => null,
+        ];
+    }
+
+    /**
+     * 重置 matchError
+     */
+    protected function resetMatchError()
+    {
+        $this->matchError = [
+            'code' => 0,
+            'msg'  => '',
+        ];
+    }
+
+    /**
+     * 重置 executeError
+     */
+    protected function resetExecuteError()
+    {
+        $this->executeError = [
+            'code' => 0,
+            'msg'  => '',
+        ];
     }
 }
