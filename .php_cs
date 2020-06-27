@@ -21,7 +21,7 @@ return PhpCsFixer\Config::create()
         'combine_consecutive_unsets'                => true,
         'method_separation'                         => true,
         'no_multiline_whitespace_before_semicolons' => true,
-        'single_quote'                              => true, // 字符串尽可能用单引号
+        'single_quote'                              => false, // 字符串尽可能用单引号
         'binary_operator_spaces'                    => [
             'align_double_arrow' => true,  // 关联数组的箭头对齐
             'align_equals'       => false, // 等号对齐

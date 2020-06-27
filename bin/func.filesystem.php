@@ -113,6 +113,7 @@ function removedir($dir)
                 return false;
             }
         } else {
+            chmod($sub, 0644);
             if (!unlink($sub)) {
                 return false;
             }
@@ -120,6 +121,7 @@ function removedir($dir)
     }
 
     // 删除自己
+    chmod($path, 0777);
     if (!rmdir($path)) {
         return false;
     }

@@ -37,7 +37,7 @@ foreach ($parts as $index => $part) {
 }
 
 // php-cs-fixer
-$cmd = "php-cs-fixer fix '$rootdir'";
-pr_info("$cmd\n\n");
+$cmd = "php-cs-fixer fix \"$rootdir\"";
+pr_info("$cmd\n");
 passthru($cmd);
 echo "\n\n";
