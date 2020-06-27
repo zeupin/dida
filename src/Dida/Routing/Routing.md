@@ -1,34 +1,26 @@
-# Routing 路由
+1. [Router 的主要工作](#router-的主要工作)
+2. [路由表](#路由表)
+   1. [典型的 Http 路由表文件](#典型的-http-路由表文件)
+   2. [典型的 Console 路由表文件](#典型的-console-路由表文件)
+   3. [说明](#说明)
 
-Routing 的主要工作是：
+# Router 的主要工作
 
 1. **match()**
 
-    把给出的 `pathinfo`，按照自定义的路由规则(Routing Rules), 解析为一个action (一般形式为 `[controller, action]`)。 
-    路由规则一般是一个路由表, 也可以是自定义的任何形式, 只要最终能得到一个特定的action就行.
+   - 把给出的 `pathinfo`，按照自定义的路由表(`Routing Table`)或者路由规则(`Routing Rules`), 确定能否解析到一个路由(`Route`) 。
+   - `Route` 形式上是一个数组, 包含如下三个字段 `path`, `callback`, `parameters`。
+   - 其中 `path` 可能是 `pathinfo`, 也可能是 `pathinfo` 的子集。
 
 2. **check()**
 
-    形式检查action是否存在以及是否可执行.
-    检查 `controller->action` 是否存在？ 是否合法?
+   形式上检查, 由 `match()` 得到的 `Route` 是否可执行。
 
 3. **execute()**
 
-    执行指定的action.
+# 路由表
 
-`Routing` 只负责从 `pathinfo` 中解析出 `controller` 和 `action` ，而：
-
-1. 不负责读取或者处理 `controller` 或者 `action` 的具体执行参数（`parameters`）。
-   > 读取和处理 `parameters` 属于业务代码范畴，应该在 `controller` 或者 `action` 里面去完成。
-
-2. 不负责检查用户的执行权限。
-   > 检查执行权限属于业务代码范畴，应该在 `controller` 或者 `action` 里面中去完成。
-
-3. 不负责从 `$_SERVER["REQUEST_URI"]` 解析出 `path`。
-   > 这么做主要是为了兼容命令行模式(Console)。
-   > Web 模式下，把 `$_SERVER["REQUEST_URI"]` 解析出 Routing 需要的 `path`，一般是在 `DIDA_APP_DIR` 的入口程序中完成，方法是调用 `Request::getPathOffset()`。
-
-一个典型的 Http 路由表文件如下：
+## 典型的 Http 路由表文件
 
 ```php
 return [
@@ -51,7 +43,7 @@ return [
 ];
 ```
 
-一个典型的 Console 路由表文件如下：
+## 典型的 Console 路由表文件
 
 ```php
 return [
@@ -64,13 +56,14 @@ return [
 ];
 ```
 
-每条记录，`键名` 对应的是路由路径，`键值` 对应的是 callback 形态的路由目标函数。
+## 说明
 
-> 虽然 callback 的目标函数有很多种形式，比如 `函数名`、`匿名函数`、`[类名, 方法名]`、`[实例, 方法名]` 等等。但从以往我们的编程实践看，炫技式的 callback 非常不利于代码的长期维护。因此，从软件工程的角度考虑，Dida 框架目前只支持 `[类名, 方法名]` 这种形式的路由目标函数声明。
+每条记录，`key` 对应的是路由路径，`value` 对应的是 `callback` 形态的路由目标函数。
 
-同时，为进一步简化模型，对于上述路由目标函数，建议函数不要带任何参数。举个例子：应为 `public function foo(){...}`, 而不要是 `public function foo(`<del>\$param1, \$param2, ...</del>`){...}`。
-
-一般是将 路由目标函数 指向到 `Controller` 的 `action` ：
+> 虽然 callback 的目标函数有很多种形式，比如 `函数名`、`匿名函数`、`[控制器名, 方法名]`、`[实例, 方法名]` 等等。但从以往我们的编程实践看，炫技式的 callback 非常不利于代码的长期维护。因此，从软件工程的角度考虑，Dida 框架**强烈建议**只使用 `[控制器名, 方法名]` 这种形式的路由目标函数声明。同时，为进一步简化模型，对于上述路由目标函数，建议函数不要带任何参数。举个例子：
+>
+> - 推荐: `public function foo(){...}`
+> - 不推荐: `public function foo(`<del>\$param1, \$param2, ...</del>`){...}`
 
 ```php
 /*
