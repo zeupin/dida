@@ -88,4 +88,11 @@ class Application
         // 载入 app.php
         require self::$confdir . DS . 'app.php';
     }
+
+    /**
+     * 结束
+     */
+    public static function end()
+    {
+    }
 }
