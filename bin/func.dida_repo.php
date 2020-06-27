@@ -23,7 +23,7 @@ function mergeDidaGitRepo($name, $giturl)
 
     // 如果temp的根目录已经存在,先删除
     if (file_exists($temp_root)) {
-        pr_info("Remove \"$temp_root\" ... ");
+        pr_info("Remove \"$temp_root${DS}\" ... ");
         $result = false;
         if (is_dir($temp_root)) {
             $result = removedir($temp_root);
@@ -68,15 +68,15 @@ function mergeDidaGitRepo($name, $giturl)
     }
 
     // 拷贝src目录
-    $cmd = "Copying '$temp_src' ... ";
+    $cmd = "Copying \"$temp_src${DS}\" ... ";
     pr_info("$cmd");
     copydir($temp_src, $this_src) ? pr_succ("Done.\n") : pr_err("Fail.\n");
 
     // 拷贝tests目录(如果有的话)
     if ($temp_tests) {
-        $cmd = "Copying \"$temp_tests\" files ... ";
+        $cmd = "Copying \"$temp_tests${DS}\" ... ";
         pr_info("$cmd");
-        copydir($temp_temp, $this_temp) ? pr_succ("Done.\n") : pr_err("Fail.\n");
+        copydir($temp_tests, $this_tests) ? pr_succ("Done.\n") : pr_err("Fail.\n");
     }
 
     // 全部完成
