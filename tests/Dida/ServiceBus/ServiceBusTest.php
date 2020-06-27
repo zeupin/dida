@@ -7,14 +7,14 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
-/**
- * 定义tests目录路径
- */
-if (!defined("TESTS")) {
-    define('TESTS', realpath(__DIR__ . '/../..'));
-}
+require __DIR__ . '/_base.php';
 
-/**
- * 载入autoload.php
- */
-require dirname(TESTS) . '/vendor/autoload.php';
+use PHPUnit\Framework\TestCase;
+use Dida\ServiceBus;
+
+class ServiceBusTest extends TestCase
+{
+    public function testInit()
+    {
+    }
+}
