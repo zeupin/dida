@@ -29,26 +29,28 @@ abstract class Facade
     const TYPE_INSTANCE = "Instance"; // 具体实例可以用这个调用
 
     /**
-     * @var array FacadeService链接, [token, type]
+     * @var array FacadeService链接
+     *            [token, type, parameters, newInstance]
+     *
+     * @example
+     *      ["Request"      , Facade::TYPE_SERVICE_BUS, [], false]
+     *      [$obj           , Facade::TYPE_INSTANCE,    [], false]
+     *      ["\Dida\Foo\Bar", Facade::TYPE_CLASSNAME,   [], false]
      */
     protected static $facadeServiceLink = [];
 
     /**
      * 设置FacadeServiceLink
      *
-     * @param string|object $token
-     * @param string        $type
-     * @param array         $parameters
-     * @param bool          $newInstance
+     * @return void
+     *
+     * @example
+     *    protected static function setFacadeServiceLink()
+     *    {
+     *       self::$facadeServiceLink = ["Request", Facade::TYPE_SERVICE_BUS, [], false];
+     *    }
      */
-    protected static function setFacadeServiceLink(
-        $token,
-        $type = Facade::TYPE_SERVICE_BUS,
-        array $parameters = [],
-        $newInstance = false
-    ) {
-        self::$facadeServiceLink = [$token, $type, $parameters, $newInstance];
-    }
+    abstract protected static function setFacadeServiceLink();
 
     /**
      * 调用__callStatic魔术方法
