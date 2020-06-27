@@ -31,7 +31,7 @@ class ApplicationTest extends TestCase
      */
     public function testInit2()
     {
-        Application::init(TESTS . '/conf-null');
+        Application::init(__DIR__ . '/conf-null');
     }
 
     /**
@@ -39,7 +39,7 @@ class ApplicationTest extends TestCase
      */
     public function testInit3()
     {
-        Application::init(TESTS . '/conf-test');
+        Application::init(__DIR__ . '/conf-test');
     }
 
     /**
@@ -49,8 +49,8 @@ class ApplicationTest extends TestCase
      */
     public function testInit4()
     {
-        Application::init(TESTS . '/conf-test');
-        Application::init(TESTS . '/conf-test');
+        Application::init(__DIR__ . '/conf-test');
+        Application::init(__DIR__ . '/conf-test');
     }
 
     /**
@@ -74,7 +74,7 @@ class ApplicationTest extends TestCase
      */
     public function testRun()
     {
-        Application::init(TESTS . '/conf-test');
+        Application::init(__DIR__ . '/conf-test');
         Application::run();
     }
 }

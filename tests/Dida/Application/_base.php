@@ -7,9 +7,12 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
-require dirname(__DIR__) . '/vendor/autoload.php';
+/**
+ * 定义tests目录路径
+ */
+define('TESTS', realpath(__DIR__ . '/../..'));
 
 /**
- * 定义tests根目录
+ * 载入autoload.php
  */
-define('TESTS', __DIR__);
+require dirname(TESTS) . '/vendor/autoload.php';

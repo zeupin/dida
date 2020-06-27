@@ -25,6 +25,7 @@
   "scripts": {
     "cs": "php-cs-fixer fix .",
     "test": "vendor/bin/phpunit tests",
+    "test:win": "vendor\\bin\\phpunit.bat tests",
     "dida:merge": "php bin/merge_dida_part.php",
     "dida:mergeall": "php bin/merge_dida_parts.php"
   },
