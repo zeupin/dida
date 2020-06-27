@@ -9,8 +9,6 @@
 
 namespace Dida;
 
-use \Dida\Event\EventException;
-
 /**
  * EventBus 事件总线
  */
