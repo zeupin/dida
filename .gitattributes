@@ -1,0 +1,45 @@
+# Define the line ending behavior of the different file extensions
+* text=auto
+* text eol=lf
+
+# common text file format
+*.php text
+*.html text
+*.htm text
+*.css text
+*.js text
+*.sql text
+*.md text
+*.ini text
+*.txt text
+*.xml text
+*.svg text
+*.yml text
+*.twig text
+
+.htaccess text
+.editorconfig text
+
+# common binary file format
+*.jpg binary
+*.png binary
+*.gif binary
+*.webp binary
+*.ico binary
+
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+
+*.gz binary
+*.zip binary
+*.bz2 binary
+*.7z binary
+*.phar binary
+
+# force eol=crlf
+*.bat eol=crlf
+
+# force eol=lf
+*.pem eol=lf
