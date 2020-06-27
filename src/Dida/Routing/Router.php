@@ -19,6 +19,7 @@ abstract class Router
     /**
      * 异常代码
      */
+    const SUCCESS = 0;
     const MATCH_EXCEPTION = 1000;
     const CHECK_EXCEPTION = 1001;
     const EXECUTE_EXCEPTION = 1002;
@@ -42,16 +43,16 @@ abstract class Router
     protected $pathinfo = null;
 
     /**
-     * 上一次match成功的路由详细信息
+     * 保存上一次match成功得到的路由详细信息
      */
-    protected $matchInfo = [
-        'path'       => null, // 可选,对应的path仅供提示用
+    protected $routeInfo = [
+        'path'       => null, // 可选,route对应的实际path,仅供提示用
         'callback'   => null, // 必填
-        'parameters' => [], // 可选,如果需要额外参数,可以放到这里
+        'parameters' => [], // 可选,如果需要附加参数,可以放到这里
     ];
 
     /**
-     * 上一次match失败的详细信息
+     * 保存上一次match失败的详细信息
      */
     protected $matchError = [
         'code' => 0,
@@ -59,7 +60,7 @@ abstract class Router
     ];
 
     /**
-     * 上一次execute失败的详细信息
+     * 保存上一次execute失败的详细信息
      */
     protected $executeError = [
         'code' => 0,
@@ -67,28 +68,22 @@ abstract class Router
     ];
 
     /**
-     * 类的初始化
+     * 初始化Router类
      */
     abstract public function __construct();
 
     /**
-     * 匹配路由.
+     * 获取 pathinfo
      *
-     * 如果匹配成功
-     *      $this->matchError = ['code'=>0, 'msg'=>'']
-     *      $this->matchInfo  = 匹配到的路由
-     * 如果匹配失败
-     *      $this->matchError = ['code'=>错误码, 'msg'=>'错误原因']
-     *      $this->matchInfo  = $this->resetMatchInfo()
-     *
-     * @param mixed $pathinfo 路径信息
-     *
-     * @return bool 匹配成功,返回true; 匹配失败,返回false.
+     * @return mixed
      */
-    abstract public function match($pathinfo);
+    public function getPathInfo()
+    {
+        return $this->pathinfo;
+    }
 
     /**
-     * 手动设置pathinfo
+     * 设置 pathinfo
      *
      * @param $pathinfo 路径信息
      *
@@ -100,43 +95,56 @@ abstract class Router
     }
 
     /**
+     * 匹配路由.
+     *
+     * 如果匹配成功
+     *      $this->matchError = ['code'=>0, 'msg'=>'']
+     *      $this->routeInfo  = 匹配到的路由
+     * 如果匹配失败
+     *      $this->matchError = ['code'=>错误码, 'msg'=>'错误原因']
+     *      $this->routeInfo  = $this->resetRouteInfo()
+     *
+     * @param mixed $pathinfo 路径信息
+     *
+     * @return bool 匹配成功,返回true; 匹配失败,返回false.
+     */
+    abstract public function match($pathinfo);
+
+    /**
      * 开始进行路由流程
+     *
+     * @return int 成功, 返回0; 失败, 返回错误码
      */
     public function start()
     {
-        // 开始
-        if ($this->pathinfo === null) {
-            $this->setDefaultPathInfo();
-        }
-
         // 如果match()失败
         if ($this->match() === false) {
-            throw new Exception('Router match() fail.', Router::MATCH_EXCEPTION);
+            return Router::MATCH_EXCEPTION;
         }
 
         // 如果check()失败
         if ($this->check() === false) {
-            throw new Exception('Router match() fail.', Router::CHECK_EXCEPTION);
+            return Router::CHECK_EXCEPTION;
         }
 
         // 如果execute()失败
         if ($this->execute() === false && $this->executeError['code'] !== 0) {
-            throw new Exception('Router match() fail.', Router::EXECUTE_EXCEPTION);
+            return Router::EXECUTE_EXCEPTION;
         }
 
-        // 成功
-        return true;
+        // 顺利完成
+        return Router::SUCCESS;
     }
 
     /**
-     * 检查matchInfo的callback是否可以执行
+     * 检查routeInfo的callback是否可以执行
      *
      * @return array ['code'=>xxx, 'msg'=>'xxxx']
      */
     public function check()
     {
         // callback
-        $callback = $this->matchInfo['callback'];
+        $callback = $this->routeInfo['callback'];
 
         // callback 未设置,返回失败
         if (!$callback) {
@@ -224,9 +232,9 @@ abstract class Router
         $this->resetExecuteError();
 
         // callback
-        $callback = $this->matchInfo['callback'];
+        $callback = $this->routeInfo['callback'];
 
-        // callback是数组格式,先生成实例
+        // 如果callback是数组格式,则生成实例
         if (is_array($callback)) {
             list($controller, $action) = $callback;
             $con = new $controller;
@@ -234,7 +242,7 @@ abstract class Router
         }
 
         // callback的参数
-        $params = $this->matchInfo['parameters'];
+        $params = $this->routeInfo['parameters'];
 
         // 如果params不是数组, 先把其转换为数组
         if (!is_array($params)) {
@@ -247,13 +255,13 @@ abstract class Router
     }
 
     /**
-     * 获取 matchInfo
+     * 获取 routeInfo
      *
      * @return array
      */
-    public function getMatchInfo()
+    public function getRouteInfo()
     {
-        return $this->matchInfo;
+        return $this->routeInfo;
     }
 
     /**
@@ -277,14 +285,14 @@ abstract class Router
     }
 
     /**
-     * 重置 matchInfo
+     * 重置 routeInfo
      */
-    protected function resetMatchInfo()
+    protected function resetRouteInfo()
     {
-        $this->matchInfo = [
+        $this->routeInfo = [
+            'path'       => null,
             'callback'   => null,
             'parameters' => [],
-            'path'       => null,
         ];
     }
 
