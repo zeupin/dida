@@ -11,10 +11,10 @@ namespace Dida\Facade;
 
 use \Dida\Facade;
 
-class Cookie extends Facade
+class Trace extends Facade
 {
     protected static function setFacadeServiceLink()
     {
-        self::$facadeServiceLink = ["Cookie", Facade::TYPE_SERVICE_BUS, [], false];
+        self::$facadeServiceLink = ["Trace", Facade::TYPE_SERVICE_BUS, [], false];
     }
 }

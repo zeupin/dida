@@ -13,4 +13,8 @@ use \Dida\Facade;
 
 class Console extends Facade
 {
+    protected static function setFacadeServiceLink()
+    {
+        self::$facadeServiceLink = ["Console", Facade::TYPE_SERVICE_BUS, [], false];
+    }
 }

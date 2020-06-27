@@ -13,4 +13,8 @@ use \Dida\Facade;
 
 class App extends Facade
 {
+    protected static function setFacadeServiceLink()
+    {
+        self::$facadeServiceLink = ["App", Facade::TYPE_SERVICE_BUS, [], false];
+    }
 }

@@ -11,6 +11,10 @@ namespace Dida\Facade;
 
 use \Dida\Facade;
 
-class Routing extends Facade
+class Router extends Facade
 {
+    protected static function setFacadeServiceLink()
+    {
+        self::$facadeServiceLink = ["Router", Facade::TYPE_SERVICE_BUS, [], false];
+    }
 }
