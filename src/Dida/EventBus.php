@@ -87,7 +87,7 @@ class EventBus
      *
      * @return int 成功返回0,失败返回错误代码.
      */
-    public static function hook($event, $callback, array $parameters = [], $id = null)
+    public static function hook($event, callable $callback, array $parameters = [], $id = null)
     {
         if (self::hasEvent($event)) {
             // 如果不指定id, 则callback放到队列尾部
