@@ -14,7 +14,8 @@
     "psr/container": "^1.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^5.7"
+    "phpunit/phpunit": "^5.7",
+    "phpdocumentor/phpdocumentor": "2.*"
   },
   "autoload": {
     "psr-4": {
@@ -27,7 +28,8 @@
     "test": "vendor/bin/phpunit tests",
     "test:win": "vendor\\bin\\phpunit.bat tests",
     "dida:merge": "php bin/merge_dida_part.php",
-    "dida:mergeall": "php bin/merge_dida_parts.php"
+    "dida:mergeall": "php bin/merge_dida_parts.php",
+    "apidoc": "vendor/bin/phpdoc -d src/ -t docs/api/"
   },
   "config": {
     "preferred-install": "dist",
