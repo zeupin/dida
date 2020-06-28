@@ -9,7 +9,7 @@
 
 namespace Dida\Routing;
 
-class Router
+class RouterOld
 {
     /**
      * 版本号

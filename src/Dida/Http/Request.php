@@ -120,6 +120,13 @@ class Request
      */
     protected function urlinfoInit()
     {
+        // 如果REQUEST_URI不存在
+        if (!isset($_SERVER['REQUEST_URI'])) {
+            $this->urlinfo = false;
+            return;
+        }
+
+        // 解析
         $this->urlinfo = parse_url($_SERVER['REQUEST_URI']);
     }
 
