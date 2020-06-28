@@ -18,3 +18,9 @@ if (!defined("TESTS")) {
  * 载入autoload.php
  */
 require dirname(TESTS) . '/vendor/autoload.php';
+
+/**
+ * Request --> ServiceBus("Request")
+ */
+$request = new Dida\Http\Request;
+Dida\ServiceBus::set("Request", $request);

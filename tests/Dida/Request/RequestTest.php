@@ -10,14 +10,20 @@
 require __DIR__ . '/_base.php';
 
 use PHPUnit\Framework\TestCase;
-use Dida\Http\Request;
+use Dida\Facade\Request;
 
 class RequestTest extends TestCase
 {
     public function testSession()
     {
-        $request = new Request;
+        $request = new Dida\Http\Request;
         $session = $request->session();
+        $this->assertEquals([], $session);
+    }
+
+    public function testRequestFacade()
+    {
+        $session = Request::session();
         $this->assertEquals([], $session);
     }
 }
