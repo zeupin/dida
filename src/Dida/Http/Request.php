@@ -66,6 +66,10 @@ class Request
     /**
      * HTTP报文头
      *
+     * 1. 如果apache_request_headers()函数存在, 用这个函数生成 headers.
+     * 2. 否则用 $_SERVER 的 HTTP_* 项生成 headers.
+     * 3. headers 的 keys 全部采用小写字母形式.
+     *
      * @var array|null 未初始化时是null, 初始化后是数组
      */
     protected $headers = null;
@@ -146,7 +150,12 @@ class Request
     /**
      * 初始化 $this->headers
      *
-     * 注意: 这个操作比较耗时间, 当需要用之前再执行.
+     * 1. 这个操作比较耗时间, 当需要用之前再执行.
+     * 2. 某个header的键名, 标准写法是单词首字母大写, 单词中间用"-"连接.
+     *    但是这样不利于取值和比对,所以将键名统一为全小写.
+     * 3. 为简单起见, 直接从$_SERVER变量的HTTP_*取出报文头的key值.
+     *    但是这种方法要求自定义的header的key必须是"FOO-BAR"的形式, 而不允许是
+     *    "FOO_BAR"的形式. 即必须用"-"作为连字符, 不准是"_".
      *
      * @return void
      */
@@ -155,9 +164,17 @@ class Request
         if (function_exists('apache_request_headers')) {
             $headers = apache_request_headers();
             if (is_array($headers)) {
-                $this->headers = $headers;
+                // 把key转为全小写,便于后续的取值和比对
+                $temp = [];
+                foreach ($headers as $name => $value) {
+                    if (is_string($name)) {
+                        $name = strtolower($name);
+                    }
+                    $temp[$name] = $value;
+                }
+                $headers = $temp;
             } else {
-                $this->headers = [];
+                $headers = [];
             }
         } else {
             // 从 $_SERVER 的 HTTP_* 项目中解析出 headers 子项
