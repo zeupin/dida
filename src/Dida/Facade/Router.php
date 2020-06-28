@@ -15,6 +15,6 @@ class Router extends Facade
 {
     protected static function setFacadeServiceLink()
     {
-        self::$facadeServiceLink = ["Router", Facade::TYPE_SERVICE_BUS, [], false];
+        static::$facadeServiceLink = ["Router", Facade::TYPE_SERVICE_BUS, [], false];
     }
 }

@@ -15,6 +15,6 @@ class Request extends Facade
 {
     protected static function setFacadeServiceLink()
     {
-        self::$facadeServiceLink = ["Request", Facade::TYPE_SERVICE_BUS, [], false];
+        static::$facadeServiceLink = ["Request", Facade::TYPE_SERVICE_BUS, [], false];
     }
 }

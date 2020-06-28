@@ -64,13 +64,13 @@ abstract class Facade
      */
     public static function __callStatic($name, $arguments)
     {
-        // 如果facade还没有被初始化
-        if (!self::$facadeService) {
-            throw new \RuntimeException("Facade \"" . get_called_class() . "\" not initialized.");
+        // 第一次执行时, 先初始化
+        if (!static::$facadeServiceLink) {
+            static::setFacadeServiceLink();
         }
 
         // 分解数组
-        list($token, $type, $parameters, $newInstance) = self::$facadeServiceLink;
+        list($token, $type, $parameters, $newInstance) = static::$facadeServiceLink;
 
         // 如果是ServiceBus类型
         if ($type === Facade::TYPE_SERVICE_BUS) {

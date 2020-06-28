@@ -15,6 +15,6 @@ class Session extends Facade
 {
     protected static function setFacadeServiceLink()
     {
-        self::$facadeServiceLink = ["Session", Facade::TYPE_SERVICE_BUS, [], false];
+        static::$facadeServiceLink = ["Session", Facade::TYPE_SERVICE_BUS, [], false];
     }
 }

@@ -15,6 +15,6 @@ class Trace extends Facade
 {
     protected static function setFacadeServiceLink()
     {
-        self::$facadeServiceLink = ["Trace", Facade::TYPE_SERVICE_BUS, [], false];
+        static::$facadeServiceLink = ["Trace", Facade::TYPE_SERVICE_BUS, [], false];
     }
 }

@@ -15,6 +15,6 @@ class Cookie extends Facade
 {
     protected static function setFacadeServiceLink()
     {
-        self::$facadeServiceLink = ["Cookie", Facade::TYPE_SERVICE_BUS, [], false];
+        static::$facadeServiceLink = ["Cookie", Facade::TYPE_SERVICE_BUS, [], false];
     }
 }

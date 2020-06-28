@@ -15,6 +15,6 @@ class Log extends Facade
 {
     protected static function setFacadeServiceLink()
     {
-        self::$facadeServiceLink = ["Log", Facade::TYPE_SERVICE_BUS, [], false];
+        static::$facadeServiceLink = ["Log", Facade::TYPE_SERVICE_BUS, [], false];
     }
 }

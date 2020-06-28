@@ -15,6 +15,6 @@ class Cache extends Facade
 {
     protected static function setFacadeServiceLink()
     {
-        self::$facadeServiceLink = ["Cache", Facade::TYPE_SERVICE_BUS, [], false];
+        static::$facadeServiceLink = ["Cache", Facade::TYPE_SERVICE_BUS, [], false];
     }
 }
