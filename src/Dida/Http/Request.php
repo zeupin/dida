@@ -10,182 +10,78 @@
 namespace Dida\Http;
 
 /**
- * Request
+ * Request HTTP请求
  */
 class Request
 {
     /**
      * Version
      */
-    const VERSION = '20191120';
+    const VERSION = '20200628';
 
     /*
-     * 内部变量
-     */
-    protected static $method = null;
-    protected static $isAjax = null;
-    protected static $clientIP = null;
-    protected static $headers = null;
-
-    /**
-     * @var array 对请求URL的解析
-     *            [
-     *            'path'     =>
-     *            'query'    =>
-     *            'fragment' =>
-     *            ]
-     */
-    protected static $urlinfo = null;
-
-    /**
-     * $_GET
+     * HTTP Method
      *
-     * @return array|mixed
-     */
-    public static function GET($name = null)
-    {
-        if (is_null($name)) {
-            return $_GET;
-        }
-
-        return self::arrayValue($name, $_GET);
-    }
-
-    /**
-     * $_POST
+     * 返回的method均为大写
      *
-     * @return array|mixed
-     */
-    public static function POST($name = null)
-    {
-        if (is_null($name)) {
-            return $_POST;
-        }
-
-        return self::arrayValue($name, $_POST);
-    }
-
-    /**
-     * $_COOKIE
-     */
-    public static function COOKIE($name = null)
-    {
-        if (is_null($name)) {
-            return Cookie::getAll();
-        }
-
-        return Cookie::get($name);
-    }
-
-    /**
-     * $_REQUEST
-     */
-    public static function REQUEST($name = null)
-    {
-        if (is_null($name)) {
-            return $_REQUEST;
-        }
-
-        return self::arrayValue($name, $_REQUEST);
-    }
-
-    /**
-     * $_SERVER
-     */
-    public static function SERVER($name = null)
-    {
-        if (is_null($name)) {
-            return $_SERVER;
-        }
-
-        return self::arrayValue($name, $_SERVER);
-    }
-
-    /**
-     * $_ENV
-     */
-    public static function ENV($name = null)
-    {
-        if (is_null($name)) {
-            return $_ENV;
-        }
-
-        return self::arrayValue($name, $_ENV);
-    }
-
-    /**
-     * $_SESSION
+     * HTTP 1.0 定义了3个METHOD:
+     *    GET  获取资源
+     *    POST 新建资源
+     *    HEAD 查询资源头
      *
-     * 特别处理了一下$_SESSION，因为不执行session_start()，就不一定有$_SESSION这个变量。
-     */
-    public static function SESSION($name = null)
-    {
-        if (!isset($_SESSION)) {
-            if (is_null($name)) {
-                return [];
-            } else {
-                return null;
-            }
-        }
-
-        if (is_null($name)) {
-            return $_SESSION;
-        }
-
-        return self::arrayValue($name, $_SESSION);
-    }
-
-    /**
-     * $_FILES
+     * HTTP 1.1 定义了5个METHOD:
+     *    PUT      更新整个资源
+     *    PATCH    更新资源的个别字段
+     *    DELETE   删除资源
+     *    OPTIONS  查询可选操作
+     *    TRACE
      *
-     * 特别处理了一下$_FILES，因为不是上传模式，就不一定有$_FILES这个变量。
+     * @var string|false 获取成功返回method, 失败返回false
      */
-    public static function FILES($name = null)
-    {
-        if (!isset($_FILES)) {
-            if (is_null($name)) {
-                return [];
-            } else {
-                return null;
-            }
-        }
-
-        if (is_null($name)) {
-            return $_FILES;
-        }
-
-        return self::arrayValue($name, $_FILES);
-    }
+    protected $method = false;
 
     /**
-     * 初始化 self::$isAjax
-     */
-    protected static function isAjaxInit()
-    {
-        if (!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-            self::$isAjax = false;
-            return;
-        }
-
-        self::$isAjax = (strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
-    }
-
-    /**
-     * 是否是Ajax请求。
+     * 对请求URL的解析
      *
-     * @return boolean
+     * 解析uri成功, 返回的urlinfo格式
+     * [
+     *     'path'     => url路径
+     *     'query'    => query查询串
+     *     'fragment' => 书签
+     * ]
+     *
+     * 解析uri失败, 这个值为false.
+     *
+     * @var array|false 解析成功,返回结构数组; 失败,返回false
      */
-    public static function isAjax()
-    {
-        if (self::$isAjax === null) {
-            self::isAjaxInit();
-        }
+    protected $urlinfo = null;
 
-        return self::$isAjax;
+    /**
+     * 客户端ip
+     *
+     * @var string|false 成功返回ip, 无法获取返回false
+     */
+    protected $clientIP = false;
+
+    /**
+     * HTTP报文头
+     *
+     * @var array|null 未初始化时是null, 初始化后是数组
+     */
+    protected $headers = null;
+
+    /**
+     * 初始化
+     */
+    public function __construct()
+    {
+        $this->methodInit();
+        $this->urlinfoInit();
+        $this->clientIPInit();
     }
 
     /**
-     * 初始化 self::$method
+     * 初始化 $this->method
      *
      * 按照如下优先级：
      * 1、如果$_POST包含 DIDA_REQUEST_METHOD 字段，则以它的值做为请求方式。
@@ -194,55 +90,41 @@ class Request
      *
      * @return void
      */
-    protected static function getMethodInit()
+    protected function methodInit()
     {
         if (isset($_POST['DIDA_REQUEST_METHOD'])) {
-            $method = strtolower($_POST['DIDA_REQUEST_METHOD']);
+            $this->method = strtoupper($_POST['DIDA_REQUEST_METHOD']);
         } elseif (isset($_POST['_METHOD'])) {
-            $method = strtolower($_POST['_METHOD']);
+            $this->method = strtoupper($_POST['_METHOD']);
         } elseif (isset($_SERVER['REQUEST_METHOD'])) {
-            $method = strtolower($_SERVER['REQUEST_METHOD']);
-        }
-
-        // 只能为：get，post，put，patch，delete，head，options之一
-        switch ($method) {
-            case 'get': // 获取资源
-            case 'post': // 新建资源
-            case 'put': // 更新整个资源
-            case 'patch': // 更新资源的个别字段
-            case 'delete': // 删除资源
-            case 'head': // 查询资源头
-            case 'options': // 查询可选操作
-                self::$method = $method;
-                return;
-            default:
-                self::$method = false;
-                return;
+            $this->method = strtoupper($_SERVER['REQUEST_METHOD']);
+        } else {
+            $this->method = false;
         }
     }
 
     /**
-     * 获取Request的method。
+     * 初始化 $this->urlinfo
      *
-     * 如果有POST的DIDA_REQUEST_METHOD字段，则以此字段为准。
-     * 没有这个字段，则看是普通的get还是post。
-     * 正常返回get，post，put，patch，delete，head，options之一。
-     * 如果是非正常值，返回false。
+     * 解析 path，query，fragment
+     * 成功，返回一个关联数组。
+     * 失败，$this->urlinfo = false。
      *
-     * @return string|false
+     * @return void
+     *
+     * @see \parse_url()
      */
-    public static function getMethod()
+    protected function urlinfoInit()
     {
-        if (self::$method === null) {
-            self::getMethodInit();
-        }
-        return self::$method;
+        $this->urlinfo = parse_url($_SERVER['REQUEST_URI']);
     }
 
     /**
-     * 初始化 self::$clientIP
+     * 初始化 $this->clientIP
+     *
+     * @return void
      */
-    protected static function getClientIPInit()
+    protected function clientIPInit()
     {
         if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
@@ -258,124 +140,218 @@ class Request
             $ip = false; // ip未定义
         }
 
-        self::$clientIP = $ip;
+        $this->clientIP = $ip;
     }
 
     /**
-     * 获取客户端IP。
+     * 初始化 $this->headers
      *
-     * @return string|false 正常返回读取到的ip，无法获取时，返回false
-     */
-    public static function getClientIP()
-    {
-        if (self::$clientIP === null) {
-            self::getClientIP();
-        }
-        return self::$clientIP;
-    }
-
-    /**
-     * 获取Request的协议名(http/https)。
+     * 注意: 这个操作比较耗时间, 当需要用之前再执行.
      *
-     * @return string|false 正常返回读取到的schema，无法获取时，返回false
+     * @return void
      */
-    public static function getSchema()
-    {
-        return (array_key_exists('REQUEST_SCHEME', $_SERVER)) ? $_SERVER['REQUEST_SCHEME'] : false;
-    }
-
-    /**
-     * 初始化 self::$headers
-     */
-    protected static function getHeadersInit()
+    protected function headersInit()
     {
         if (function_exists('apache_request_headers')) {
             $headers = apache_request_headers();
             if (is_array($headers)) {
-                self::$headers = $headers;
+                $this->headers = $headers;
             } else {
-                self::$headers = [];
+                $this->headers = [];
             }
         } else {
-            // todo
-            self::$headers = [];
+            // 从 $_SERVER 的 HTTP_* 项目中解析出 headers 子项
+            $headers = [];
+            foreach ($_SERVER as $name => $value) {
+                if (substr($name, 0, 5) == 'HTTP_') {
+                    $name = substr($name, 5);
+                    $name = strtolower($name);
+                    $name = str_replace('_', '-', $name);
+                    $headers[$name] = $value;
+                }
+            }
         }
+
+        $this->headers = $headers;
     }
 
     /**
-     * 获取所有headers列表
-     */
-    public static function getHeaders()
-    {
-        if (self::$headers === null) {
-            self::getHeadersInit();
-        }
-
-        return self::$headers;
-    }
-
-    /**
-     * 获取指定的header
-     */
-    public static function getHeader($name)
-    {
-        if (self::$headers === null) {
-            self::getHeadersInit();
-        }
-
-        return self::arrayValue($name, self::$headers);
-    }
-
-    /**
-     * 初始化 self::$urlinfo
-     */
-    protected static function getUrlInfoInit()
-    {
-        // 解析 path，query，fragment
-        // 成功，返回一个关联数组。
-        // 失败，self::$urlinfo = false。
-        self::$urlinfo = parse_url($_SERVER['REQUEST_URI']);
-
-        // 成功后，做下标准化处理
-        if (self::$urlinfo) {
-            // 统一移除path末尾的/，以便对 “.../foo” 和 “.../foo/” 处理一致。
-            self::$urlinfo['path'] = rtrim(self::$urlinfo['path'], '/\\');
-        }
-    }
-
-    /**
-     * 请求的路径解析
+     * $_GET
      *
-     * @return array|false 成功返回一个结构数组，失败返回false
+     * @param string $name
+     *
+     * @return array|mixed|null
      */
-    public static function getUrlInfo()
+    public function get($name = null)
     {
-        // 初始化
-        if (self::$urlinfo === null) {
-            self::getUrlInfoInit();
+        if (is_null($name)) {
+            return $_GET;
         }
 
-        return self::$urlinfo;
+        return $this->arrayValue($_GET, $name);
+    }
+
+    /**
+     * $_POST
+     *
+     * @param string $name
+     *
+     * @return array|mixed|null
+     */
+    public function post($name = null)
+    {
+        if (is_null($name)) {
+            return $_POST;
+        }
+
+        return $this->arrayValue($_POST, $name);
+    }
+
+    /**
+     * $_REQUEST
+     *
+     * @param string $name
+     *
+     * @return array|mixed|null
+     */
+    public function request($name = null)
+    {
+        if (is_null($name)) {
+            return $_REQUEST;
+        }
+
+        return $this->arrayValue($_REQUEST, $name);
+    }
+
+    /**
+     * $_SERVER
+     *
+     * @param string $name
+     *
+     * @return array|mixed|null
+     */
+    public function server($name = null)
+    {
+        if (is_null($name)) {
+            return $_SERVER;
+        }
+
+        return $this->arrayValue($_SERVER, $name);
+    }
+
+    /**
+     * $_ENV
+     *
+     * @param string $name
+     *
+     * @return array|mixed|null
+     */
+    public function env($name = null)
+    {
+        if (is_null($name)) {
+            return $_ENV;
+        }
+
+        return $this->arrayValue($_ENV, $name);
+    }
+
+    /**
+     * $_COOKIE
+     *
+     * @param string $name
+     *
+     * @return array|mixed|null
+     */
+    public function cookie($name = null)
+    {
+        if (is_null($name)) {
+            return Cookie::getAll();
+        }
+
+        return Cookie::get($name);
+    }
+
+    /**
+     * $_SESSION
+     *
+     * 特别处理了一下$_SESSION，因为不执行session_start()，就不一定有$_SESSION这个变量。
+     *
+     * @param string $name
+     *
+     * @return array|mixed|null
+     */
+    public function session($name = null)
+    {
+        if (!isset($_SESSION)) {
+            $_SESSION = [];
+        }
+
+        if (is_null($name)) {
+            return $_SESSION;
+        }
+
+        return $this->arrayValue($_SESSION, $name);
+    }
+
+    /**
+     * $_FILES
+     *
+     * 特别处理了一下$_FILES，因为不是上传模式，就不一定有$_FILES这个变量。
+     *
+     * @param string $name
+     *
+     * @return array|mixed|null
+     */
+    public function files($name = null)
+    {
+        if (!isset($_FILES)) {
+            $_FILES = [];
+        }
+
+        if (is_null($name)) {
+            return $_FILES;
+        }
+
+        return $this->arrayValue($_FILES, $name);
+    }
+
+    /**
+     * 获取Request的method
+     *
+     * @return string|false
+     */
+    public function getMethod()
+    {
+        return $this->method;
+    }
+
+    /**
+     * uri的路径解析结果
+     *
+     * @return array|false 成功返回一个uri的结构数组，失败返回false
+     */
+    public function getUrlInfo()
+    {
+        return $this->urlinfo;
     }
 
     /**
      * Request的url路径。
      *
-     * @return string|null|false 正常返回path，没有path则返回null，出错返回false
+     * @return string|null|false 正常返回路径，没有则返回null，出错返回false
      */
-    public static function getPath()
+    public function getPath()
     {
-        // 初始化
-        if (self::$urlinfo === null) {
-            self::getUrlInfoInit();
-        }
-
         // 如果 getUrlInfoInit() 失败
-        if (self::$urlinfo === false) {
+        if ($this->urlinfo === false) {
             return false;
         }
 
-        return (array_key_exists('path', self::$urlinfo)) ? self::$urlinfo['path'] : null;
+        if (array_key_exists('path', $this->urlinfo)) {
+            return $this->urlinfo['path'];
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -383,74 +359,91 @@ class Request
      *
      * @return string|null|false 正常返回查询串，没有则返回null，出错返回false
      */
-    public static function getQueryString()
+    public function getQueryString()
     {
-        // 初始化
-        if (self::$urlinfo === null) {
-            self::getUrlInfoInit();
-        }
-
         // 如果 getUrlInfoInit() 失败
-        if (self::$urlinfo === false) {
+        if ($this->urlinfo === false) {
             return false;
         }
 
-        return (array_key_exists('query', self::$urlinfo)) ? self::$urlinfo['query'] : null;
+        if (array_key_exists('query', $this->urlinfo)) {
+            return $this->urlinfo['query'];
+        } else {
+            return null;
+        }
     }
 
     /**
      * Request的页面书签。
      *
-     * @return string|null|false 正常返回fragment，没有则返回null，出错返回false
+     * @return string|null|false 正常返回书签，没有则返回null，出错返回false
      */
-    public static function getFragment()
+    public function getFragment()
     {
-        // 初始化
-        if (self::$urlinfo === null) {
-            self::getUrlInfoInit();
-        }
-
         // 如果 getUrlInfoInit() 失败
-        if (self::$urlinfo === false) {
+        if ($this->urlinfo === false) {
             return false;
         }
 
-        return (array_key_exists('fragment', self::$urlinfo)) ? self::$urlinfo['fragment'] : null;
+        if (array_key_exists('fragment', $this->urlinfo)) {
+            return $this->urlinfo['fragment'];
+        } else {
+            return null;
+        }
     }
 
     /**
-     * 获取路径中去除了基准路径后的剩余部分。
+     * 获取客户端IP。
      *
-     * @param string $basePath 基准路径
-     *
-     * @return false|string
-     *                      URL路径不是以基准路径开头的，返回false。
-     *                      返回去除基准路径后的剩余部分。
-     *                      URL路径等于基准路径，返回空串。
+     * @return string|false 正常,返回客户端ip; 获取失败,返回false
      */
-    public static function getPathOffset($basePath)
+    public function getClientIP()
     {
-        $path = self::getPath();
+        return $this->clientIP;
+    }
 
-        // $path异常
-        if ($path === null) {
-            return false;
-        }
-        if ($path === false) {
-            return false;
-        }
-
-        // URL路径等于基准路径，返回空串。
-        if ($path === $basePath) {
-            return '';
+    /**
+     * 获取所有headers列表
+     */
+    public function getHeaders()
+    {
+        if ($this->headers === null) {
+            $this->headersInit();
         }
 
-        $len = mb_strlen($basePath);
-        if (mb_substr($path, 0, $len) === $basePath) {
-            return mb_substr($path, $len);
-        } else {
-            return false;
+        return $this->headers;
+    }
+
+    /**
+     * 获取指定的header
+     */
+    public function getHeader($name)
+    {
+        if ($this->headers === null) {
+            $this->headersInit();
         }
+
+        $name = strtoupper($name);
+        return $this->arrayValue($this->headers, $name);
+    }
+
+    /**
+     * 是否是一个ajax请求
+     *
+     * @return bool
+     */
+    public function isAjax()
+    {
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+            $v = $_SERVER['HTTP_X_REQUESTED_WITH'];
+            if (strtolower($v) === 'xmlhttprequest') {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -474,9 +467,9 @@ class Request
      *
      * @return string|false 正常返回取到的HTTP_REFERER。无法获取时，返回false
      */
-    public static function getReferer()
+    public function getReferer()
     {
-        if (array_key_exists('HTTP_REFERER', $_SERVER)) {
+        if (isset($_SERVER['HTTP_REFERER'])) {
             return $_SERVER['HTTP_REFERER'];
         } else {
             return false;
@@ -484,154 +477,70 @@ class Request
     }
 
     /**
-     * 从指定数组中挑出给定的单元。
+     * 获取Http的协议名(http/https)。
      *
-     * @param string|array $array
-     * @param string       $keyN
-     *
-     * @return array|false 正常返回一个数组，有错返回false。
-     *
-     * @example
-     * \Dida\Request::pick("post","user","pwd")
-     * \Dida\Request::pick("post",["user","pwd"])
-     * \Dida\Request::pick($_POST,["user","pwd"])
-     * 都能得到结果
-     * [
-     *     "user" => $_POST["user"],
-     *     "pwd"  => $_POST["pwd"],
-     * ]
+     * @return string|false 正常返回读取到的schema; 无法获取时，返回false
      */
-    public static function pick($array, $keyN)
+    public function getSchema()
     {
-        // 准备
-        $prepare = self::pickPrepare($array, $keyN);
-        if ($prepare === false) {
-            return false;
+        if (isset($_SERVER['REQUEST_SCHEME'])) {
+            return $_SERVER['REQUEST_SCHEME'];
         } else {
-            list($array, $keys) = $prepare;
+            return false;
         }
-
-        // 开始
-        $result = [];
-
-        // 名称
-        foreach ($keys as $key) {
-            $result[$key] = self::arrayValue($key, $array);
-        }
-
-        // 返回
-        return $result;
     }
 
     /**
-     * 从指定数组中挑出除给定的单元以外的所有单元。
+     * 获取路径中去除了基准路径后的剩余部分。
      *
-     * @param string|array $array
-     * @param string       $keyN
+     * URL路径不存在, 返回false
+     * URL路径不是以基准路径开头的，返回false。
      *
-     * @return array|false 正常返回一个数组，有错返回false。
+     * @param string $basePath 基准路径
+     *
+     * @return string|false 返回去除基准路径后的剩余部分, 失败返回false
      */
-    public static function pickExcept($array, $keyN)
+    public function getOffsetPath($basePath)
     {
-        // 准备
-        $prepare = self::pickPrepare($array, $keyN);
-        if ($prepare === false) {
+        $path = $this->getPath();
+
+        // $path异常
+        if ($path === false) {
             return false;
+        }
+
+        // path=null 等效于 path=''
+        if ($path === null) {
+            $path = '';
+        }
+
+        // 统一移除path末尾的/，以便对 “.../foo” 和 “.../foo/” 处理一致
+        $path = rtrim($path, '/\\');
+
+        // URL路径等于基准路径，返回空串。
+        if ($path === $basePath) {
+            return '';
+        }
+
+        $len = mb_strlen($basePath);
+        if (mb_substr($path, 0, $len) === $basePath) {
+            return mb_substr($path, $len);
         } else {
-            list($array, $keys) = $prepare;
-        }
-
-        // 开始
-        $result = $array;
-
-        // 名称
-        foreach ($keys as $key) {
-            unset($result[$key]);
-        }
-
-        // 返回
-        return $result;
-    }
-
-    /**
-     * @param array|string $array
-     * @param string|array $keyN
-     *
-     * @return boolean
-     */
-    protected static function pickPrepare($array, $keyN)
-    {
-        // $array是字符串
-        if (is_string($array)) {
-            switch (mb_strtolower($array)) {
-                case 'post':
-                    $array = $_POST;
-                    break;
-                case 'get':
-                    $array = $_GET;
-                    break;
-                case 'cookie':
-                case 'cookies':
-                    $array = self::COOKIE();
-                    break;
-                case 'session':
-                    $array = self::SESSION();
-                    break;
-                case 'files':
-                    $array = self::FILES();
-                    break;
-                case 'server':
-                    $array = $_SERVER;
-                    break;
-                case 'env':
-                    $array = $_ENV;
-                    break;
-                case 'headers':
-                    $array = self::headers();
-                    break;
-                default:
-                    return false;
-            }
-        } elseif (!is_array($array)) {
+            // 如果不是一个basePath开始, 返回false
             return false;
         }
-
-        // 要排除的键
-        $keys = [];
-        $cnt = func_num_args();
-        if ($cnt === 2) {
-            if (is_array($keyN)) {
-                $keys = $keyN;
-            } elseif (is_string($keyN)) {
-                $keys[] = $keyN;
-            } else {
-                return false;
-            }
-        } elseif ($cnt > 2) {
-            for ($i = 1; $i < $cnt; $i++) {
-                $key = func_get_arg($i);
-                if (is_string($key) || is_int($key)) {
-                    $keys[] = $key;
-                } else {
-                    return false;
-                }
-            }
-        }
-
-        // 完成
-        return [$array, $keys];
     }
 
     /**
      * 一个工具函数。
      * 如果数组中key存在，则返回对应的value，否则返回null。
      *
-     * @param int|string $key
      * @param array      $array
+     * @param int|string $key
      *
      * @return mixed
      */
-    protected static function arrayValue($key, array $array)
+    protected function arrayValue(array $array, $key)
     {
         if (array_key_exists($key, $array)) {
             return $array[$key];
