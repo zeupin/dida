@@ -16,63 +16,98 @@ class Make
     {
         $refClass = new ReflectionClass($classname);
         $methods = $refClass->getMethods(ReflectionMethod::IS_PUBLIC + ReflectionMethod::IS_STATIC);
+        echo "/*\n";
+        echo " * Facade methods for $classname\n";
+        echo " *\n";
         foreach ($methods as $method) {
             $s = $this->buildMethod($method);
-            // echo "@method static $s\n";
+            echo " * @method static $s\n";
         }
+        echo " */\n";
     }
 
     public function buildMethod(ReflectionMethod $method)
     {
         $name = $method->getName();
         $comment = $method->getDocComment();
-        $this->parseMethodDocComment($comment);
+        $namespace = $method->getNamespaceName();
+
+        $nodes = $this->parseMethodDocComment($comment, $namespace);
+        $docparams = [];
+        $returns = [];
+        foreach ($nodes as $node) {
+            if ($node["tag"] === "param") {
+                $docparams[$node["name"]] = $node;
+            } elseif ($node["tag"] === "return") {
+                $returns[] = $node["type"];
+            }
+        }
+        // var_dump($docparams);
+        $returnType = implode("|", $returns);
 
         $params = [];
         $parameters = $method->getParameters();
         foreach ($parameters as $parameter) {
-            $params[] = $this->buildParameter($parameter);
+            $paramName = "$" . $parameter->getName();
+            if (array_key_exists($paramName, $docparams)) {
+                $commentType = $docparams[$paramName]["type"];
+            } else {
+                $commentType = null;
+            }
+            $params[] = $this->buildParameter($parameter, $commentType);
         }
         $params = implode(", ", $params);
 
-        return "$name($params)";
+        if ($returnType) {
+            return "$returnType $name($params)";
+        } else {
+            return "$name($params)";
+        }
     }
 
-    public function parseMethodDocComment($comment)
+    public function parseMethodDocComment($comment, $namespace)
     {
         $patterns = [
-            '/^\/\*\*\s{0,}/',
-            '/\s{0,}\*\/$/',
-            '/[ \t]{0,}\*[ \t]{0,}/'
+            '/^\/\*\*\s{0,}/', // 删除 "/**"
+            '/\s{0,}\*\/$/', // 删除 " */"
+            '/[ \t]{0,}\*[ \t]{0,}/' // 删除 " * "
         ];
         $result = preg_replace($patterns, '', $comment);
+
+        // 把结果分解成行
         $lines = preg_split("/\n\r{0,1}/", $result);
 
+        // 最终生成的nodes
         $nodes = [];
+
+        // 默认的起始节点
         $defaultNode = [
-            'tag'     => null,
-            'text'    => '',
+            'tag'  => null,
+            'text' => '',
         ];
         $node = $defaultNode;
+
+        // 解析每行
         foreach ($lines as $line) {
+            // 检查本行是否是 @xxxx 模式
+            //         |-----1------|         |--2--|
             $re = "/^\@([a-zA-Z]{1,})[ \t]{0,}(.{0,})/";
             $matches = [];
             if (preg_match($re, $line, $matches)) {
-                $tag = $matches[1];
+                $tag = $matches[1];  // tag
                 $rest = $matches[2]; // 剩余部分
-
                 // 把上一个node结束掉
+                // 如果上个node为默认的起始节点,或者为无效节点,则忽略
                 if ($node != $defaultNode && $node !== null) {
                     $nodes[] = $node;
                 }
 
-                // 开始这个node
+                // 开始当前node
                 $node = [
-                    'tag'  => $tag,
+                    'tag' => $tag,
                 ];
 
-                var_dump($rest);
-                // 按照类型解析
+                // 按照不同类型解析
                 switch ($tag) {
                     case "param":
                         $result = preg_split("/[ \t]{1,}/", $rest, 3);
@@ -101,12 +136,25 @@ class Make
                             $node["text"] = '';
                         }
                         break;
+
+                    default:
+                        // 去掉$rest的头部和尾部空白
+                        $re = [
+                            "/^\s{1,}/", // 去掉头部空白
+                            "/\s{1,}$/", // 去掉尾部空白
+                        ];
+                        $node["text"] = preg_replace($re, '', $rest);
                 }
             } else {
                 if ($node === null) {
                     // 上个node非法
                 } else {
-                    $node["text"] .= (($node["text"]) ? "\n" : '') . $line;
+                    // 把当前行添加到 node[text]
+                    if (($node["text"] === '')) {
+                        $node["text"] = $line;
+                    } else {
+                        $node["text"] .= "\n" . $line;
+                    }
                 }
             }
         }
@@ -116,10 +164,61 @@ class Make
             $nodes[] = $node;
         }
 
-        var_dump($nodes);
+        // 最后整理一下
+        foreach ($nodes as $index => $node) {
+            // 剔除掉每个node的尾部空白
+            $node["text"] = preg_replace("/\s{1,}$/", '', $node["text"]);
+
+            // 对类型进行处理
+            if (isset($node["type"])) {
+                $node["type"] = $this->parseType($node["type"], $namespace);
+            }
+
+            // 保存
+            $nodes[$index] = $node;
+        }
+
+        // 返回解析后的DocDocument的nodes
+        // var_dump($nodes);
+        return $nodes;
     }
 
-    public function buildParameter(ReflectionParameter $parameter)
+    public function parseType($type, $namespace)
+    {
+        $result = [];
+        $types = explode("|", $type);
+        foreach ($types as $type) {
+            switch ($type) {
+                case "void":
+                case "string":
+                case "array":
+                case "callable":
+                case "mixed":
+                case "bool":
+                case "boolean":
+                case "true":
+                case "false":
+                case "null":
+                case "int":
+                case "integer":
+                case "float":
+                case "double":
+                    $result[] = $type;
+                    break;
+                default:
+                    if (preg_match('/[A-Za-z0-9\_]/', $type)) {
+                        // 加上namespace
+                        $result[] = $namespace . "\\$type";
+                    } else {
+                        // 如有古怪字符
+                        $result[] = $type;
+                    }
+            }
+        }
+        return implode("|", $result);
+    }
+
+    public function buildParameter(ReflectionParameter $parameter, $commentType = null)
     {
         // 开始
         $s = [];
@@ -132,9 +231,8 @@ class Make
         } elseif ($parameter->isCallable()) {
             // 如果是callable
             $s[] = "callable";
-        }
-
-        if ($parameter->getClass()) {
+        } elseif (is_string($commentType)) {
+            $s[] = $commentType;
         }
 
         // ----------------------------------------------------------------
