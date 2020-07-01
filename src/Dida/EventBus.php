@@ -111,6 +111,8 @@ class EventBus
      *
      * @param string $event 事件名称
      * @param string $id    回调函数的id
+     *
+     * @return void
      */
     public static function unhook($event, $id = null)
     {
