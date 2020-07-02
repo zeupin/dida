@@ -80,10 +80,10 @@ class EventBus
     /**
      * 绑定一个回调函数到指定事件上。
      *
-     * @param string   $event      事件名称
-     * @param callback $callback   回调函数
-     * @param array    $parameters 回调函数的参数
-     * @param string   $id         指定回调函数的id
+     * @param string      $event      事件名称
+     * @param callback    $callback   回调函数
+     * @param array       $parameters 回调函数的参数
+     * @param string|null $id         指定回调函数的id
      *
      * @return int 成功返回0,失败返回错误代码.
      */
@@ -109,8 +109,8 @@ class EventBus
      * 解除某个事件上挂接的某个或者全部回调函数。
      * 如果不指定id，则表示解除此事件上的所有回调函数。
      *
-     * @param string $event 事件名称
-     * @param string $id    回调函数的id
+     * @param string      $event 事件名称
+     * @param string|null $id    回调函数的id
      *
      * @return void
      */
