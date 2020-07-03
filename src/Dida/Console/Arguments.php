@@ -32,12 +32,18 @@ class Arguments
     /**
      * 解析命令行参数
      *
-     * @param array $argv 传入的命令行参数数组
+     * @param array|null $argv 传入的命令行参数数组
      *
      * @return array
      */
-    public function __construct($argv)
+    public function __construct($argv = null)
     {
+        // 如果没有指定命令行参数数组, 默认为全局的$argv数组
+        if ($argv === null) {
+            global $argv;
+        }
+
+        // 开始解析命令行
         $this->parse($argv);
     }
 
