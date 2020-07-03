@@ -8,13 +8,7 @@
  */
 
 /**
- * 定义tests目录路径
+ * Request --> ServiceBus("Request")
  */
-if (!defined("TESTS")) {
-    define('TESTS', realpath(__DIR__ . '/../..'));
-}
-
-/**
- * 载入autoload.php
- */
-require dirname(TESTS) . '/vendor/autoload.php';
+$request = new Dida\Http\Request;
+Dida\ServiceBus::set("Request", $request);

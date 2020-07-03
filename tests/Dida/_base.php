@@ -11,16 +11,10 @@
  * 定义tests目录路径
  */
 if (!defined("TESTS")) {
-    define('TESTS', realpath(__DIR__ . '/../..'));
+    define('TESTS', realpath(__DIR__ . '/..'));
 }
 
 /**
  * 载入autoload.php
  */
 require dirname(TESTS) . '/vendor/autoload.php';
-
-/**
- * Request --> ServiceBus("Request")
- */
-$request = new Dida\Http\Request;
-Dida\ServiceBus::set("Request", $request);
