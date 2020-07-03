@@ -17,16 +17,72 @@ class Facade
 {
     public function facade($classname)
     {
+        $ret = [];
         $refClass = new ReflectionClass($classname);
         $methods = $refClass->getMethods(ReflectionMethod::IS_PUBLIC + ReflectionMethod::IS_STATIC);
-        echo "/*\n";
-        echo " * Facade methods for $classname\n";
-        echo " *\n";
+        $ret[] = "/*";
+        $ret[] = " * Facade methods for $classname";
+        $ret[] = " *";
         foreach ($methods as $method) {
             $s = $this->buildMethod($method);
-            echo " * @method static $s\n";
+            $ret[] = " * @method static $s";
         }
-        echo " */\n";
+        $ret[] = " */";
+
+        return implode("\n", $ret) . "\n";
+    }
+
+    /**
+     * 按照模板生成一个Facade,并写入到指定文件
+     *
+     * @param string $originalClassname
+     * @param string $facadeClassname
+     * @param string $namespace
+     * @param string $serviceName
+     * @param string $filepath
+     */
+    public function buildFacade($originalClassname, $facadeClassname, $namespace, $serviceName, $outputFile)
+    {
+        // 生成伪方法
+        $ret = [];
+        $refClass = new ReflectionClass($originalClassname);
+        $methods = $refClass->getMethods(ReflectionMethod::IS_PUBLIC + ReflectionMethod::IS_STATIC);
+        $ret[] = "/*";
+        $ret[] = " * Facade methods for $originalClassname";
+        $ret[] = " *";
+        foreach ($methods as $method) {
+            $s = $this->buildMethod($method);
+            $ret[] = " * @method static $s";
+        }
+        $ret[] = " */";
+        $methods = implode("\n", $ret);
+
+        // namespace
+        if ($namespace === '' || $namespace === '\\') {
+            $namespace = '';
+        } else {
+            $namespace = "namespace $namespace;\n";
+        }
+
+        // 文件内容模板
+        $tpl = <<<TEMPLATE
+<?php
+$namespace
+use \Dida\Facade;
+
+$methods
+class $facadeClassname extends Facade
+{
+    protected static function setFacadeServiceLink()
+    {
+        static::\$facadeServiceLink = ["$serviceName", Facade::TYPE_SERVICE_BUS, [], false];
+    }
+}
+
+TEMPLATE;
+
+        // 输出到目标文件
+        file_put_contents($outputFile, $tpl);
     }
 
     public function buildMethod(ReflectionMethod $method)
@@ -253,10 +309,13 @@ class Facade
         // 如果有缺省值
         if ($parameter->isDefaultValueAvailable()) {
             $s[] = "=";
-            // 如果默认值是个常量, 返回这个常量名
+
             if ($parameter->isDefaultValueConstant()) {
+                // 如果默认值是个常量, 返回这个常量名
+                // 如果常量是类常量, 返回格式为: 命名空间\类名::常量名
                 $s[] = $parameter->getDefaultValueConstantName();
             } else {
+                // 如果是个数值, 返回这个数值
                 $s[] = $this->buildValue($parameter->getDefaultValue());
             }
         }
