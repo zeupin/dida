@@ -7,10 +7,20 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
-namespace Dida\Facade;
+namespace \Dida\Facade;
 
 use \Dida\Facade;
 
+/*
+ * Facade methods for Dida\Http\Response
+ *
+ * @method static setNoCache()
+ * @method static setAllowCORS()
+ * @method static setHeaders(array $headers)
+ * @method static bool json(mixed $data, array|string $cacheSetting = 'no-cache')
+ * @method static redirect(string $url, array|null $cacheSetting = null)
+ * @method static boolean download(string $srcfile, string $name = null, boolean $mime = false, array|null $cacheSetting = null)
+ */
 class Response extends Facade
 {
     protected static function setFacadeServiceLink()

@@ -7,10 +7,20 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
-namespace Dida\Facade;
+namespace \Dida\Facade;
 
 use \Dida\Facade;
 
+/*
+ * Facade methods for Dida\Console\Console
+ *
+ * @method static pr($msg, $style = null)
+ * @method static prln($msg, $style = null)
+ * @method static string ss(string $msg, string $style)
+ * @method static err($msg)
+ * @method static notice($msg)
+ * @method static info($msg)
+ */
 class Console extends Facade
 {
     protected static function setFacadeServiceLink()
