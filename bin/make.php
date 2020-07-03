@@ -8,8 +8,7 @@
  */
 
 require dirname(__DIR__) . "/vendor/autoload.php";
-require __DIR__ . "/dida/Make.php";
 
-$make = new Make();
-// $make->facade("Dida\Http\Request");
+$make = new Dida\Make\Facade();
 $make->facade("Dida\EventBus");
+$make->facade("PDO");

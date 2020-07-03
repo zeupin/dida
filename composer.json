@@ -22,7 +22,11 @@
       "Dida\\": "src/Dida"
     }
   },
-  "autoload-dev": {},
+  "autoload-dev": {
+    "psr-4": {
+      "Dida\\Make\\": "bin/Dida/Make"
+    }
+  },
   "scripts": {
     "cs": "php-cs-fixer fix .",
     "test": "vendor/bin/phpunit tests",
