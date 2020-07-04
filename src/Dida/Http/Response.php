@@ -27,7 +27,7 @@ class Response
      *
      * @return void
      */
-    public function setNoCache()
+    public function disableCache()
     {
         header('Cache-Control: private, max-age=0, no-store, no-cache, must-revalidate'); // HTTP 1.1
         header('Pragma: no-cache'); // HTTP 1.0
@@ -39,7 +39,7 @@ class Response
      *
      * @return void
      */
-    public function setAllowCORS()
+    public function allowCORS()
     {
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Methods: *');
