@@ -7,10 +7,15 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
-namespace Dida\Facade;
+namespace \Dida\Facade;
 
 use \Dida\Facade;
 
+/*
+ * Facade methods for Dida\Http\Session
+ *
+ * @method static start()
+ */
 class Session extends Facade
 {
     protected static function setFacadeServiceLink()
