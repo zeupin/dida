@@ -17,15 +17,17 @@ class Response
     /**
      * Version
      */
-    const VERSION = '20200615';
+    const VERSION = '20200704';
 
     /**
      * 告知浏览器不要缓存
      *
      * 1. 如果在 Cache-Control 响应头设置了 "max-age" 或者 "s-max-age" 指令，那么 Expires 头会被忽略。
      *    <https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Expires>
+     *
+     * @return void
      */
-    public static function setNoCache()
+    public function setNoCache()
     {
         header('Cache-Control: private, max-age=0, no-store, no-cache, must-revalidate'); // HTTP 1.1
         header('Pragma: no-cache'); // HTTP 1.0
@@ -34,8 +36,10 @@ class Response
 
     /**
      * 设置允许跨域资源共享(CORS)
+     *
+     * @return void
      */
-    public static function setAllowCORS()
+    public function setAllowCORS()
     {
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Methods: *');
@@ -45,8 +49,10 @@ class Response
      * 批量设置应答的 HTTP Header
      *
      * @param array $headers
+     *
+     * @return void
      */
-    public static function setHeaders(array $headers)
+    public function setHeaders(array $headers)
     {
         foreach ($headers as $key => $header) {
             if (is_int($key)) {
@@ -63,9 +69,9 @@ class Response
      * @param mixed        $data
      * @param array|string $cacheSetting 缓存设置
      *
-     * @return bool
+     * @return void
      */
-    public static function json($data, $cacheSetting = 'no-cache')
+    public function json($data, $cacheSetting = 'no-cache')
     {
         // 缓存设置
         if ($cacheSetting === 'no-cache') {
@@ -77,9 +83,6 @@ class Response
         // 输出 json
         header('Content-Type:application/json; charset=utf-8');
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
-
-        // 成功
-        return true;
     }
 
     /**
@@ -87,8 +90,10 @@ class Response
      *
      * @param string     $url
      * @param array|null $cacheSetting 缓存设置
+     *
+     * @return void
      */
-    public static function redirect($url, $cacheSetting = null)
+    public function redirect($url, $cacheSetting = null)
     {
         // 缓存设置
         if ($cacheSetting === null) {
@@ -99,9 +104,6 @@ class Response
 
         // 执行
         header("Location: $url");
-
-        // 完成
-        die();
     }
 
     /**
@@ -109,12 +111,12 @@ class Response
      *
      * @param string     $srcfile      服务器上源文件的文件名。
      * @param string     $name         下载时的文件名。如果为null，则默认使用srcfile的文件名。
-     * @param boolean    $mime         是否需要设置文件的MIME。
+     * @param bool       $mime         是否需要设置文件的MIME。
      * @param array|null $cacheSetting 缓存设置
      *
-     * @return boolean
+     * @return bool
      */
-    public static function download($srcfile, $name = null, $mime = false, $cacheSetting = null)
+    public function download($srcfile, $name = null, $mime = false, $cacheSetting = null)
     {
         // 检查待下载的源文件是否存在。
         if (file_exists($srcfile)) {
