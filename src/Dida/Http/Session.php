@@ -15,9 +15,69 @@ namespace Dida\Http;
 class Session
 {
     /**
-     * 开始
+     * 版本号
      */
-    public function start()
+    const VERSION = '20200704';
+
+    /**
+     * 初始化
+     */
+    public function __construct()
+    {
+    }
+
+    /**
+     * 是否有指定的session
+     *
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function has($key)
+    {
+    }
+
+    /**
+     * 获取指定的session值
+     *
+     * @param string $key
+     */
+    public function get($key)
+    {
+    }
+
+    /**
+     * 设置指定的session
+     *
+     * @param string $key
+     * @param mixed  $value
+     *
+     * @return void
+     */
+    public function set($key, $value)
+    {
+    }
+
+    /**
+     * 删除指定的session
+     *
+     * @param string $key
+     */
+    public function remove($key)
+    {
+    }
+
+    /**
+     * 获取所有session
+     */
+    public function getAll()
+    {
+    }
+
+    /**
+     * 销毁当前的session
+     */
+    public function destory()
     {
     }
 }

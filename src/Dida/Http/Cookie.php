@@ -19,8 +19,8 @@ use Dida\Util\Crypt;
  *    同一个name, 但是不同的path的cookie，在浏览器里面被视为是两个不同的cookie。
  *    有时候发现明明是删除了cookie项，怎么还有？？大多数就是这个path路径的问题。
  *    对不精通cookie细节的人，这是个大坑。
- * 2. 本类中，所有调用 setcookie() 的地方，都强制设置 $path = $this->path 且 $domain = $this->domain。
- * 3. 将 $this->salt 设为 非空字符串，表示启用cookie值加密机制。
+ * 2. 本类中，所有调用 setcookie() 的地方，都强制设置 $path = $this->conf['path'] 且 $domain = $this->conf['domain']。
+ * 3. 将 $this->conf['salt'] 设为 非空字符串，表示启用cookie值加密机制。
  * 4. 对于某个cookie[name => value]，实际加密密钥为 ($salt + $name)。
  *    这样即使两个cookie的实际值相同，但它们加密后的值也不同。
  * 5. 设置、删除时，指定的cookie项的(name、path、domain)，都要与原Cookie完全一样。
@@ -31,7 +31,7 @@ class Cookie
     /**
      * 版本号
      */
-    const VERSION = '20200614';
+    const VERSION = '20200704';
 
     /**
      * 内部cookies数据。
@@ -44,36 +44,49 @@ class Cookie
     protected $cookies = [];
 
     /**
-     * 对cookie的值进行安全加密的salt。为空串表示不需要加密。
+     * path
+     *      cookie的有效网址路径
+     * 		设置成 '/' 时，Cookie 对整个域名 domain 有效。
+     * 		如果设置成 '/foo/'， Cookie 仅仅对 domain 中 /foo/ 目录及其子目录有效（比如 /foo/bar/）。
+     * 		设置为空时，默认是设置 Cookie 时的当前目录 (注意: 不注意的话,这里就是一个坑)
+     * 		默认为'/'，一般设置为App的子目录路径。
+     * domain
+     *      cookie的有效域名, 默认为''
+     * salt
+     *      对cookie的值进行安全加密的salt。为空串表示不需要加密。
      *
-     * @var string
+     * @var array
      */
-    protected $salt = '';
-
-    /**
-     * cookie的有效网址路径
-     *
-     * 设置成 '/' 时，Cookie 对整个域名 domain 有效。
-     * 如果设置成 '/foo/'， Cookie 仅仅对 domain 中 /foo/ 目录及其子目录有效（比如 /foo/bar/）。
-     * 设置为空时，默认是设置 Cookie 时的当前目录。
-     *
-     * @var string 有效网址路径，默认为'/'，一般设置为App的子目录路径。
-     */
-    protected $path = '/';
-
-    /**
-     * cookie的有效域名
-     *
-     * @var string 有效域名，默认为''
-     */
-    protected $domain = '';
+    protected $conf = [
+        "path"   => '/',
+        "domain" => '',
+        "salt"   => '',
+    ];
 
     /**
      * 初始化
+     *
+     * @param array $conf 配置
      */
-    public function __construct()
+    public function __construct(array $conf = [])
     {
+        // 合并配置
+        $this->config($conf);
+
+        // 初始化
         $this->init();
+    }
+
+    /**
+     * 设置配置项
+     *
+     * @param array $conf
+     *
+     * @return void
+     */
+    public function config(array $conf)
+    {
+        $this->conf = array_merge($this->conf, $conf);
     }
 
     /**
@@ -119,60 +132,6 @@ class Cookie
     }
 
     /**
-     * 设置安全salt
-     *
-     * @param string $salt
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return void
-     */
-    public function setSalt($salt)
-    {
-        if (!is_string($salt)) {
-            throw new \InvalidArgumentException('Dida: Cookie加密密钥必须为字符串类型');
-        }
-
-        $this->salt = $salt;
-    }
-
-    /**
-     * 设置cookie的有效网址路径
-     *
-     * @param string $path
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return void
-     */
-    public function setPath($path)
-    {
-        if (!is_string($path)) {
-            throw new \InvalidArgumentException('Dida: Cookie有效路径必须为字符串类型');
-        }
-
-        $this->path = $path;
-    }
-
-    /**
-     * 设置cookie的有效网址路径
-     *
-     * @param string $domain
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return void
-     */
-    public function setDomain($domain)
-    {
-        if (!is_string($domain)) {
-            throw new \InvalidArgumentException('Dida: Cookie有效域名必须为字符串类型');
-        }
-
-        $this->domain = $domain;
-    }
-
-    /**
      * 设置一个cookie。
      * 各参数设置参见 PHP 的 setcookie 函数。
      *
@@ -195,7 +154,7 @@ class Cookie
         $value = strval($value);
 
         // 设置，参见class备注[1][2]
-        return setcookie($name, $value, $expires, $this->path, $this->domain, $secure, $httponly);
+        return setcookie($name, $value, $expires, $this->conf['path'], $this->conf['domain'], $secure, $httponly);
     }
 
     /**
@@ -221,9 +180,9 @@ class Cookie
         $value = strval($value);
 
         // 如果value不为空，且加密key不为空，则加密value
-        if ($value && $this->salt) {
+        if ($value && $this->conf['salt']) {
             // 如果启用了安全加密模式
-            $value = Crypt::encrypt($value, $this->salt . $name);
+            $value = Crypt::encrypt($value, $this->conf['salt'] . $name);
 
             // 如果加密失败，返回false
             if ($value === false) {
@@ -232,7 +191,7 @@ class Cookie
         }
 
         // 设置，参见class备注[1][2]
-        return setcookie($name, $value, $expires, $this->path, $this->domain, $secure, $httponly);
+        return setcookie($name, $value, $expires, $this->conf['path'], $this->conf['domain'], $secure, $httponly);
     }
 
     /**
@@ -268,12 +227,12 @@ class Cookie
         }
 
         // 如果加密key为空，直接返回结果
-        if ($this->salt === '') {
+        if ($this->conf['salt'] === '') {
             return $this->cookies[$name];
         }
 
         // 解密
-        $safekey = $this->salt . $name;
+        $safekey = $this->conf['salt'] . $name;
         $result = Crypt::decrypt($this->cookies[$name], $safekey);
 
         // 解密失败，返回null
@@ -319,7 +278,7 @@ class Cookie
     {
         // path
         if (!is_string($path)) {
-            $path = $this->path;
+            $path = $this->conf['path'];
         }
 
         // 如果cookie存在
@@ -329,10 +288,10 @@ class Cookie
 
             // 删除$_COOKIE的变量
             $name1 = str_replace('.', '_', $name);
-            unset($_COOKIE[$name],$_COOKIE[$name1]);
+            unset($_COOKIE[$name], $_COOKIE[$name1]);
 
             // 让浏览器端也删除cookie
-            setcookie($name, '', 1, $path, $this->domain);
+            setcookie($name, '', 1, $path, $this->conf['domain']);
         }
     }
 }
