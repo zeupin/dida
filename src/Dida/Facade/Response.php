@@ -14,12 +14,12 @@ use \Dida\Facade;
 /*
  * Facade methods for Dida\Http\Response
  *
- * @method static setNoCache()
- * @method static setAllowCORS()
- * @method static setHeaders(array $headers)
- * @method static bool json(mixed $data, array|string $cacheSetting = 'no-cache')
- * @method static redirect(string $url, array|null $cacheSetting = null)
- * @method static boolean download(string $srcfile, string $name = null, boolean $mime = false, array|null $cacheSetting = null)
+ * @method static void setNoCache()
+ * @method static void setAllowCORS()
+ * @method static void setHeaders(array $headers)
+ * @method static void json(mixed $data, array|string $cacheSetting = 'no-cache')
+ * @method static void redirect(string $url, array|null $cacheSetting = null)
+ * @method static bool download(string $srcfile, string $name = null, bool $mime = false, array|null $cacheSetting = null)
  */
 class Response extends Facade
 {
