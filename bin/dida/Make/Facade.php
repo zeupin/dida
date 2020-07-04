@@ -35,18 +35,20 @@ class Facade
     /**
      * 按照模板生成一个Facade,并写入到指定文件
      *
-     * @param string $originalClassname
-     * @param string $facadeClassname
-     * @param string $namespace
-     * @param string $serviceName
-     * @param string $filepath
+     * @param string $originalClassname 参照的类名
+     * @param string $facadeClassname   Facade的类名
+     * @param string $namespace         Facade的namespace
+     * @param string $serviceName       绑定的服务名
+     * @param string $outputFile        输出文件路径
      */
     public function buildFacade($originalClassname, $facadeClassname, $namespace, $serviceName, $outputFile)
     {
-        // 生成伪方法
-        $ret = [];
+        // 生成
         $refClass = new ReflectionClass($originalClassname);
+
+        // 伪方法
         $methods = $refClass->getMethods(ReflectionMethod::IS_PUBLIC + ReflectionMethod::IS_STATIC);
+        $ret = [];
         $ret[] = "/*";
         $ret[] = " * Facade methods for $originalClassname";
         $ret[] = " *";
@@ -57,14 +59,14 @@ class Facade
         $ret[] = " */";
         $methods = implode("\n", $ret);
 
-        // namespace
+        // namespace部分
         if ($namespace === '' || $namespace === '\\') {
             $namespace = '';
         } else {
             $namespace = "namespace $namespace;\n";
         }
 
-        // 文件内容模板
+        // 输出文件的模板
         $tpl = <<<TEMPLATE
 <?php
 $namespace
@@ -85,7 +87,14 @@ TEMPLATE;
         file_put_contents($outputFile, $tpl);
     }
 
-    public function buildMethod(ReflectionMethod $method)
+    /**
+     * 生成method的定义
+     *
+     * @param \ReflectionMethod $method
+     *
+     * @return string
+     */
+    public function buildMethod(\ReflectionMethod $method)
     {
         // 方法名
         $name = $method->getName();
@@ -123,125 +132,14 @@ TEMPLATE;
         }
     }
 
-//
-//    public function parseMethodDocComment($comment, $namespace)
-//    {
-//        $patterns = [
-//            '/^\/\*\*\s{0,}/', // 删除 "/**"
-//            '/\s{0,}\*\/$/', // 删除 " */"
-//            '/[ \t]{0,}\*[ \t]{0,}/' // 删除 " * "
-//        ];
-//        $result = preg_replace($patterns, '', $comment);
-//
-//        // 把结果分解成行
-//        $lines = preg_split("/\n\r{0,1}/", $result);
-//
-//        // 最终生成的nodes
-//        $nodes = [];
-//
-//        // 默认的起始节点
-//        $defaultNode = [
-//            'tag'  => null,
-//            'text' => '',
-//        ];
-//        $node = $defaultNode;
-//
-//        // 解析每行
-//        foreach ($lines as $line) {
-//            // 检查本行是否是 @xxxx 模式
-//            //         |-----1------|         |--2--|
-//            $re = "/^\@([a-zA-Z]{1,})[ \t]{0,}(.{0,})/";
-//            $matches = [];
-//            if (preg_match($re, $line, $matches)) {
-//                $tag = $matches[1];  // tag
-//                $rest = $matches[2]; // 剩余部分
-//                // 把上一个node结束掉
-//                // 如果上个node为默认的起始节点,或者为无效节点,则忽略
-//                if ($node != $defaultNode && $node !== null) {
-//                    $nodes[] = $node;
-//                }
-//
-//                // 开始当前node
-//                $node = [
-//                    'tag' => $tag,
-//                ];
-//
-//                // 按照不同类型解析
-//                switch ($tag) {
-//                    case "param":
-//                        $result = preg_split("/[ \t]{1,}/", $rest, 3);
-//                        // 无法解析
-//                        if (count($result) < 2) {
-//                            $node = null;
-//                            continue;
-//                        }
-//
-//                        // 设置param
-//                        $node["type"] = $result[0];
-//                        $node["name"] = $result[1];
-//                        if (isset($result[2])) {
-//                            $node["text"] = $result[2];
-//                        } else {
-//                            $node["text"] = '';
-//                        }
-//                        break;
-//
-//                    case "return":
-//                        $result = preg_split("/[ \t]{1,}/", $rest, 2);
-//                        $node["type"] = $result[0];
-//                        if (isset($result[1])) {
-//                            $node["text"] = $result[1];
-//                        } else {
-//                            $node["text"] = '';
-//                        }
-//                        break;
-//
-//                    default:
-//                        // 去掉$rest的头部和尾部空白
-//                        $re = [
-//                            "/^\s{1,}/", // 去掉头部空白
-//                            "/\s{1,}$/", // 去掉尾部空白
-//                        ];
-//                        $node["text"] = preg_replace($re, '', $rest);
-//                }
-//            } else {
-//                if ($node === null) {
-//                    // 上个node非法
-//                } else {
-//                    // 把当前行添加到 node[text]
-//                    if (($node["text"] === '')) {
-//                        $node["text"] = $line;
-//                    } else {
-//                        $node["text"] .= "\n" . $line;
-//                    }
-//                }
-//            }
-//        }
-//
-//        // 把上一个node结束掉
-//        if ($node != $defaultNode) {
-//            $nodes[] = $node;
-//        }
-//
-//        // 最后整理一下
-//        foreach ($nodes as $index => $node) {
-//            // 剔除掉每个node的尾部空白
-//            $node["text"] = preg_replace("/\s{1,}$/", '', $node["text"]);
-//
-//            // 对类型进行处理
-//            if (isset($node["type"])) {
-//                $node["type"] = $this->parseType($node["type"], $namespace);
-//            }
-//
-//            // 保存
-//            $nodes[$index] = $node;
-//        }
-//
-//        // 返回解析后的DocDocument的nodes
-//        // var_dump($nodes);
-//        return $nodes;
-//    }
-
+    /**
+     * 解析一个类型串
+     *
+     * @param string $type      类型表达式. 如果是复合类型,中间用 | 分割.类型串中不可含有空格
+     * @param string $namespace 命名空间
+     *
+     * @return string
+     */
     public function parseType($type, $namespace)
     {
         $result = [];
@@ -266,13 +164,15 @@ TEMPLATE;
                     break;
                 default:
                     if (preg_match('/^\[A-Za-z_]/', $type)) {
-                        // 绝对命名空间
+                        // 绝对命名空间, 以 \ 开头
+                        // 所以说,在代码中尽量以这个形式给出参数,定义最清晰
                         $result[] = $type;
                     } elseif (preg_match('/^[A-Za-z_]/', $type)) {
-                        // 加上namespace
+                        // 相对, 以字母开头, 需要额外加上 namespace
+                        // todo: 还应该加上 use Xxxx\Yxxxx 的定义
                         $result[] = $namespace . "\\$type";
                     } else {
-                        // 如有古怪字符
+                        // 如果无法识别,就按照原样输出
                         $result[] = $type;
                     }
             }
@@ -280,7 +180,15 @@ TEMPLATE;
         return implode("|", $result);
     }
 
-    public function buildParameter(ReflectionParameter $parameter, $commentType = null)
+    /**
+     * 生成parameter字符串
+     *
+     * @param \ReflectionParameter $parameter
+     * @param string               $commentType
+     *
+     * @return string
+     */
+    public function buildParameter(\ReflectionParameter $parameter, $commentType = null)
     {
         // 开始
         $s = [];
@@ -326,6 +234,15 @@ TEMPLATE;
         return $final;
     }
 
+    /**
+     * 生成value的表达式
+     *
+     * @param string $value 值
+     *
+     * @return string
+     *
+     * @throws Exception 如果是无法识别的value表达式,抛异常
+     */
     public function buildValue($value)
     {
         $typename = gettype($value);
