@@ -20,9 +20,42 @@ class Session
     const VERSION = '20200704';
 
     /**
+     * 配置项
+     */
+    protected $conf = [];
+
+    /**
+     * Session的数据
+     */
+    protected $data = [];
+
+    /**
      * 初始化
      */
     public function __construct()
+    {
+    }
+
+    /**
+     * 配置
+     *
+     * @param array $conf
+     */
+    public function config(array $conf)
+    {
+    }
+
+    /**
+     * 开始
+     */
+    public function start()
+    {
+    }
+
+    /**
+     * 销毁当前的session
+     */
+    public function destory()
     {
     }
 
@@ -71,13 +104,6 @@ class Session
      * 获取所有session
      */
     public function getAll()
-    {
-    }
-
-    /**
-     * 销毁当前的session
-     */
-    public function destory()
     {
     }
 }
