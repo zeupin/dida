@@ -9,7 +9,7 @@
  */
 
 /**
- * 把Dida的各个零部件的最新版本合并到本repo
+ * 把Dida的各个组件的最新版本合并到本repo
  */
 
 require __DIR__ . '/func.console.php';
@@ -29,9 +29,9 @@ if ($argc < 2) {
     $giturl = $argv[1];
 }
 
-// 参数2=名字(可有可无)
+// 参数2=名字(选填。如果没有，默认设为 merge-dida-component)
 if ($argc < 3) {
-    $name = 'temp-name';
+    $name = 'merge-dida-component';
 } else {
     $name = $argv[2];
 }
