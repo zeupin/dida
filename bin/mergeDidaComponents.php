@@ -13,7 +13,7 @@
 
 require __DIR__ . '/func.console.php';
 require __DIR__ . '/func.filesystem.php';
-require __DIR__ . '/func.dida_repo.php';
+require __DIR__ . '/func.dida.merge.php';
 
 // Dida的各个组件
 $components = [
@@ -33,7 +33,7 @@ foreach ($components as $index => $component) {
     echo sprintf("%s %d %s\n\n", str_repeat('-', 30), $index + 1, str_repeat('-', 30));
 
     // 合并
-    mergeDidaGitRepo($name, $giturl);
+    mergeDidaComponentRepo($name, $giturl);
 }
 
 // php-cs-fixer

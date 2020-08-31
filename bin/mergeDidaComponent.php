@@ -14,7 +14,7 @@
 
 require __DIR__ . '/func.console.php';
 require __DIR__ . '/func.filesystem.php';
-require __DIR__ . '/func.dida_repo.php';
+require __DIR__ . '/func.dida.merge.php';
 
 // repo的根目录
 $rootdir = dirname(__DIR__);
@@ -37,7 +37,7 @@ if ($argc < 3) {
 }
 
 // 导入
-mergeDidaGitRepo($name, $giturl);
+mergeDidaComponentRepo($name, $giturl);
 
 // php-cs-fixer
 $cmd = "php-cs-fixer fix \"$rootdir\"";
