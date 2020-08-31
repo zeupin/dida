@@ -7,7 +7,7 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
-function mergeDidaGitRepo($name, $giturl)
+function mergeDidaComponentRepo($name, $giturl)
 {
     $DS = DIRECTORY_SEPARATOR;
 
