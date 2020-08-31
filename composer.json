@@ -29,8 +29,8 @@
   },
   "scripts": {
     "cs": "php-cs-fixer fix .",
-    "test": "vendor/bin/phpunit tests",
-    "test:win": "vendor\\bin\\phpunit.bat tests",
+    "unittests": "vendor/bin/phpunit tests",
+    "unittests:win": "vendor\\bin\\phpunit.bat tests",
     "dida:merge": "php bin/mergeDidaComponent.php",
     "dida:mergeall": "php bin/mergeDidaComponents.php",
     "apidoc": "vendor/bin/phpdoc -d src/ -t docs/api/"
