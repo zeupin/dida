@@ -8,15 +8,15 @@
  */
 
 /**
- * 把Dida的各个零部件的最新版本合并到本repo
+ * 把Dida的各个组件的最新版本合并到本repo
  */
 
 require __DIR__ . '/func.console.php';
 require __DIR__ . '/func.filesystem.php';
 require __DIR__ . '/func.dida_repo.php';
 
-// Dida的各个零件
-$parts = [
+// Dida的各个组件
+$components = [
     ['dida-application', 'https://gitee.com/zeupin/dida-application.git'],
     ['dida-config', 'https://github.com/zeupin/dida-config.git'],
     ['dida-container', 'https://github.com/zeupin/dida-container.git'],
@@ -25,9 +25,9 @@ $parts = [
     ['dida-routing', 'https://gitee.com/zeupin/dida-routing.git'],
 ];
 
-// 把零件拼起来
-foreach ($parts as $index => $part) {
-    list($name, $giturl) = $part;
+// 把组件拼起来
+foreach ($components as $index => $component) {
+    list($name, $giturl) = $component;
 
     // 横线
     echo sprintf("%s %d %s\n\n", str_repeat('-', 30), $index + 1, str_repeat('-', 30));
