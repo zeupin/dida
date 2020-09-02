@@ -37,7 +37,8 @@
     "unittests:win": "vendor\\bin\\phpunit.bat tests",
     "dida:merge": "php bin/mergeDidaComponent.php",
     "dida:mergeall": "php bin/mergeDidaComponents.php",
-    "apidoc": "vendor/bin/phpdoc -d src/ -t docs/api/"
+    "apidoc": "vendor/bin/phpdoc -d src/ -t docs/api/",
+    "apidoc:win": "vendor\\bin\\phpdoc.bat -d src/ -t docs/api/"
   },
   "config": {
     "preferred-install": "dist",
