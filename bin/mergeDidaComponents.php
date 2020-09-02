@@ -17,7 +17,6 @@ require __DIR__ . '/func.dida.merge.php';
 
 // Dida的各个组件
 $components = [
-    ['dida-application', 'https://gitee.com/zeupin/dida-application.git'],
     ['dida-config', 'https://github.com/zeupin/dida-config.git'],
     ['dida-container', 'https://github.com/zeupin/dida-container.git'],
     ['dida-log', 'https://github.com/zeupin/dida-log.git'],
