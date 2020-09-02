@@ -306,14 +306,20 @@ class Request
      */
     public function session($name = null)
     {
+        // 如果session没有启用
         if (!isset($_SESSION)) {
-            $_SESSION = [];
+            if ($name === null) {
+                return [];
+            }
+            return $this->arrayValue([], $name);
         }
 
+        // 返回所有session
         if (is_null($name)) {
             return $_SESSION;
         }
 
+        // 返回指定session
         return $this->arrayValue($_SESSION, $name);
     }
 
