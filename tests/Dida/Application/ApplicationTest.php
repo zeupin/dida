@@ -21,7 +21,7 @@ class ApplicationTest extends TestCase
      */
     public function testInit1()
     {
-        Application::init('');
+        $app = new Application('');
     }
 
     /**
@@ -31,7 +31,7 @@ class ApplicationTest extends TestCase
      */
     public function testInit2()
     {
-        Application::init(__DIR__ . '/conf-null');
+        $app = new Application(__DIR__ . '/conf-null');
     }
 
     /**
@@ -39,34 +39,7 @@ class ApplicationTest extends TestCase
      */
     public function testInit3()
     {
-        Application::init(__DIR__ . '/conf-test');
-    }
-
-    /**
-     * 不允许多次初始化
-     *
-     * @expectedException \Exception
-     */
-    public function testInit4()
-    {
-        Application::init(__DIR__ . '/conf-test');
-        Application::init(__DIR__ . '/conf-test');
-    }
-
-    /**
-     * 如果还没有进行init()就执行run(),抛异常
-     *
-     * @expectedException \Exception
-     */
-    public function testRun1()
-    {
-        MyApp::setConfDir(null);
-
-        // confdir现在应该为null
-        $this->assertEquals(null, Application::confDir());
-
-        // run()
-        Application::run();
+        $app = new Application(__DIR__ . '/conf-test');
     }
 
     /**
@@ -74,21 +47,7 @@ class ApplicationTest extends TestCase
      */
     public function testRun()
     {
-        Application::init(__DIR__ . '/conf-test');
-        Application::run();
-    }
-}
-
-/**
- * 辅助类
- */
-class MyApp extends Application
-{
-    /**
-     * 强行修改$confdir的值
-     */
-    public static function setConfDir($confdir)
-    {
-        parent::$confdir = $confdir;
+        $app = new Application(__DIR__ . '/conf-test');
+        $app->run();
     }
 }
