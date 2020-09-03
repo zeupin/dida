@@ -98,11 +98,11 @@ abstract class Router
      * 匹配路由.
      *
      * 如果匹配成功
-     *      $this->matchError = ['code'=>0, 'msg'=>'']
-     *      $this->routeInfo  = 匹配到的路由
+     *      $this->matchError = ['code'=>0, 'msg'=>''];
+     *      $this->routeInfo  = 匹配到的路由;
      * 如果匹配失败
-     *      $this->matchError = ['code'=>错误码, 'msg'=>'错误原因']
-     *      $this->routeInfo  = $this->resetRouteInfo()
+     *      $this->matchError = ['code'=>错误码, 'msg'=>'错误原因'];
+     *      $this->routeInfo  = $this->resetRouteInfo();
      *
      * @param mixed $pathinfo 路径信息
      *
@@ -286,6 +286,8 @@ abstract class Router
 
     /**
      * 重置 routeInfo
+     *
+     * @return array 重置后的数值
      */
     protected function resetRouteInfo()
     {
@@ -294,10 +296,13 @@ abstract class Router
             'callback'   => null,
             'parameters' => [],
         ];
+        return $this->routeInfo;
     }
 
     /**
      * 重置 matchError
+     * 
+     * @return array 重置后的数值
      */
     protected function resetMatchError()
     {
@@ -305,10 +310,13 @@ abstract class Router
             'code' => 0,
             'msg'  => '',
         ];
+        return $this->matchError;
     }
 
     /**
      * 重置 executeError
+     * 
+     * @return array 重置后的数值
      */
     protected function resetExecuteError()
     {
@@ -316,5 +324,6 @@ abstract class Router
             'code' => 0,
             'msg'  => '',
         ];
+        return $this->executeError;
     }
 }
