@@ -1,14 +1,27 @@
-# `Dida\Application::run()`
+# bootstrap
 
-当执行 `Dida\Application::run()` 时, 会首先加载本目录中的`常量定义文件`(`constants.php`) 和`系统函数文件`(`functions.php`).
+在`composer.json`中设置了自动加载本目录中的指定文件：
 
-constants.php
+composer.json
+
+```json
+{
+  "autoload": {
+    "files": [
+      "src/Dida/bootstrap/constants.php",
+      "src/Dida/bootstrap/functions.php"
+    ],
+  },
+}
+```
+
+constants.php 全局常量
 
 ```php
 define('DS', DIRECTORY_SEPARATOR);
 ```
 
-functions.php
+functions.php 全局函数
 
 ```php
 ```
