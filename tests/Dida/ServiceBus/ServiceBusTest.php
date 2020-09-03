@@ -14,7 +14,11 @@ use Dida\ServiceBus;
 
 class ServiceBusTest extends TestCase
 {
-    public function testInit()
+    public function test1()
     {
+        ServiceBus::set("Request", new Dida\Http\Request);
+        ServiceBus::set("Response", new Dida\Http\Response);
+        ServiceBus::set("Cookie", new Dida\Http\Cookie);
+        ServiceBus::set("Session", new Dida\Http\Session);
     }
 }
