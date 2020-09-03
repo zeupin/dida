@@ -32,6 +32,9 @@
     }
   },
   "scripts": {
+    "post-update-cmd": [
+      "composer dump-autoload"
+    ],
     "cs": "php-cs-fixer fix .",
     "unittests": "vendor/bin/phpunit tests",
     "unittests:win": "vendor\\bin\\phpunit.bat tests",
