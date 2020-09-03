@@ -7,7 +7,7 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
-namespace \Dida\Facade;
+namespace Dida\Facade;
 
 use \Dida\Facade;
 
