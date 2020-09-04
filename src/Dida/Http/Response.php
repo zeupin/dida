@@ -75,9 +75,9 @@ class Response
     {
         // 缓存设置
         if ($cacheSetting === 'no-cache') {
-            self::setNoCache();
+            $this->disableCache();
         } elseif (is_array($cacheSetting)) {
-            self::setHeaders($cacheSetting);
+            $this->setHeaders($cacheSetting);
         }
 
         // 输出 json
@@ -97,9 +97,9 @@ class Response
     {
         // 缓存设置
         if ($cacheSetting === null) {
-            self::setNoCache();
+            $this->disableCache();
         } elseif (is_array($cacheSetting)) {
-            self::setHeaders($cacheSetting);
+            $this->setHeaders($cacheSetting);
         }
 
         // 执行
@@ -160,9 +160,9 @@ class Response
 
         // 缓存设置
         if ($cacheSetting === null) {
-            self::setNoCache();
+            $this->disableCache();
         } elseif (is_array($cacheSetting)) {
-            self::setHeaders($cacheSetting);
+            $this->setHeaders($cacheSetting);
         }
 
         // 设置输出报头
