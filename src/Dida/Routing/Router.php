@@ -241,15 +241,15 @@ abstract class Router
 
         // 如果check未通过
         if ($this->checkResult['code'] !== 0) {
-            $this->executeResult = [
-                "code" => $this->checkResult["code"],
-                "msg"  => "check失败",
-            ];
+            $this->executeResult = $this->checkResult;
             return false;
+        } else {
+            // 检查通过，则可以视为正常执行
+            $this->executeResult = [
+                'code'=> 0,
+                'msg' => '',
+            ];
         }
-
-        // 重置 executeResult
-        $this->resetExecuteResult();
 
         // callback
         $callback = $this->routeInfo['callback'];
@@ -270,7 +270,7 @@ abstract class Router
         }
 
         // 执行
-        // 成功返回执行结果, 出错返回false
+        // call_user_func_array(): 成功返回执行结果, 有错返回false
         return call_user_func_array($callback, $params);
     }
 
