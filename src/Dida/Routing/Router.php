@@ -144,43 +144,51 @@ abstract class Router
     /**
      * 检查routeInfo的callback是否可以执行
      *
-     * @return array ['code'=>xxx, 'msg'=>'xxxx']
+     * @return bool 检查通过，返回true。检查失败，返回false。
+     *              检查完成后，可以通过 $this->checkResult 变量查看更详细的结果。
      */
     public function check()
     {
+        // 重置 checkResult
+        $this->resetCheckResult();
+
         // callback
         $callback = $this->routeInfo['callback'];
 
-        // callback 未设置,返回失败
+        // 如果callback为空，直接返回失败
         if (!$callback) {
-            return [
+            $this->checkResult = [
                 'code' => Router::ERROR_CALLBACK_INVALID,
                 'msg'  => 'Invalid callback.',
             ];
+            return false;
         }
 
         // 普通的callable,正常返回
         if (is_callable($callback)) {
-            return [
+            $this->checkResult = [
                 'code' => 0,
                 'msg'  => '',
             ];
+            return true;
         }
 
         // 类型不是数组,返回失败
         if (!is_array($callback)) {
-            return [
+            $this->checkResult = [
                 'code' => Router::ERROR_CALLBACK_INVALID_TYPE,
                 'msg'  => 'Invalid callback type.',
             ];
+            return false;
         }
 
         // 数组的个数不对
         if (count($callback) < 2) {
-            return [
+            $this->checkResult = [
                 'code' => Router::ERROR_CALLBACK_INVALID,
                 'msg'  => 'Invalid callback.',
             ];
+            return false;
         }
 
         // 获取controller和action
@@ -188,40 +196,47 @@ abstract class Router
 
         // controller和action不是字符串
         if (!is_string($controller) || !is_string($action)) {
-            return [
+            $this->checkResult = [
                 'code' => Router::ERROR_CALLBACK_INVALID,
                 'msg'  => 'Invalid callback.',
             ];
+            return false;
         }
 
         // 如果controller不存在，则返回错误信息
         if (!class_exists($controller)) {
-            return [
+            $this->checkResult = [
                 'code' => Router::ERROR_CALLBACK_CONTROLLER_INVALID,
                 'msg'  => "Invalid callback controller '$controller'.",
             ];
+            return false;
         }
 
-        // 如果action不存在,也没有使用__call()魔术方法
+        // 如果action不存在
         if (!method_exists($controller, $action)) {
+            // 如果controller定义了魔术方法__call，可以视为action存在
             if (method_exists($controller, '__call')) {
-                return [
+                $this->checkResult = [
                     'code' => 0,
                     'msg'  => '',
                 ];
-            } else {
-                return [
-                    'code' => Router::ERROR_CALLBACK_ACTION_INVALID,
-                    'msg'  => "Invalid callback action '$controller::$action'",
-                ];
+                return true;
             }
+
+            // 其它情况返回action无效的错误信息
+            $this->checkResult = [
+                'code' => Router::ERROR_CALLBACK_ACTION_INVALID,
+                'msg'  => "Invalid callback action '$controller::$action'",
+            ];
+            return false;
         }
 
         // 正常返回
-        return [
+        $this->checkResult = [
             'code' => 0,
             'msg'  => '',
         ];
+        return true;
     }
 
     /**
@@ -233,25 +248,19 @@ abstract class Router
      */
     public function execute()
     {
-        // 重置 checkResult
-        $this->resetCheckResult();
-
-        // 先执行check检查
-        $this->check();
-
-        // 如果check未通过
-        if ($this->checkResult['code'] !== 0) {
+        // 先执行check检查。如果check未通过，报错后直接退出函数
+        if (!$this->check()) {
             $this->executeResult = $this->checkResult;
             return false;
-        } else {
-            // 检查通过，则可以视为正常执行
-            $this->executeResult = [
-                'code'=> 0,
-                'msg' => '',
-            ];
         }
 
-        // callback
+        // 检查通过，则可以视为正常执行
+        $this->executeResult = [
+            'code'=> 0,
+            'msg' => '',
+        ];
+
+        // 提取callback
         $callback = $this->routeInfo['callback'];
 
         // 如果callback是数组格式,则生成实例
