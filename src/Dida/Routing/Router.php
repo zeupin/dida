@@ -111,19 +111,20 @@ abstract class Router
     abstract public function match($pathinfo);
 
     /**
-     * 开始进行路由流程
+     * 运行一个完整的路由流程
+     * match() => check() => execute()
      *
      * @return int 成功, 返回0; 失败, 返回错误码
      */
-    public function start()
+    public function run($pathinfo)
     {
         // 如果match()失败
-        if ($this->match() === false) {
+        if ($this->match($pathinfo) === false) {
             return Router::MATCH_EXCEPTION;
         }
 
         // 如果check()失败
-        if ($this->check() === false) {
+        if ($this->check()['code']) {
             return Router::CHECK_EXCEPTION;
         }
 
@@ -301,7 +302,7 @@ abstract class Router
 
     /**
      * 重置 matchError
-     * 
+     *
      * @return array 重置后的数值
      */
     protected function resetMatchError()
@@ -315,7 +316,7 @@ abstract class Router
 
     /**
      * 重置 executeError
-     * 
+     *
      * @return array 重置后的数值
      */
     protected function resetExecuteError()
