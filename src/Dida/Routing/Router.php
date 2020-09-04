@@ -14,7 +14,7 @@ abstract class Router
     /**
      * 版本号
      */
-    const VERSION = '20200627';
+    const VERSION = '20200904';
 
     /**
      * 异常代码
@@ -52,25 +52,28 @@ abstract class Router
     ];
 
     /**
-     * 保存上一次match失败的详细信息
+     * 保存上一次match的结果
      */
-    protected $matchError = [
-        'code' => 0,
+    protected $matchResult = [
+        'code' => -1,
         'msg'  => '',
     ];
 
     /**
-     * 保存上一次execute失败的详细信息
+     * 保存上一次check的结果
      */
-    protected $executeError = [
-        'code' => 0,
+    protected $checkResult = [
+        'code' => -1,
         'msg'  => '',
     ];
 
     /**
-     * 初始化Router类
+     * 保存上一次execute的结果
      */
-    abstract public function __construct();
+    protected $executeResult = [
+        'code' => -1,
+        'msg'  => '',
+    ];
 
     /**
      * 获取 pathinfo
@@ -98,10 +101,10 @@ abstract class Router
      * 匹配路由.
      *
      * 如果匹配成功
-     *      $this->matchError = ['code'=>0, 'msg'=>''];
+     *      $this->matchResult = ['code'=>0, 'msg'=>''];
      *      $this->routeInfo  = 匹配到的路由;
      * 如果匹配失败
-     *      $this->matchError = ['code'=>错误码, 'msg'=>'错误原因'];
+     *      $this->matchResult = ['code'=>错误码, 'msg'=>'错误原因'];
      *      $this->routeInfo  = $this->resetRouteInfo();
      *
      * @param mixed $pathinfo 路径信息
@@ -112,7 +115,7 @@ abstract class Router
 
     /**
      * 运行一个完整的路由流程
-     * match() => check() => execute()
+     * match => check => execute
      *
      * @return int 成功, 返回0; 失败, 返回错误码
      */
@@ -123,14 +126,15 @@ abstract class Router
             return Router::MATCH_EXCEPTION;
         }
 
-        // 如果check()失败
-        if ($this->check()['code']) {
-            return Router::CHECK_EXCEPTION;
-        }
-
         // 如果execute()失败
-        if ($this->execute() === false && $this->executeError['code'] !== 0) {
-            return Router::EXECUTE_EXCEPTION;
+        if ($this->execute() === false) {
+            if ($this->checkResult["code"] !== 0) {
+                return Router::CHECK_EXCEPTION;
+            }
+
+            if ($this->executeResult["code"] !== 0) {
+                return Router::EXECUTE_EXCEPTION;
+            }
         }
 
         // 顺利完成
@@ -229,8 +233,23 @@ abstract class Router
      */
     public function execute()
     {
-        // 重置executeError
-        $this->resetExecuteError();
+        // 重置 checkResult
+        $this->resetCheckResult();
+
+        // 先执行check检查
+        $this->check();
+
+        // 如果check未通过
+        if ($this->checkResult['code'] !== 0) {
+            $this->executeResult = [
+                "code" => $this->checkResult["code"],
+                "msg"  => "check失败",
+            ];
+            return false;
+        }
+
+        // 重置 executeResult
+        $this->resetExecuteResult();
 
         // callback
         $callback = $this->routeInfo['callback'];
@@ -266,23 +285,33 @@ abstract class Router
     }
 
     /**
-     * 获取 matchError
+     * 获取 matchResult
      *
      * @return array
      */
-    public function getMatchError()
+    public function getMatchResult()
     {
-        return $this->matchError;
+        return $this->matchResult;
     }
 
     /**
-     * 获取 executeError
+     * 获取 checkResult
      *
      * @return array
      */
-    public function getExecuteError()
+    public function getCheckResult()
     {
-        return $this->executeError;
+        return $this->checkResult;
+    }
+
+    /**
+     * 获取 executeResult
+     *
+     * @return array
+     */
+    public function getExecuteResult()
+    {
+        return $this->executeResult;
     }
 
     /**
@@ -301,30 +330,44 @@ abstract class Router
     }
 
     /**
-     * 重置 matchError
+     * 重置 matchResult
      *
      * @return array 重置后的数值
      */
-    protected function resetMatchError()
+    protected function resetMatchResult()
     {
-        $this->matchError = [
-            'code' => 0,
+        $this->matchResult = [
+            'code' => -1,
             'msg'  => '',
         ];
-        return $this->matchError;
+        return $this->matchResult;
     }
 
     /**
-     * 重置 executeError
+     * 重置 checkResult
      *
      * @return array 重置后的数值
      */
-    protected function resetExecuteError()
+    protected function resetCheckResult()
     {
-        $this->executeError = [
-            'code' => 0,
+        $this->checkResult = [
+            'code' => -1,
             'msg'  => '',
         ];
-        return $this->executeError;
+        return $this->checkResult;
+    }
+
+    /**
+     * 重置 executeResult
+     *
+     * @return array 重置后的数值
+     */
+    protected function resetExecuteResult()
+    {
+        $this->executeResult = [
+            'code' => -1,
+            'msg'  => '',
+        ];
+        return $this->executeResult;
     }
 }
