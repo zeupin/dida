@@ -12,19 +12,19 @@ namespace Dida\Routing;
 use \Dida\Routing\Router;
 
 /**
- * Http路由
+ * 基于path的路由
  */
-class HttpRouter extends Router
+class PathRouter extends Router
 {
     /**
-     * @var 路由表
+     * @var array 路由表
      */
     protected $routes = [];
 
     /**
      * 载入路由表文件
      *
-     * @param $filepath 路由表文件路径
+     * @param $filepath 路由表的文件路径
      *
      * @return bool 成功返回true，失败返回false
      *
