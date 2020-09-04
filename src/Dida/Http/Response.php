@@ -17,7 +17,7 @@ class Response
     /**
      * Version
      */
-    const VERSION = '20200704';
+    const VERSION = '20200905';
 
     /**
      * 告知浏览器不要缓存
