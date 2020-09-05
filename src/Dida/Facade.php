@@ -19,7 +19,7 @@ abstract class Facade
     /**
      * 版本号
      */
-    const VERSION = '20200627';
+    const VERSION = '20200905';
 
     /**
      * 服务类型常数
@@ -64,10 +64,9 @@ abstract class Facade
      */
     public static function __callStatic($name, $arguments)
     {
-        // 第一次执行时, 先初始化
-        if (!static::$facadeServiceLink) {
-            static::setFacadeServiceLink();
-        }
+        // 设置FacadeService指向链接
+        // setFacadeServiceLink()是个抽象函数，在各个Facade的代码里面具体实现
+        static::setFacadeServiceLink();
 
         // 分解数组
         list($token, $type, $parameters, $newInstance) = static::$facadeServiceLink;
