@@ -10,7 +10,8 @@
 /**
  * 生成指定类的Facade伪方法
  *
- * 用法: php bin/makeFacade.php 要解析的类名
+ * 用法:
+ * php bin/makeFacadeMethods.php 要解析的类名
  *
  * @example
  * php bin/makeFacadeMethods.php \PDO
