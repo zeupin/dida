@@ -14,7 +14,16 @@ use \Dida\Facade;
 /*
  * Facade methods for Dida\Http\Session
  *
- * @method static start()
+ * @method static void __construct(array $conf = [])
+ * @method static void config(array $conf)
+ * @method static bool start()
+ * @method static bool destory()
+ * @method static bool unset()
+ * @method static bool has(string $key)
+ * @method static mixed|null get(string $key)
+ * @method static bool set(string $key, mixed $value)
+ * @method static void remove(string $key)
+ * @method static getAll()
  */
 class Session extends Facade
 {

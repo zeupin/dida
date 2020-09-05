@@ -14,8 +14,8 @@ use \Dida\Facade;
 /*
  * Facade methods for Dida\Http\Response
  *
- * @method static void setNoCache()
- * @method static void setAllowCORS()
+ * @method static void disableCache()
+ * @method static void allowCORS()
  * @method static void setHeaders(array $headers)
  * @method static void json(mixed $data, array|string $cacheSetting = 'no-cache')
  * @method static void redirect(string $url, array|null $cacheSetting = null)

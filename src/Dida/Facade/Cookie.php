@@ -14,17 +14,16 @@ use \Dida\Facade;
 /*
  * Facade methods for Dida\Http\Cookie
  *
- * @method static init()
- * @method static void setKey(string $key)
- * @method static void setPath(string $path)
- * @method static void setDomain(string $domain)
+ * @method static __construct(array $conf = [])
+ * @method static void config(array $conf)
+ * @method static void init()
  * @method static bool set(string $name, string $value, int $expires = 0, bool $secure = false, bool $httponly = false)
  * @method static bool setSafe(string $name, string $value, int $expires = 0, bool $secure = false, bool $httponly = false)
- * @method static string|null|false get(string $name)
+ * @method static string|null get(string $name)
  * @method static string|null getSafe(string $name)
- * @method static getAll()
+ * @method static array getAll()
  * @method static array getNames()
- * @method static remove(string $name, $path = null)
+ * @method static void remove(string $name, $path = null)
  */
 class Cookie extends Facade
 {
