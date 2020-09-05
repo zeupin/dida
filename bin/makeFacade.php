@@ -17,5 +17,5 @@ $make = new Dida\Make\Facade();
 $make->buildFacade('Dida\Http\Request', 'Request', '\\Dida\\Facade', 'Request', dirname(__DIR__) . "/src/Dida/Facade/Request.php");
 $make->buildFacade('Dida\Http\Response', 'Response', '\\Dida\\Facade', 'Response', dirname(__DIR__) . "/src/Dida/Facade/Response.php");
 $make->buildFacade('Dida\Http\Cookie', 'Cookie', '\\Dida\\Facade', 'Cookie', dirname(__DIR__) . "/src/Dida/Facade/Cookie.php");
-$make->buildFacade('Dida\Http\Cookie', 'Session', '\\Dida\\Facade', 'Session', dirname(__DIR__) . "/src/Dida/Facade/Session.php");
+$make->buildFacade('Dida\Http\Session', 'Session', '\\Dida\\Facade', 'Session', dirname(__DIR__) . "/src/Dida/Facade/Session.php");
 $make->buildFacade('Dida\Console\Console', 'Console', '\\Dida\\Facade', 'Console', dirname(__DIR__) . "/src/Dida/Facade/Console.php");
