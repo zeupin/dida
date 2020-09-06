@@ -66,23 +66,64 @@ class Response
     /**
      * 输出一个json应答
      *
-     * @param mixed        $data
-     * @param array|string $cacheSetting 缓存设置
+     * $options参数设置：
+     *     cache
+     *         不设置  默认禁用缓存
+     *         "default" 默认缓存
+     *     headers(或header，但是都要用如下二维数组形式)
+     *         [
+     *             "key1" => "value1", // 例如 header('Expires: 0')
+     *             "key2" => "value2", // header('key2: value2')
+     *         ]
+     *     pretty_print
+     *         true或1  输出格式化的json
+     *     json_encode_options
+     *         int  如果设置了这个值，则直接在json_encode中使用
+     *
+     * @param mixed $data
+     * @param array $options 输出设置
      *
      * @return void
      */
-    public function json($data, $cacheSetting = 'no-cache')
+    public function json($data, array $options = [])
     {
-        // 缓存设置
-        if ($cacheSetting === 'no-cache') {
+        // cache处理
+        // 如果没有设置cache，默认是禁用cache
+        if (array_key_exists("cache", $options)) {
+            switch ($options["cache"]) {
+                case "default":
+                    break;
+                default:
+                    $this->disableCache();
+            }
+        } else {
             $this->disableCache();
-        } elseif (is_array($cacheSetting)) {
-            $this->setHeaders($cacheSetting);
+        }
+
+        // header/headers处理
+        if (array_key_exists("header", $options)) {
+            $this->setHeaders($options["header"]);
+        }
+        if (array_key_exists("headers", $options)) {
+            $this->setHeaders($options["headers"]);
+        }
+
+        // json_encode
+        $json_options = JSON_UNESCAPED_UNICODE;
+
+        // pretty_print
+        if (array_key_exists("pretty_print", $options) && $options["pretty_print"]) {
+            $json_options = $json_options | JSON_PRETTY_PRINT;
+        }
+
+        // json_encode_options
+        if (array_key_exists("json_encode_options", $options)) {
+            $json_options = $options["json_encode_options"];
         }
 
         // 输出 json
         header('Content-Type:application/json; charset=utf-8');
-        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        echo json_encode($data, $json_options);
     }
 
     /**
