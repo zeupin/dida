@@ -7,8 +7,9 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
-use Dida\Config;
-use App\Router;
+use \Dida\Config;
+use \Dida\ServiceBus;
+use \App\Router; // 如果Router的namespace不是App，记得在这里修改！
 
 /*
  * ------------------------------------------------------------
@@ -23,11 +24,10 @@ date_default_timezone_set(Config::get("app.timezone"));
  * 注册服务
  * ------------------------------------------------------------
  */
-Dida\ServiceBus::set('App', $app);
-Dida\ServiceBus::set('Request', new Dida\Http\Request);
-Dida\ServiceBus::set('Response', new Dida\Http\Response);
-Dida\ServiceBus::set('Session', new Dida\Http\Session);
-Dida\ServiceBus::set('Cookie', new Dida\Http\Cookie);
+ServiceBus::set('Request', new Dida\Http\Request);
+ServiceBus::set('Response', new Dida\Http\Response);
+ServiceBus::set('Session', new Dida\Http\Session);
+ServiceBus::set('Cookie', new Dida\Http\Cookie);
 
 /*
  * ------------------------------------------------------------
@@ -41,4 +41,4 @@ $routepath = Dida\Facade\Request::getOffsetPath(DIDA_APP_URL);
 if (!$router->match($routepath)) {
     die("404 File Not Found");
 }
-Router::execute();
+$router->execute();

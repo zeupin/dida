@@ -10,6 +10,7 @@
 namespace Dida;
 
 use \Dida\Config;
+use \Dida\ServiceBus;
 
 /**
  * Dida\Application 基类
@@ -66,6 +67,9 @@ class Application
      */
     public function run()
     {
+        // 注册App实例
+        ServiceBus::set('App', $this);
+
         // 载入 bootstrap.php
         require $this->confdir . DS . "bootstrap.php";
     }
