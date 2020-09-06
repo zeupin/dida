@@ -9,6 +9,8 @@
 
 namespace Dida;
 
+use \Dida\Config;
+
 /**
  * Dida\Application 基类
  */
@@ -42,12 +44,17 @@ class Application
         // 把路径标准化
         $confdir = realpath($confdir);
 
-        // 形式检查一下confdir里面是否存在几个必须的配置文件.
-        // 如果不存在的话,在这里就抛异常.
-        $file = $confdir . DS . 'app.php';
-        if (!file_exists($file) || !is_file($file)) {
-            $errmsg = "Missing a required configuration file: $file.";
-            throw new \Exception($errmsg);
+        // 形式检查一下confdir里面是否存在几个必须的配置文件。
+        // 如果不存在的话,在这里就抛异常。
+        // 1. bootstrap.php 启动配置文件
+        // 2. app.php       App配置文件
+        $requiredfiles = ["bootstrap.php", "app.php"];
+        foreach ($requiredfiles as $filename) {
+            $file = $confdir . DS . $filename;
+            if (!file_exists($file) || !is_file($file)) {
+                $errmsg = "Missing a required configuration file: $file.";
+                throw new \Exception($errmsg);
+            }
         }
 
         // 保存配置文件目录
@@ -59,8 +66,8 @@ class Application
      */
     public function run()
     {
-        // 载入 app.php
-        require $this->confdir . DS . 'app.php';
+        // 载入 bootstrap.php
+        require $this->confdir . DS . "bootstrap.php";
     }
 
     /**
