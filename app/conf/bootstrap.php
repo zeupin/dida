@@ -35,7 +35,7 @@ ServiceBus::set('Cookie', new Dida\Http\Cookie);
  * ------------------------------------------------------------
  */
 $router = new Router;
-Dida\ServiceBus::set('Router', $router);
+ServiceBus::set('Router', $router);
 
 $routepath = Dida\Facade\Request::getOffsetPath(DIDA_APP_URL);
 if (!$router->match($routepath)) {
