@@ -8,8 +8,7 @@
  */
 
 $finder = PhpCsFixer\Finder::create()
-    ->exclude('temp')
-    ;
+    ->exclude('temp');
 
 return PhpCsFixer\Config::create()
     ->setRules([
@@ -100,7 +99,7 @@ return PhpCsFixer\Config::create()
         // 'phpdoc_no_useless_inheritdoc' => true,
         // 'phpdoc_return_self_reference' => true,
         // 'phpdoc_scalar' => true,
-        'phpdoc_separation' => true,
+        'phpdoc_separation'              => true,
         'phpdoc_single_line_var_spacing' => true,
         // 'phpdoc_summary' => true,
         // 'phpdoc_to_comment' => true,
