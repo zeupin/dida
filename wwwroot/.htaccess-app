@@ -1,0 +1,12 @@
+RewriteEngine On
+
+#
+# This is a single-application mode .htaccess sample.
+# In your project, please change the filename ".htaccess-app" to ".htaccess".
+#
+
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} ^(.*)$
+RewriteRule ^(.*)$ /index.php [QSA,L]

@@ -1,0 +1,20 @@
+RewriteEngine On
+
+#
+# This is a multi-application mode .htaccess sample.
+# In your project, please change the filename ".htaccess-apps" to ".htaccess".
+#
+
+# oa
+RewriteBase /oa
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} ^/oa(.*)$
+RewriteRule ^(.*)$ /oa/index.php [QSA]
+
+# crm
+RewriteBase /crm
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} ^/crm(.*)$
+RewriteRule ^(.*)$ /crm/index.php [QSA]
