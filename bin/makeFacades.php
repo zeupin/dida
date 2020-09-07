@@ -26,3 +26,4 @@ $make->buildFacade('Dida\Http\Response', 'Response', 'Dida\\Facades', 'Response'
 $make->buildFacade('Dida\Http\Cookie', 'Cookie', 'Dida\\Facades', 'Cookie', dirname(__DIR__) . "/src/Dida/Facades/Cookie.php");
 $make->buildFacade('Dida\Http\Session', 'Session', 'Dida\\Facades', 'Session', dirname(__DIR__) . "/src/Dida/Facades/Session.php");
 $make->buildFacade('Dida\Console\Console', 'Console', 'Dida\\Facades', 'Console', dirname(__DIR__) . "/src/Dida/Facades/Console.php");
+$make->buildFacade('Dida\Db\Db', 'Db', 'Dida\\Facades', 'Db', dirname(__DIR__) . "/src/Dida/Facades/Db.php");

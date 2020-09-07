@@ -11,6 +11,12 @@ namespace Dida\Facades;
 
 use \Dida\Facade;
 
+/*
+ * Facade methods for Dida\Db\Db
+ *
+ * @method static __construct(array $conf)
+ * @method static init()
+ */
 class Db extends Facade
 {
     protected static function setFacadeServiceLink()

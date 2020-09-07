@@ -17,7 +17,7 @@ use \Dida\Facade;
  * @method static void disableCache()
  * @method static void allowCORS()
  * @method static void setHeaders(array $headers)
- * @method static void json(mixed $data, array|string $cacheSetting = 'no-cache')
+ * @method static void json(mixed $data, array $options = [])
  * @method static void redirect(string $url, array|null $cacheSetting = null)
  * @method static bool download(string $srcfile, string $name = null, bool $mime = false, array|null $cacheSetting = null)
  */
