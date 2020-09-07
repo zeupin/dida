@@ -60,7 +60,7 @@ abstract class Facade
      *
      * @return mixed|false 成功,返回执行结果;有错,返回false.
      *
-     * @throws \RuntimeException Facade在执行call_user_func_array之前出错
+     * @throws \Exception Facade在执行call_user_func_array之前出错
      */
     public static function __callStatic($method_name, $arguments)
     {
@@ -81,7 +81,7 @@ abstract class Facade
 
             // 如果在实例化的时候有错,抛异常
             if (is_int($service)) {
-                throw new \RuntimeException("Getting \"$token\" service from ServiceBus fail.");
+                throw new \Exception("Getting \"$token\" service from ServiceBus fail.");
             }
 
             // 构造callback
@@ -94,7 +94,7 @@ abstract class Facade
         // 如果是实例类型
         if ($type === Facade::TYPE_INSTANCE) {
             // 已经是实例了,直接用就行
-            $callback = [$token, $name];
+            $callback = [$token, $method_name];
 
             // 返回执行结果
             return call_user_func_array($callback, $arguments);
@@ -102,14 +102,57 @@ abstract class Facade
 
         // 如果是静态类类型
         if ($type === Facade::TYPE_CLASSNAME) {
-            // callback在类名模式时, 实际执行的是静态方法ClassName::$name()
-            $callback = [$token, $name];
+            // callback在类名模式时, 实际执行的是静态方法ClassName::$method_name()
+            $callback = [$token, $method_name];
 
             // 返回执行结果
             return call_user_func_array($callback, $arguments);
         }
 
         // $type类型非法
-        throw new \RuntimeException("Illegal Facade type \"$type\"");
+        throw new \Exception("Illegal Facade type \"$type\"");
+    }
+
+    /**
+     * 获取Facade服务的实例
+     *
+     * @return object Facade绑定的服务实例
+     *
+     * @throws \Exception
+     */
+    public static function getFacadeService()
+    {
+        // 设置FacadeService指向链接
+        // setFacadeServiceLink()是个抽象函数，在各个Facade的代码里面具体实现
+        static::setFacadeServiceLink();
+
+        // 分解数组
+        list($token, $type, $parameters, $newInstance) = static::$facadeServiceLink;
+
+        // 如果是ServiceBus类型
+        if ($type === Facade::TYPE_SERVICE_BUS) {
+            if ($newInstance) {
+                $service = ServiceBus::getNew($token, $parameters);
+            } else {
+                $service = ServiceBus::get($token, $parameters);
+            }
+
+            // 如果在实例化的时候有错,抛异常
+            if (is_int($service)) {
+                throw new \Exception("Getting \"$token\" service from ServiceBus fail.");
+            }
+
+            // 返回
+            return $service;
+        }
+
+        // 如果是实例类型
+        if ($type === Facade::TYPE_INSTANCE) {
+            // 已经是实例了,直接用就行
+            return $token;
+        }
+
+        // 其它类型无法生成实例，直接抛异常
+        throw new \Exception("Illegal Facade type \"$type\"");
     }
 }
