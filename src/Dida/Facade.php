@@ -55,14 +55,14 @@ abstract class Facade
     /**
      * 调用__callStatic魔术方法
      *
-     * @param string $name
+     * @param string $method_name
      * @param array  $arguments
      *
      * @return mixed|false 成功,返回执行结果;有错,返回false.
      *
      * @throws \RuntimeException Facade在执行call_user_func_array之前出错
      */
-    public static function __callStatic($name, $arguments)
+    public static function __callStatic($method_name, $arguments)
     {
         // 设置FacadeService指向链接
         // setFacadeServiceLink()是个抽象函数，在各个Facade的代码里面具体实现
@@ -85,7 +85,7 @@ abstract class Facade
             }
 
             // 构造callback
-            $callback = [$service, $name];
+            $callback = [$service, $method_name];
 
             // 返回执行结果
             return call_user_func_array($callback, $arguments);
