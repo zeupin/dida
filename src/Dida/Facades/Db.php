@@ -15,6 +15,6 @@ class Db extends Facade
 {
     protected static function setFacadeServiceLink()
     {
-        static::$facadeServiceLink = ["DB", Facade::TYPE_SERVICE_BUS, [], false];
+        static::$facadeServiceLink = ["Db", Facade::TYPE_SERVICE_BUS, [], false];
     }
 }
