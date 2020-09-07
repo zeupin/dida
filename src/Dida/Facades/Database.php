@@ -11,7 +11,7 @@ namespace Dida\Facades;
 
 use \Dida\Facade;
 
-class DB extends Facade
+class Db extends Facade
 {
     protected static function setFacadeServiceLink()
     {
