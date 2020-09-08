@@ -69,4 +69,12 @@ class Db
         // 生成PDO实例
         $this->pdo = $this->driver->getPDO();
     }
+
+    /**
+     * 返回当前对象
+     */
+    public function _this()
+    {
+        return $this;
+    }
 }
