@@ -115,6 +115,11 @@ abstract class Facade
 
     /**
      * 获取Facade服务的实例
+     * 
+     * 1. 本函数只是提供一个应急手段，一般情况下尽量不要用，毕竟执行效率比较低。
+     * 2. 可以在Facade中定义一个_this()方法，返回实例对象，来达到和本函数同样的目的。这种方式
+     *    更安全、更快、更明确。只要使用 \Dida\Facades\Db::_this()，即可获取绑定的服务实例。
+     *    参见 \Dida\Facades\Db 的 _this() 代码。
      *
      * @return object Facade绑定的服务实例
      *
