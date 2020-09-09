@@ -16,6 +16,9 @@ use \Dida\Facade;
  *
  * @method static __construct(array $conf)
  * @method static init()
+ * @method static _this()
+ * @method static pdo()
+ * @method static schemainfo()
  */
 class Db extends Facade
 {

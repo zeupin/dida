@@ -15,4 +15,23 @@ class Mysql extends Driver
      * 版本号
      */
     const VERSION = '20200907';
+
+    /**
+     * 返回schemainfo实例
+     *
+     * @return \Dida\Db\SchemaInfo\SchemaInfo|false 成功返回SchemaInfo实例，失败返回false
+     */
+    public function schemainfo()
+    {
+        // 如果PDO未生成，则返回false
+        if (!$this->pdo instanceof \PDO) {
+            return false;
+        }
+
+        // 创建实例
+        $schemainfo = new \Dida\Db\SchemaInfo\Mysql($this->pdo);
+
+        // 返回
+        return $schemainfo;
+    }
 }

@@ -40,7 +40,7 @@ class Db
      *                      init()成功，为生成的PDO实例
      *                      init()失败，则为false
      */
-    public $pdo = null;
+    protected $pdo = null;
 
     /**
      * 开始
@@ -67,7 +67,7 @@ class Db
         $this->driver = new $this->conf["driver"]($this->conf);
 
         // 生成PDO实例
-        $this->pdo = $this->driver->getPDO();
+        $this->pdo = $this->driver->pdo();
     }
 
     /**
@@ -76,5 +76,21 @@ class Db
     public function _this()
     {
         return $this;
+    }
+
+    /**
+     * 返回PDO实例
+     */
+    public function pdo()
+    {
+        return $this->pdo;
+    }
+
+    /**
+     * 返回 driver->schemainfo()
+     */
+    public function schemainfo()
+    {
+        return $this->driver->schemainfo();
     }
 }
