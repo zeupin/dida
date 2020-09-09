@@ -89,4 +89,20 @@ class ArrayEx
         // 返回
         return $result;
     }
+
+    /**
+     * 将给出的数组，按照第col列，重新生成一个带key的新数组
+     *
+     * 常用于数据库的操作。数据库先用fetchAll()生成一个结果集数组，然后用这个函数为生成的数组加上特定的keys。
+     *
+     * @param array      $array 原数组
+     * @param int|string $col   指定按照原数组的哪一列作为新数组的key
+     *
+     * @return array|false 成功返回生成的新数组，失败返回false
+     */
+    public static function addKeys(array $array, $col)
+    {
+        $keys = array_column($array, $col);
+        return array_combine($keys, $array);
+    }
 }
