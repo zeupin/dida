@@ -11,7 +11,7 @@ namespace Dida\Db\Driver;
 
 use \PDO;
 
-class Driver
+abstract class Driver
 {
     /**
      * 版本号
@@ -26,6 +26,20 @@ class Driver
     protected $conf;
 
     /**
+     * 生成的PDO实例
+     *
+     * @var \PDO|false
+     */
+    protected $pdo;
+
+    /**
+     * SchemaInfo实例
+     *
+     * @var \Dida\Db\SchemaInfo
+     */
+    protected $schemainfo;
+
+    /**
      * 初始化
      */
     public function __construct(array $conf)
@@ -37,28 +51,41 @@ class Driver
      * 根据配置，生成PDO对象实例
      *
      * @return \PDO|false 成功返回PDO对象实例；失败返回false。
+     *                    如果返回了false，需要检查 $conf["dsn"] 是否未设置。
      */
-    public function getPDO()
+    public function pdo()
     {
         // 配置项
         $conf = $this->conf;
 
         // 如果没有定义dsn字段，则报错
         if (!array_key_exists('dsn', $conf)) {
-            return false;
+            $this->pdo = false;
+            return $this->pdo;
         }
 
         // 根据PDO规范，依次设置dsn,username,password,driver_options。
         // 参见PDO文档。
         if (!array_key_exists('username', $conf)) {
-            return new PDO($conf['dsn']);
+            $this->pdo = new PDO($conf['dsn']);
+            return $this->pdo;
         }
         if (!array_key_exists('password', $conf)) {
-            return new PDO($conf['dsn'], $conf['username']);
+            $this->pdo = new PDO($conf['dsn'], $conf['username']);
+            return $this->pdo;
         }
         if (!array_key_exists('options', $conf)) {
-            return new PDO($conf['dsn'], $conf['username'], $conf['password']);
+            $this->pdo = new PDO($conf['dsn'], $conf['username'], $conf['password']);
+            return $this->pdo;
         }
-        return new PDO($conf['dsn'], $conf['username'], $conf['password'], $conf['options']);
+        $this->pdo = new PDO($conf['dsn'], $conf['username'], $conf['password'], $conf['options']);
+        return $this->pdo;
     }
+
+    /**
+     * 返回schemainfo实例
+     *
+     * @return \Dida\Db\SchemaInfo\SchemaInfo|false 成功返回SchemaInfo实例，失败返回false
+     */
+    abstract public function schemainfo();
 }
