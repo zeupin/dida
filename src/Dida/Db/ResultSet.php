@@ -97,7 +97,7 @@ class ResultSet
      * @return int|false PDO执行成功，返回受影响的行数
      *                   PDO执行失败，返回false
      */
-    public function getRowsAffected()
+    public function rowCount()
     {
         if ($this->errCode === '00000') {
             return $this->pdostatement->rowCount();
