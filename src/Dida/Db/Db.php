@@ -116,28 +116,23 @@ class Db
         $sth = $this->pdo->prepare($sql);
         $sth->execute($params); // [1]
 
-        // 为输出做准备
-        $resultset = new ResultSet();
-
-        // 配置项
-        $resultset->options = $options;
-
         // 保存本次PDO的errorInfo
         $info = $this->pdo->errorInfo();
 
         // 标准的SQLSTATE错误码，5位字符串，没有错误时为00000
-        $resultset->errCode = $info[0];
+        $errCode = $info[0];
 
         // 本次PDO执行正常，errMsg=""
         // 本次PDO执行失败，errMsg="[驱动级错误码]: 驱动级错误信息"
         if ($info[0] === '00000') {
-            $resultset->errMsg = '';
+            $errMsg = '';
         } else {
-            $resultset->errMsg = sprintf("[%s]: %s", $info[1], $info[2]);
+            $errMsg = sprintf("[%s]: %s", $info[1], $info[2]);
         }
 
-        // PDOStatement实例
-        $resultset->pdostatement = $sth;
+        // 为输出做准备
+        $resultset = new ResultSet();
+        $resultset->init($errCode, $errMsg, $sth, $options);
 
         // 返回resultset，供下一步处理
         return $resultset;

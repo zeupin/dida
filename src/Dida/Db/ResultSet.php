@@ -92,6 +92,26 @@ class ResultSet
     }
 
     /**
+     * SQL是否执行成功
+     *
+     * @return bool
+     */
+    public function success()
+    {
+        return ($this->errCode === '00000');
+    }
+
+    /**
+     * SQL是否执行失败
+     *
+     * @return bool
+     */
+    public function fail()
+    {
+        return ($this->errCode !== '00000');
+    }
+
+    /**
      * 返回受影响的行数
      *
      * @return int|false PDO执行成功，返回受影响的行数
@@ -104,16 +124,6 @@ class ResultSet
         } else {
             return false;
         }
-    }
-
-    /**
-     * SQL是否执行成功
-     *
-     * @return bool
-     */
-    public function success()
-    {
-        return ($this->errCode === '00000');
     }
 
     /**
