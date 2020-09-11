@@ -111,6 +111,9 @@ class Db
      * 执行SQL后，会设置resultset的code、msg、pdostatement属性
      * 然后在 execRead/execWrite 中设置resultset的data或者rowsAffected
      *
+     * 特别注意！
+     * [1] 如果$sql有语法错误，但是在PDO->execute()后，errorCode依然会为"00000"，有点奇怪，需要注意。
+     *
      * @param string $sql
      * @param array  $params
      * @param array  $options
@@ -121,7 +124,7 @@ class Db
     {
         // 执行标准数据库操作
         $sth = $this->pdo->prepare($sql);
-        $sth->execute($params);
+        $sth->execute($params); // [1]
 
         // 为输出做准备
         $resultset = new ResultSet();
@@ -161,8 +164,14 @@ class Db
      */
     public function execRead($sql, array $params = [], array $options = [])
     {
+        // 先执行通用处理
         $resultset = $this->execCommon($sql, $params, $options);
+
+        // 标记exectype为读操作
         $resultset->exectype = ResultSet::EXEC_READ;
+
+        // 返回，供后面继续调用
+        return $resultset;
     }
 
     /**
@@ -176,7 +185,13 @@ class Db
      */
     public function execWrite($sql, array $params = [], array $options = [])
     {
+        // 先执行通用处理
         $resultset = $this->execCommon($sql, $params, $options);
+
+        // 标记exectype为写操作
         $resultset->exectype = ResultSet::EXEC_WRITE;
+
+        // 返回，供后面继续调用
+        return $resultset;
     }
 }

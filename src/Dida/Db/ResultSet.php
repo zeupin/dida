@@ -9,6 +9,8 @@
 
 namespace Dida\Db;
 
+use Dida\Util\ArrayEx;
+
 /**
  * 结果集
  */
@@ -122,7 +124,7 @@ class ResultSet
      */
     public function fetch()
     {
-        return $this->pdostatament->fetch();
+        return $this->pdostatement->fetch();
     }
 
     /**
@@ -133,14 +135,76 @@ class ResultSet
      */
     public function fetchAll()
     {
-        return $this->pdostatament->fetchAll();
+        return $this->pdostatement->fetchAll();
     }
 
     /**
      * 参见PHP官方文档的 PDOStatement::fetchColumn()
+     *
+     * 注意：fetchColumn()的参数只能是列序号，不能是列名。
+     * 如果想用列名，需要使用getColumn()函数。
+     *
+     * @param int $col_number 列的序号
+     *
+     * @return mixed|false 成功返回结果
+     *                     失败返回false
      */
-    public function fetchColumn($col_number = 0)
+    public function fetchColumn($col_number)
     {
-        return $this->pdostatement->fetchColumn($col_number);
+        return $this->pdostatement->fetchAll();
+    }
+
+    /**
+     * fetch()的别名
+     *
+     * @return array
+     */
+    public function getRow()
+    {
+        return $this->fetch();
+    }
+
+    /**
+     * fetchAll()的别名
+     *
+     * @return array
+     */
+    public function getRows()
+    {
+        return $this->fetchAll();
+    }
+
+    /**
+     * 返回指定的某列的值
+     *
+     * @param int|string $col 列序号或者列名
+     *
+     * @return mixed|false 成功返回获取的值
+     *                     有错返回false
+     */
+    public function getColumn($col)
+    {
+        $row = $this->fetch();
+
+        if (!$row) {
+            return false;
+        }
+
+        // 返回结果
+        return $row[$col];
+    }
+
+    /**
+     * 返回所有行，并将其中的$key_col列的值作为键
+     *
+     * @param int|string $key_col 拟作为键值列的序号或者键名
+     *
+     * @return array
+     */
+    public function getRowsWithKeys($key_col)
+    {
+        $rows = $this->fetchAll();
+        $keys = array_column($rows, $key_col);
+        return array_combine($keys, $rows);
     }
 }
