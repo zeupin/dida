@@ -76,16 +76,6 @@ class Db
     }
 
     /**
-     * 返回当前对象
-     *
-     * @return \Dida\Db\Db
-     */
-    public function _this()
-    {
-        return $this;
-    }
-
-    /**
      * 返回PDO实例
      *
      * @return \PDO|null|false
@@ -139,11 +129,11 @@ class Db
         $resultset->errCode = $info[0];
 
         // 本次PDO执行正常，errMsg=""
-        // 本次PDO执行失败，errMsg="驱动级错误码:驱动级错误信息"
+        // 本次PDO执行失败，errMsg="[驱动级错误码]: 驱动级错误信息"
         if ($info[0] === '00000') {
             $resultset->errMsg = '';
         } else {
-            $resultset->errMsg = $info[1] . ":" . $info[2];
+            $resultset->errMsg = sprintf("[%s]: %s", $info[1], $info[2]);
         }
 
         // PDOStatement实例
