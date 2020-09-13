@@ -88,11 +88,24 @@ class Db
     /**
      * 返回 driver->schemainfo()
      *
-     * @return \Dida\Db\SchemaInfo\SchemaInfo
+     * @return \Dida\Db\SchemaInfo
      */
     public function schemainfo()
     {
         return $this->driver->schemainfo();
+    }
+
+    /**
+     * 返回 driver->table($name, $prefix, $db)
+     *
+     * @param string $name   数据表名
+     * @param string $prefix 数据表名前缀
+     *
+     * @return \Dida\Db\Table
+     */
+    public function table($name, $prefix)
+    {
+        return $this->driver->table($name, $prefix, $this);
     }
 
     /**
@@ -115,7 +128,6 @@ class Db
         // 执行标准数据库操作
         $sth = $this->pdo->prepare($sql);
         $sth->execute($params); // [1]
-
         // 保存本次PDO的errorInfo
         $info = $this->pdo->errorInfo();
 
