@@ -7,7 +7,7 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
-namespace Dida\Db\SchemaInfo;
+namespace Dida\Db;
 
 use \PDO;
 
