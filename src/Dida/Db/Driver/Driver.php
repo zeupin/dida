@@ -16,7 +16,7 @@ abstract class Driver
     /**
      * 版本号
      */
-    const VERSION = '20200907';
+    const VERSION = '20200913';
 
     /**
      * 配置项
@@ -85,7 +85,16 @@ abstract class Driver
     /**
      * 返回schemainfo实例
      *
-     * @return \Dida\Db\SchemaInfo\SchemaInfo|false 成功返回SchemaInfo实例，失败返回false
+     * @return \Dida\Db\SchemaInfo|false 成功返回SchemaInfo实例，失败返回false
      */
     abstract public function schemainfo();
+
+    /**
+     * 返回table实例
+     *
+     * @param string      $name   数据表名
+     * @param string      $prefix 数据表名前缀
+     * @param \Dida\Db\Db $db     当前db的实例
+     */
+    abstract public function table($name, $prefix, $db);
 }
