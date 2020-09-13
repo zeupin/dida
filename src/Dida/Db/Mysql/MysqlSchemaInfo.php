@@ -7,12 +7,12 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
-namespace Dida\Db\SchemaInfo;
+namespace Dida\Db\Mysql;
 
 use \PDO;
 use \Dida\Util\ArrayEx;
 
-class Mysql extends SchemaInfo
+class MysqlSchemaInfo extends \Dida\Db\SchemaInfo
 {
     /**
      * 版本号

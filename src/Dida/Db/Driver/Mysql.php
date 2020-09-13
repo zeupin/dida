@@ -14,12 +14,12 @@ class Mysql extends Driver
     /**
      * 版本号
      */
-    const VERSION = '20200907';
+    const VERSION = '20200913';
 
     /**
      * 返回schemainfo实例
      *
-     * @return \Dida\Db\SchemaInfo\SchemaInfo|false 成功返回SchemaInfo实例，失败返回false
+     * @return \Dida\Db\Mysql\MysqlSchemaInfo|false 成功返回SchemaInfo实例，失败返回false
      */
     public function schemainfo()
     {
@@ -33,5 +33,20 @@ class Mysql extends Driver
 
         // 返回
         return $schemainfo;
+    }
+
+    /**
+     * 返回一个MysqlTable实例
+     *
+     * @param string      $name   数据表名
+     * @param string      $prefix 数据表名前缀
+     * @param \Dida\Db\Db $db     当前db的实例
+     *
+     * @return \Dida\Db\Mysql\MysqlTable
+     */
+    public function table($name, $prefix, $db)
+    {
+        $table = new \Dida\Db\Mysql\MysqlTable($name, $prefix, $db);
+        return $table;
     }
 }
