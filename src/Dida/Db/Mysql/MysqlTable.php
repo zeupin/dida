@@ -7,7 +7,7 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
-namespace Dida\Db;
+namespace Dida\Db\Mysql;
 
 /**
  * Mysql数据表操作
