@@ -105,4 +105,40 @@ class ArrayEx
         $keys = array_column($array, $col);
         return array_combine($keys, $array);
     }
+
+    /**
+     * 只允许白名单中的元素，非白名单的元素全部都删除
+     *
+     * @param array $array
+     * @param array $keys
+     *
+     * @return array
+     */
+    public static function allow(array $array, array $keys)
+    {
+        foreach ($array as $k=>$v) {
+            if (!in_array($k, $keys)) {
+                unset($array[$k]);
+            }
+        }
+        return $array;
+    }
+
+    /**
+     * 删除在黑名单中的元素，其它的保留
+     *
+     * @param array $array
+     * @param array $keys
+     *
+     * @return array
+     */
+    public static function disallow(array $array, array $keys)
+    {
+        foreach ($array as $k=>$v) {
+            if (in_array($k, $keys)) {
+                unset($array[$k]);
+            }
+        }
+        return $array;
+    }
 }
