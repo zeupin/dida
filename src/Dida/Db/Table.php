@@ -173,31 +173,38 @@ SQL;
     /**
      * SELECT操作
      *
-     * @param array  $fieldlist 字段列表
-     * @param array  $where     条件
-     * @param string $limit     LIMIT子句
+     * @param array|string $fieldlist 字段列表
+     * @param array        $where     条件
+     * @param string       $limit     LIMIT子句
      *
      * @return \Dida\Db\ResultSet
      */
-    public function select(array $fieldlist, array $where = [], $limit = '')
+    public function select($fieldlist = '*', array $where = [], $limit = '')
     {
         // SQL的参数
         $params = [];
 
         // 字段列表
-        $_fields = [];
-        foreach ($fieldlist as $as => $field) {
-            if (is_int($as)) {
-                $_fields[] = "{$this->borderchar}$field{$this->borderchar}";
-            } else {
-                $_fields[] = "{$this->borderchar}$field{$this->borderchar} AS {$this->borderchar}$as{$this->borderchar}";
+        if (is_string($fieldlist)) {
+            $_fields = $fieldlist;
+        } elseif (is_array($fieldlist)) {
+            $_fields = [];
+            foreach ($fieldlist as $as => $field) {
+                if (is_int($as)) {
+                    $_fields[] = "{$this->borderchar}$field{$this->borderchar}";
+                } else {
+                    $_fields[] = "{$this->borderchar}$field{$this->borderchar} AS {$this->borderchar}$as{$this->borderchar}";
+                }
             }
+            $_fields = implode(", ", $_fields);
+        } else {
+            throw new \Exception("Invalid '\$fieldlist' paramater type.");
         }
-        $_fields = implode(", ", $_fields);
 
         // where子句
         $_where = '';
         if ($where) {
+            $_where = [];
             foreach ($where as $field => $value) {
                 $_where[] = "{$this->borderchar}$field{$this->borderchar} = ?";
                 $params[] = $value;
@@ -232,27 +239,33 @@ SQL;
     /**
      * COUNT
      *
-     * @param array  $fieldlist 字段列表
-     * @param array  $where     条件
-     * @param string $limit     LIMIT子句
+     * @param array|string $fieldlist 字段列表。从性能原因考虑，这个参数最好用表的主键名。
+     * @param array        $where     条件
+     * @param string       $limit     LIMIT子句
      *
      * @return int|false 成功返回count，失败返回false
      */
-    public function count(array $fieldlist, array $where = [], $limit = '')
+    public function count($fieldlist = '*', array $where = [])
     {
         // SQL的参数
         $params = [];
 
         // 字段列表
-        $_fields = [];
-        foreach ($fieldlist as $as => $field) {
-            if (is_int($as)) {
-                $_fields[] = "{$this->borderchar}$field{$this->borderchar}";
-            } else {
-                $_fields[] = "{$this->borderchar}$field{$this->borderchar} AS {$this->borderchar}$as{$this->borderchar}";
+        if (is_string($fieldlist)) {
+            $_fields = $fieldlist;
+        } elseif (is_array($fieldlist)) {
+            $_fields = [];
+            foreach ($fieldlist as $as => $field) {
+                if (is_int($as)) {
+                    $_fields[] = "{$this->borderchar}$field{$this->borderchar}";
+                } else {
+                    $_fields[] = "{$this->borderchar}$field{$this->borderchar} AS {$this->borderchar}$as{$this->borderchar}";
+                }
             }
+            $_fields = implode(", ", $_fields);
+        } else {
+            throw new \Exception("Invalid '\$fieldlist' paramater type.");
         }
-        $_fields = implode(", ", $_fields);
 
         // where子句
         $_where = '';
@@ -265,12 +278,6 @@ SQL;
             $_where = "WHERE\n    $_where\n";
         }
 
-        // limit子句
-        $_limit = '';
-        if ($limit) {
-            $_limit = "LIMIT $limit";
-        }
-
         // 生成SQL语句
         $sql = <<<SQL
 SELECT
@@ -278,7 +285,6 @@ SELECT
 FROM
     {$this->borderchar}$this->table{$this->borderchar}
 $_where
-$_limit
 SQL;
 
         // 执行

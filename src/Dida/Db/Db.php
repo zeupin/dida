@@ -103,7 +103,7 @@ class Db
      *
      * @return \Dida\Db\Table
      */
-    public function table($name, $prefix)
+    public function table($name, $prefix = '')
     {
         return $this->driver->table($name, $prefix, $this);
     }
@@ -128,6 +128,7 @@ class Db
         // 执行标准数据库操作
         $sth = $this->pdo->prepare($sql);
         $sth->execute($params); // [1]
+
         // 保存本次PDO的errorInfo
         $info = $this->pdo->errorInfo();
 
