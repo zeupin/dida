@@ -12,7 +12,7 @@ namespace Dida\Db\Mysql;
 /**
  * Mysql数据表操作
  */
-class MysqlTable extends \Dida\Db\Table
+class MysqlTable extends \Dida\Db\Query\Table
 {
     /**
      * 版本号
@@ -20,7 +20,11 @@ class MysqlTable extends \Dida\Db\Table
     const VERSION = '20200913';
 
     /**
-     * @var string Mysql的定界符是"`"
+     * 设置标识引用符
      */
-    protected $borderchar = "`";
+    protected function setIdentifierQuote()
+    {
+        $this->left_quote = '`';
+        $this->right_quote = '`';
+    }
 }

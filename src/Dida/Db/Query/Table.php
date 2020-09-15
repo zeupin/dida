@@ -7,12 +7,12 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
-namespace Dida\Db;
+namespace Dida\Db\Query;
 
 /**
  * 数据表
  */
-class Table
+abstract class Table
 {
     /**
      * 版本号
@@ -20,7 +20,9 @@ class Table
     const VERSION = '20200913';
 
     /**
-     * @var string 数据表名
+     * 数据表名
+     *
+     * @var string
      */
     protected $table = null;
 
@@ -35,9 +37,36 @@ class Table
     protected $pdo;
 
     /**
-     * @var string 名称定界符
+     * 标识引用符，左
+     *
+     * @var string
+     *
+     * @see setIdentifierQuote()
      */
-    protected $borderchar = '';
+    protected $left_quote = '';
+
+    /**
+     * 标识引用符，右
+     *
+     * @var string
+     *
+     * @see setIdentifierQuote()
+     */
+    protected $right_quote = '';
+
+    /**
+     * 设置标识符引用字符
+     *
+     * 1. 对Mysql，左右标识引用字符分别为 ``
+     * 2. 对Sqlite，左右标识引用字符分别为 ""
+     * 3. 对Access，左右标识引用字符分别为 []
+     *
+     * @param string $left_quote
+     * @param string $right_quote
+     *
+     * @return void
+     */
+    abstract protected function setIdentifierQuote();
 
     /**
      * __construct
@@ -51,6 +80,9 @@ class Table
         $this->table = $prefix . $name;
         $this->db = $db;
         $this->pdo = $db->pdo();
+
+        // 设置标识符引用字符
+        $this->setIdentifierQuote();
     }
 
     /**
@@ -67,7 +99,7 @@ class Table
      *
      * @return array|false 成功返回array，失败返回false
      */
-    protected function whereClause($where)
+    protected function clauseWHERE($where)
     {
         // 如果where为字符串
         if (is_string($where)) {
@@ -108,7 +140,7 @@ class Table
                 $sql = [];
                 $params = [];
                 foreach ($where as $k => $v) {
-                    $sql[] = "{$this->borderchar}$k{$this->borderchar} = ?";
+                    $sql[] = "{$this->left_quote}$k{$this->right_quote} = ?";
                     $params[] = $v;
                 }
                 $ret = [
@@ -129,7 +161,7 @@ class Table
      *
      * @return array|false 成功返回array，失败返回false
      */
-    protected function setClause(array $row)
+    protected function clauseSET(array $row)
     {
         // 如果$row为[]，直接抛异常
         if (!$row) {
@@ -140,7 +172,7 @@ class Table
         $sql = [];
         $params = [];
         foreach ($row as $field => $value) {
-            $sql[] = "{$this->borderchar}$field{$this->borderchar} = ?";
+            $sql[] = "{$this->left_quote}$field{$this->right_quote} = ?";
             $params[] = $value;
         }
         return [
@@ -153,21 +185,21 @@ class Table
      * UPDATE操作
      *
      * @param array        $row   要更新的数据项
-     * @param array|string $where 条件。参见 $this->whereClause()。
+     * @param array|string $where 条件。参见 $this->clauseWHERE()。
      *
      * @return \Dida\Db\ResultSet
      */
     public function update(array $row, $where)
     {
         // set子句
-        $_set = $this->setClause($row);
+        $_set = $this->clauseSET($row);
 
         // where子句
-        $_where = $this->whereClause($where);
+        $_where = $this->clauseWHERE($where);
 
         // 构造sql
         $sql = <<<SQL
-UPDATE {$this->borderchar}$this->table{$this->borderchar}
+UPDATE {$this->left_quote}$this->table{$this->right_quote}
 {$_set["sql"]}
 {$_where["sql"]}
 SQL;
@@ -198,7 +230,7 @@ SQL;
         $_fields = [];
         $_values = [];
         foreach ($row as $field => $value) {
-            $_fields[] = "{$this->borderchar}$field{$this->borderchar}";
+            $_fields[] = "{$this->left_quote}$field{$this->right_quote}";
             $_values[] = '?';
             $params[] = $value;
         }
@@ -207,7 +239,7 @@ SQL;
 
         // SQL
         $sql = <<<SQL
-INSERT INTO {$this->borderchar}$this->table{$this->borderchar}
+INSERT INTO {$this->left_quote}$this->table{$this->right_quote}
     ($_fields)
 VALUES
     ($_values)
@@ -223,17 +255,17 @@ SQL;
     /**
      * DELETE操作
      *
-     * @param array|string $where 条件。参见 $this->whereClause()。
+     * @param array|string $where 条件。参见 $this->clauseWHERE()。
      *
      * @return \Dida\Db\ResultSet
      */
     public function delete(array $where)
     {
-        $_where = $this->whereClause($where);
+        $_where = $this->clauseWHERE($where);
 
         // 构造sql
         $sql = <<<SQL
-DELETE FROM {$this->borderchar}$this->table{$this->borderchar}
+DELETE FROM {$this->left_quote}$this->table{$this->right_quote}
 $_where
 SQL;
         // 构造params
@@ -250,7 +282,7 @@ SQL;
      * SELECT操作
      *
      * @param array|string $fieldlist 字段列表
-     * @param array|string $where     条件。参见 $this->whereClause()。
+     * @param array|string $where     条件。参见 $this->clauseWHERE()。
      * @param string       $limit     LIMIT子句
      *
      * @return \Dida\Db\ResultSet
@@ -264,9 +296,9 @@ SQL;
             $_fields = [];
             foreach ($fieldlist as $as => $field) {
                 if (is_int($as)) {
-                    $_fields[] = "{$this->borderchar}$field{$this->borderchar}";
+                    $_fields[] = "{$this->left_quote}$field{$this->right_quote}";
                 } else {
-                    $_fields[] = "{$this->borderchar}$field{$this->borderchar} AS {$this->borderchar}$as{$this->borderchar}";
+                    $_fields[] = "{$this->left_quote}$field{$this->right_quote} AS {$this->left_quote}$as{$this->right_quote}";
                 }
             }
             $_fields = implode(", ", $_fields);
@@ -275,7 +307,7 @@ SQL;
         }
 
         // where子句
-        $_where = $this->whereClause($where);
+        $_where = $this->clauseWHERE($where);
 
         // limit子句
         $_limit = '';
@@ -288,7 +320,7 @@ SQL;
 SELECT
     $_fields
 FROM
-    {$this->borderchar}$this->table{$this->borderchar}
+    {$this->left_quote}$this->table{$this->right_quote}
 {$_where["sql"]}
 $_limit
 SQL;
@@ -307,7 +339,7 @@ SQL;
      * COUNT
      *
      * @param array|string $fieldlist 字段列表。从性能原因考虑，这个参数最好设置为表的主键。
-     * @param array|string $where     条件。参见 $this->whereClause()。
+     * @param array|string $where     条件。参见 $this->clauseWHERE()。
      * @param string       $limit     LIMIT子句
      *
      * @return int|false 成功返回count，失败返回false
@@ -321,9 +353,9 @@ SQL;
             $_fields = [];
             foreach ($fieldlist as $as => $field) {
                 if (is_int($as)) {
-                    $_fields[] = "{$this->borderchar}$field{$this->borderchar}";
+                    $_fields[] = "{$this->left_quote}$field{$this->right_quote}";
                 } else {
-                    $_fields[] = "{$this->borderchar}$field{$this->borderchar} AS {$this->borderchar}$as{$this->borderchar}";
+                    $_fields[] = "{$this->left_quote}$field{$this->right_quote} AS {$this->left_quote}$as{$this->right_quote}";
                 }
             }
             $_fields = implode(", ", $_fields);
@@ -332,14 +364,14 @@ SQL;
         }
 
         // where子句
-        $_where = $this->whereClause($where);
+        $_where = $this->clauseWHERE($where);
 
         // 构造sql
         $sql = <<<SQL
 SELECT
-    COUNT($_fields) AS {$this->borderchar}count{$this->borderchar}
+    COUNT($_fields) AS {$this->left_quote}count{$this->right_quote}
 FROM
-    {$this->borderchar}$this->table{$this->borderchar}
+    {$this->left_quote}$this->table{$this->right_quote}
 {$_where["sql"]}
 SQL;
 

@@ -101,7 +101,7 @@ class Db
      * @param string $name   数据表名
      * @param string $prefix 数据表名前缀
      *
-     * @return \Dida\Db\Table
+     * @return \Dida\Db\Query\Table
      */
     public function table($name, $prefix = '')
     {

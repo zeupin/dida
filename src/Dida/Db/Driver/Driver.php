@@ -95,6 +95,8 @@ abstract class Driver
      * @param string      $name   数据表名
      * @param string      $prefix 数据表名前缀
      * @param \Dida\Db\Db $db     当前db的实例
+     *
+     * @return \Dida\Db\Query\Table
      */
     abstract public function table($name, $prefix, $db);
 }
