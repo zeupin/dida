@@ -54,42 +54,126 @@ class Table
     }
 
     /**
+     * WHERE子句
+     *
+     * $where为空串: 不要WHERE子句
+     * $where为字符串: 输出 WHERE $where
+     * $where为关联数组: $key=$value，并用AND连接
+     * $where为序列数组：（功能预留，可以做更复杂的处理）
+     *
+     * 如果为复杂表达式，建议用字符串形式。
+     *
+     * @param array|string $where 条件
+     *
+     * @return array|false 成功返回array，失败返回false
+     */
+    protected function whereClause($where)
+    {
+        // 如果where为字符串
+        if (is_string($where)) {
+            if (trim($where) === '') {
+                $ret = [
+                    'sql'    => '',
+                    'params' => [],
+                ];
+                return $ret;
+            } else {
+                $ret = [
+                    'sql'    => "WHERE $where",
+                    'params' => [],
+                ];
+                return $ret;
+            }
+        }
+
+        // 如果$where为数组
+        if (is_array($where)) {
+            // 如果为[]空数组，表示不需要WHERE子句
+            if (!$where) {
+                $ret = [
+                    'sql'    => '',
+                    'params' => [],
+                ];
+                return $ret;
+            }
+
+            // 取$where的第一个key。
+            // 根据这个key判断$where是关联数组还是序列数组，然后根据不同的类型进行处理。
+            if (key($where) === 0) {
+                // 如果为序列数组
+                // todo 预留
+                throw new \Exception('"$where" parameter shoule be an assoc array or a string.');
+            } else {
+                // 如果为关联数组
+                $sql = [];
+                $params = [];
+                foreach ($where as $k => $v) {
+                    $sql[] = "{$this->borderchar}$k{$this->borderchar} = ?";
+                    $params[] = $v;
+                }
+                $ret = [
+                    'sql'    => 'WHERE ' . implode(" AND ", $sql),
+                    'params' => $params,
+                ];
+                return $ret;
+            }
+        }
+
+        throw new \Exception('"$where" parameter type is invalid.');
+    }
+
+    /**
+     * SET子句
+     *
+     * @param array $row 数据
+     *
+     * @return array|false 成功返回array，失败返回false
+     */
+    protected function setClause(array $row)
+    {
+        // 如果$row为[]，直接抛异常
+        if (!$row) {
+            throw new \Exception("SET clause can not be blank.");
+        }
+
+        // 生成
+        $sql = [];
+        $params = [];
+        foreach ($row as $field => $value) {
+            $sql[] = "{$this->borderchar}$field{$this->borderchar} = ?";
+            $params[] = $value;
+        }
+        return [
+            'sql'    => "SET " . implode(', ', $sql),
+            'params' => $params,
+        ];
+    }
+
+    /**
      * UPDATE操作
      *
-     * @param array $row   要更新的数据项
-     * @param array $where 条件
+     * @param array        $row   要更新的数据项
+     * @param array|string $where 条件。参见 $this->whereClause()。
      *
      * @return \Dida\Db\ResultSet
      */
-    public function update(array $row, array $where)
+    public function update(array $row, $where)
     {
-        // SQL的参数
-        $params = [];
-
         // set子句
-        $_set = [];
-        foreach ($row as $field => $value) {
-            $_set[] = "{$this->borderchar}$field{$this->borderchar} = ?";
-            $params[] = $value;
-        }
-        $_set = implode(", ", $_set);
+        $_set = $this->setClause($row);
 
         // where子句
-        $_where = [];
-        foreach ($where as $field => $value) {
-            $_where[] = "{$this->borderchar}$field{$this->borderchar} = ?";
-            $params[] = $value;
-        }
-        $_where = implode(", ", $_where);
+        $_where = $this->whereClause($where);
 
-        // 生成SQL语句
+        // 构造sql
         $sql = <<<SQL
 UPDATE {$this->borderchar}$this->table{$this->borderchar}
-SET
-    $_set
-WHERE
-    $_where
+{$_set["sql"]}
+{$_where["sql"]}
 SQL;
+
+        // 构造params
+        $params = array_merge($_set["params"], $_where["params"]);
 
         // 执行
         $rs = $this->db->execWrite($sql, $params);
@@ -139,29 +223,21 @@ SQL;
     /**
      * DELETE操作
      *
-     * @param array $where 条件
+     * @param array|string $where 条件。参见 $this->whereClause()。
      *
      * @return \Dida\Db\ResultSet
      */
     public function delete(array $where)
     {
-        // SQL的参数
-        $params = [];
+        $_where = $this->whereClause($where);
 
-        // where子句
-        $_where = [];
-        foreach ($where as $field => $value) {
-            $_where[] = "{$this->borderchar}$field{$this->borderchar} = ?";
-            $params[] = $value;
-        }
-        $_where = implode(", ", $_where);
-
-        // 生成SQL语句
+        // 构造sql
         $sql = <<<SQL
 DELETE FROM {$this->borderchar}$this->table{$this->borderchar}
-WHERE
-    $_where
+$_where
 SQL;
+        // 构造params
+        $params = $_where["params"];
 
         // 执行
         $rs = $this->db->execWrite($sql, $params);
@@ -174,16 +250,13 @@ SQL;
      * SELECT操作
      *
      * @param array|string $fieldlist 字段列表
-     * @param array        $where     条件
+     * @param array|string $where     条件。参见 $this->whereClause()。
      * @param string       $limit     LIMIT子句
      *
      * @return \Dida\Db\ResultSet
      */
-    public function select($fieldlist = '*', array $where = [], $limit = '')
+    public function select($fieldlist = '*', $where = '', $limit = '')
     {
-        // SQL的参数
-        $params = [];
-
         // 字段列表
         if (is_string($fieldlist)) {
             $_fields = $fieldlist;
@@ -198,20 +271,11 @@ SQL;
             }
             $_fields = implode(", ", $_fields);
         } else {
-            throw new \Exception("Invalid '\$fieldlist' paramater type.");
+            throw new \Exception('"$fieldlist" paramater type is invalid.');
         }
 
         // where子句
-        $_where = '';
-        if ($where) {
-            $_where = [];
-            foreach ($where as $field => $value) {
-                $_where[] = "{$this->borderchar}$field{$this->borderchar} = ?";
-                $params[] = $value;
-            }
-            $_where = implode(", ", $_where);
-            $_where = "WHERE\n    $_where\n";
-        }
+        $_where = $this->whereClause($where);
 
         // limit子句
         $_limit = '';
@@ -225,9 +289,12 @@ SELECT
     $_fields
 FROM
     {$this->borderchar}$this->table{$this->borderchar}
-$_where
+{$_where["sql"]}
 $_limit
 SQL;
+
+        // 构造params
+        $params = $_where["params"];
 
         // 执行
         $rs = $this->db->execRead($sql, $params);
@@ -239,17 +306,14 @@ SQL;
     /**
      * COUNT
      *
-     * @param array|string $fieldlist 字段列表。从性能原因考虑，这个参数最好用表的主键名。
-     * @param array        $where     条件
+     * @param array|string $fieldlist 字段列表。从性能原因考虑，这个参数最好设置为表的主键。
+     * @param array|string $where     条件。参见 $this->whereClause()。
      * @param string       $limit     LIMIT子句
      *
      * @return int|false 成功返回count，失败返回false
      */
     public function count($fieldlist = '*', array $where = [])
     {
-        // SQL的参数
-        $params = [];
-
         // 字段列表
         if (is_string($fieldlist)) {
             $_fields = $fieldlist;
@@ -268,24 +332,19 @@ SQL;
         }
 
         // where子句
-        $_where = '';
-        if ($where) {
-            foreach ($where as $field => $value) {
-                $_where[] = "{$this->borderchar}$field{$this->borderchar} = ?";
-                $params[] = $value;
-            }
-            $_where = implode(", ", $_where);
-            $_where = "WHERE\n    $_where\n";
-        }
+        $_where = $this->whereClause($where);
 
-        // 生成SQL语句
+        // 构造sql
         $sql = <<<SQL
 SELECT
     COUNT($_fields) AS {$this->borderchar}count{$this->borderchar}
 FROM
     {$this->borderchar}$this->table{$this->borderchar}
-$_where
+{$_where["sql"]}
 SQL;
+
+        // 构造params
+        $params = $_where["params"];
 
         // 执行
         $rs = $this->db->execRead($sql, $params);
