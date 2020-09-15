@@ -69,6 +69,7 @@ class ResultSet
 
         // setFetchMode
         if (!array_key_exists('fetchmode', $options)) {
+            // 如果没有设置fetchmode选项，则默认fetchmode为关联数组
             $this->pdostatement->setFetchMode(\PDO::FETCH_ASSOC);
         } else {
             switch ($options["fetchmode"]) {
@@ -205,16 +206,16 @@ class ResultSet
     }
 
     /**
-     * 返回所有行，并将其中的$key_col列的值作为键
+     * 返回所有行，并以其中的$col列的值作为键
      *
-     * @param int|string $key_col 拟作为键值列的序号或者键名
+     * @param int|string $col 用哪一列作为keys
      *
      * @return array
      */
-    public function getRowsWithKeys($key_col)
+    public function getRowsWithKeys($col)
     {
         $rows = $this->fetchAll();
-        $keys = array_column($rows, $key_col);
+        $keys = array_column($rows, $col);
         return array_combine($keys, $rows);
     }
 }
