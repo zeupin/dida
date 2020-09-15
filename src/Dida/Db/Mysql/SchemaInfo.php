@@ -12,7 +12,7 @@ namespace Dida\Db\Mysql;
 use \PDO;
 use \Dida\Util\ArrayEx;
 
-class MysqlSchemaInfo extends \Dida\Db\SchemaInfo
+class SchemaInfo extends \Dida\Db\SchemaInfo
 {
     /**
      * 版本号

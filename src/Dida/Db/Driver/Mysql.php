@@ -17,9 +17,9 @@ class Mysql extends Driver
     const VERSION = '20200913';
 
     /**
-     * 返回schemainfo实例
+     * 返回一个SchemaInfo
      *
-     * @return \Dida\Db\Mysql\MysqlSchemaInfo|false 成功返回SchemaInfo实例，失败返回false
+     * @return \Dida\Db\Mysql\SchemaInfo|false 成功返回SchemaInfo实例，失败返回false
      */
     public function schemainfo()
     {
@@ -29,24 +29,24 @@ class Mysql extends Driver
         }
 
         // 创建实例
-        $schemainfo = new \Dida\Db\SchemaInfo\Mysql($this->pdo);
+        $schemainfo = new \Dida\Db\Mysql\SchemaInfo($this->pdo);
 
         // 返回
         return $schemainfo;
     }
 
     /**
-     * 返回一个MysqlTable实例
+     * 返回一个Table
      *
      * @param string      $name   数据表名
      * @param string      $prefix 数据表名前缀
      * @param \Dida\Db\Db $db     当前db的实例
      *
-     * @return \Dida\Db\Mysql\MysqlTable
+     * @return \Dida\Db\Mysql\Table
      */
     public function table($name, $prefix, $db)
     {
-        $table = new \Dida\Db\Mysql\MysqlTable($name, $prefix, $db);
+        $table = new \Dida\Db\Mysql\Table($name, $prefix, $db);
         return $table;
     }
 }
