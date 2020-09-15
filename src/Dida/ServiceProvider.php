@@ -7,8 +7,11 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
-namespace Dida\Service;
+namespace Dida;
 
+/**
+ * ServiceProvider
+ */
 class ServiceProvider
 {
 }

@@ -7,7 +7,7 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
-namespace Dida\Service;
+namespace Dida;
 
 abstract class Service
 {
