@@ -15,4 +15,16 @@ class Sqlite extends Driver
      * 版本号
      */
     const VERSION = '20200907';
+
+    /**
+     * 返回schemainfo实例
+     *
+     * @return \Dida\Db\SchemaInfo|false 成功返回SchemaInfo实例，失败返回false
+     *
+     * @todo 待实现
+     */
+    public function schemainfo()
+    {
+        throw new \Exception("todo");
+    }
 }
