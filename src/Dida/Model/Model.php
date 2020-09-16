@@ -12,7 +12,7 @@ namespace Dida\Model;
 /**
  * Model
  */
-class Model
+abstract class Model
 {
     /**
      * 版本号
