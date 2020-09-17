@@ -29,7 +29,7 @@ abstract class Query
     /**
      * @var \Dida\Db\Driver\Driver
      */
-    protected $db;
+    protected $driver;
 
     /**
      * @var \PDO
@@ -57,7 +57,7 @@ abstract class Query
     /**
      * 主数据表
      *
-     * 一般使用$this->db->table(...)生成
+     * 一般使用$this->driver->table(...)生成
      *
      * @var string
      */
@@ -93,7 +93,7 @@ abstract class Query
     {
         $this->tablePrefix = $prefix;
         $this->mainTable = $prefix . $name;
-        $this->db = $db;
+        $this->driver = $driver;
 
         // 设置标识符引用字符
         $this->setIdentifierQuote();
@@ -114,7 +114,16 @@ abstract class Query
     abstract protected function setIdentifierQuote();
 
     /**
-     * 为标识符加上引用符
+     * 为标识名加上引用符
+     *
+     * 1. 如果标识名中，已经含有左引用符或者右引用符，则不会进行任何转换，直接原样输出。
+     *    特别注意，如果自己写了引用符，而没有成对出现，则SQL将会出错！
+     *    如果输入 username，会转为 `username`
+     *    如果输入 `username`，就直接原样输出 `username`
+     *    如果有点运算
+     * 2. 如果有"."，会分段加引用符
+     *    例：t_users.username，会分段转义输出 `t_users`.`username`
+     *    例：`t_users`.username，因为含有"`"，所以会原样输出 `t_users`.username
      *
      * @var string $identifier 标识符
      *
@@ -122,6 +131,17 @@ abstract class Query
      */
     protected function quoteIdentifier($identifier)
     {
+        // 如果无需转义
+        if ($this->left_quote === '' && $this->right_quote === '') {
+            return $identifier;
+        }
+
+        // 如果名称中已有转义符，则不转义
+        if (strpos($identifier, $this->left_quote) !== false || strpos($identifier, $this->right_quote) !== false) {
+            return $identifier;
+        }
+
+        // 开始转义
         $a = explode('.', $identifier);
         foreach ($a as &$i) {
             $i = $this->left_quote . $i . $this->right_quote;
@@ -137,7 +157,7 @@ abstract class Query
      * $where为关联数组: $key=$value，并用AND连接
      * $where为序列数组：（功能预留，可以做更复杂的处理）
      *
-     * 如果为复杂表达式，建议用字符串形式。
+     * 如果为复杂条件，建议用字符串形式。
      *
      * @param array|string $where 条件
      *
