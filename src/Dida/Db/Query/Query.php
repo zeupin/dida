@@ -17,6 +17,7 @@ abstract class Query
     /*
      * Traits
      */
+    use FromTrait;
     use WhereTrait;
     use JoinTrait;
     use ActionTrait;
@@ -86,9 +87,10 @@ abstract class Query
      */
     public function __construct($driver, $name, $prefix, $as)
     {
-        $this->tablePrefix = $prefix;
-        $this->mainTable = $prefix . $name;
         $this->driver = $driver;
+        $this->mainTable = $prefix . $name;
+        $this->tablePrefix = $prefix;
+        $this->mainTableAs = $as;
 
         // 设置标识符引用字符
         $this->setIdentifierQuote();
@@ -144,74 +146,75 @@ abstract class Query
         return implode('.', $a);
     }
 
-    /**
-     * WHERE子句
-     *
-     * $where为空串: 不要WHERE子句
-     * $where为字符串: 输出 WHERE $where
-     * $where为关联数组: $key=$value，并用AND连接
-     * $where为序列数组：（功能预留，可以做更复杂的处理）
-     *
-     * 如果为复杂条件，建议用字符串形式。
-     *
-     * @param array|string $where 条件
-     *
-     * @return array|false 成功返回array，失败返回false
-     */
-    protected function clauseWHERE($where)
-    {
-        // 如果where为字符串
-        if (is_string($where)) {
-            if (trim($where) === '') {
-                $ret = [
-                    'sql'    => '',
-                    'params' => [],
-                ];
-                return $ret;
-            } else {
-                $ret = [
-                    'sql'    => "WHERE $where",
-                    'params' => [],
-                ];
-                return $ret;
-            }
-        }
-
-        // 如果$where为数组
-        if (is_array($where)) {
-            // 如果为[]空数组，表示不需要WHERE子句
-            if (!$where) {
-                $ret = [
-                    'sql'    => '',
-                    'params' => [],
-                ];
-                return $ret;
-            }
-
-            // 取$where的第一个key。
-            // 根据这个key判断$where是关联数组还是序列数组，然后根据不同的类型进行处理。
-            if (key($where) === 0) {
-                // 如果为序列数组
-                // todo 预留
-                throw new \Exception('"$where" parameter shoule be an assoc array or a string.');
-            } else {
-                // 如果为关联数组
-                $sql = [];
-                $params = [];
-                foreach ($where as $k => $v) {
-                    $sql[] = "{$this->left_quote}$k{$this->right_quote} = ?";
-                    $params[] = $v;
-                }
-                $ret = [
-                    'sql'    => 'WHERE ' . implode(" AND ", $sql),
-                    'params' => $params,
-                ];
-                return $ret;
-            }
-        }
-
-        throw new \Exception('"$where" parameter type is invalid.');
-    }
+//
+//    /**
+//     * WHERE子句
+//     *
+//     * $where为空串: 不要WHERE子句
+//     * $where为字符串: 输出 WHERE $where
+//     * $where为关联数组: $key=$value，并用AND连接
+//     * $where为序列数组：（功能预留，可以做更复杂的处理）
+//     *
+//     * 如果为复杂条件，建议用字符串形式。
+//     *
+//     * @param array|string $where 条件
+//     *
+//     * @return array|false 成功返回array，失败返回false
+//     */
+//    protected function clauseWHERE($where)
+//    {
+//        // 如果where为字符串
+//        if (is_string($where)) {
+//            if (trim($where) === '') {
+//                $ret = [
+//                    'sql'    => '',
+//                    'params' => [],
+//                ];
+//                return $ret;
+//            } else {
+//                $ret = [
+//                    'sql'    => "WHERE $where",
+//                    'params' => [],
+//                ];
+//                return $ret;
+//            }
+//        }
+//
+//        // 如果$where为数组
+//        if (is_array($where)) {
+//            // 如果为[]空数组，表示不需要WHERE子句
+//            if (!$where) {
+//                $ret = [
+//                    'sql'    => '',
+//                    'params' => [],
+//                ];
+//                return $ret;
+//            }
+//
+//            // 取$where的第一个key。
+//            // 根据这个key判断$where是关联数组还是序列数组，然后根据不同的类型进行处理。
+//            if (key($where) === 0) {
+//                // 如果为序列数组
+//                // todo 预留
+//                throw new \Exception('"$where" parameter shoule be an assoc array or a string.');
+//            } else {
+//                // 如果为关联数组
+//                $sql = [];
+//                $params = [];
+//                foreach ($where as $k => $v) {
+//                    $sql[] = "{$this->left_quote}$k{$this->right_quote} = ?";
+//                    $params[] = $v;
+//                }
+//                $ret = [
+//                    'sql'    => 'WHERE ' . implode(" AND ", $sql),
+//                    'params' => $params,
+//                ];
+//                return $ret;
+//            }
+//        }
+//
+//        
+//    }
 
     /**
      * SET子句
