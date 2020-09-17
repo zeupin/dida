@@ -9,7 +9,8 @@
 
 namespace Dida;
 
-use \Dida\Exceptions\ServiceNotFoundException;
+use \ReflectionClass;
+use \Closure;
 
 /**
  * 服务总线
@@ -22,9 +23,9 @@ class ServiceBus
     const VERSION = '20200627';
 
     /* 类型常量 */
-    const CLASSNAME_TYPE = 'classname';     // 类名字符串
-    const CLOSURE_TYPE = 'closure';         // 闭包
-    const INSTANCE_TYPE = 'instance';       // 服务实例
+    const CLASSNAME_TYPE = 'CLASSNAME';     // 类名字符串类型
+    const CLOSURE_TYPE = 'CLOSURE';         // 闭包类型
+    const INSTANCE_TYPE = 'INSTANCE';       // 服务实例类型
 
     /**
      * 错误常量
@@ -59,8 +60,8 @@ class ServiceBus
     /**
      * 注册一个服务
      *
-     * @param string                $name
-     * @param string|closure|object $service
+     * @param string                 $name
+     * @param string|\Closure|object $service
      *
      * @return int 成功返回0,失败返回错误码
      */
@@ -76,7 +77,7 @@ class ServiceBus
             self::$names[$name] = ServiceBus::CLASSNAME_TYPE;
             self::$classnames[$name] = $service;
         } elseif (is_object($service)) {
-            if ($service instanceof Closure) {
+            if ($service instanceof \Closure) {
                 self::$names[$name] = ServiceBus::CLOSURE_TYPE;
                 self::$closures[$name] = $service;
             } else {
@@ -197,7 +198,7 @@ class ServiceBus
 
         // 已被注册为单例服务，不可生成新的服务实例
         if (isset(self::$singletons[$name])) {
-            throw new ServiceSingletonVioletException($name);
+            throw new \Exception("'$name' is a singleton type.");
         }
 
         // 生成新的服务实例
