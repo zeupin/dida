@@ -32,11 +32,6 @@ abstract class Query
     protected $driver;
 
     /**
-     * @var \PDO
-     */
-    protected $pdo;
-
-    /**
      * 标识引用符，左
      *
      * @var string
