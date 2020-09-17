@@ -48,24 +48,31 @@ trait UpdateTrait
     /**
      * UPDATE操作
      *
-     * @param array|null   $row   要更新的数据项
+     * @param array        $row   要更新的数据项
      * @param array|string $where 条件。参见 $this->clauseWHERE()。
      *
      * @return \Dida\Db\ResultSet
      */
-    public function update(array $row = [], $wheres = null)
+    public function update(array $row, $wheres = null)
     {
-        $_table = $this->sqlMainTable();
-
-        // 如果$row不为空
+        // 处理$row
         if ($row) {
             $this->dataItems = $row;
+        } else {
+            throw new \Exception('Invalid parameter value $row: ' . var_export($row, true));
         }
 
-        // 如果$wheres不为空
-        if ($wheres) {
+        // 处理$wheres
+        if (!$wheres) {
+        } elseif (is_array($wheres)) {
             $this->where($wheres);
+        } elseif (is_string($wheres)) {
+            $this->whereRaw($wheres, []);
+        } else {
+            throw new \Exception('Invalid parameter value $wheres.' . var_export($row, true));
         }
+
+        $_table = $this->sqlMainTable();
 
         // set子句
         $_set = $this->clauseSET();

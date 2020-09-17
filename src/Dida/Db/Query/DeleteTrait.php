@@ -20,6 +20,7 @@ trait DeleteTrait
      */
     public function delete(array $wheres = [])
     {
+        // 如果设置了wheres
         if ($wheres) {
             $this->where($wheres);
         }
