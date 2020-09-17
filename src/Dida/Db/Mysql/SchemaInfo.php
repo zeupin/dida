@@ -68,10 +68,11 @@ SQL;
      * 返回指定schema的所有数据表的名字
      *
      * @param string $schema 指定的schema名
+     * @param string $prefix 数据表前缀
      *
      * @return array
      */
-    public function getTableNames($schema)
+    public function getTableNames($schema, $prefix = '')
     {
         $sql = <<<SQL
 SELECT
@@ -79,11 +80,10 @@ SELECT
 FROM
     `information_schema`.`TABLES`
 WHERE
-    `TABLE_SCHEMA` LIKE :schema
+    `TABLE_SCHEMA` LIKE ?
+    AND `TABLE_NAME` LIKE ?
 SQL;
-        $params = [
-            ":schema" => $schema,
-        ];
+        $params = [$schema, "$prefix%"];
         $sth = $this->pdo->prepare($sql);
         $sth->execute($params);
         $rows = $sth->fetchAll(PDO::FETCH_COLUMN);
@@ -94,10 +94,11 @@ SQL;
      * 返回指定schema的所有数据表的元信息
      *
      * @param string $schema 指定的schema名
+     * @param string $prefix 数据表前缀
      *
      * @return array
      */
-    public function getTables($schema)
+    public function getTables($schema, $prefix = '')
     {
         $sql = <<<SQL
 SELECT
@@ -110,11 +111,10 @@ SELECT
 FROM
     `information_schema`.`TABLES`
 WHERE
-    `TABLE_SCHEMA` LIKE :schema
+    `TABLE_SCHEMA` LIKE ?
+    AND `TABLE_NAME` LIKE ?
 SQL;
-        $params = [
-            ":schema" => $schema,
-        ];
+        $params = [$schema, "$prefix%"];
         $sth = $this->pdo->prepare($sql);
         $sth->execute($params);
         $rows = $sth->fetchAll(PDO::FETCH_ASSOC);
@@ -138,12 +138,9 @@ SELECT
 FROM
     `information_schema`.`COLUMNS`
 WHERE
-    (`TABLE_SCHEMA` LIKE :schema) AND (`TABLE_NAME` LIKE :table)
+    (`TABLE_SCHEMA` LIKE ?) AND (`TABLE_NAME` LIKE ?)
 SQL;
-        $params = [
-            ":schema" => $schema,
-            ":table"  => $table,
-        ];
+        $params = [$schema, $table];
         $sth = $this->pdo->prepare($sql);
         $sth->execute($params);
         $rows = $sth->fetchAll(PDO::FETCH_COLUMN);
@@ -181,14 +178,11 @@ SELECT
 FROM
     `information_schema`.`COLUMNS`
 WHERE
-    (`TABLE_SCHEMA` LIKE :schema) AND (`TABLE_NAME` LIKE :table)
+    (`TABLE_SCHEMA` LIKE ?) AND (`TABLE_NAME` LIKE ?)
 ORDER BY
     `ORDINAL_POSITION`
 SQL;
-        $params = [
-            ":schema" => $schema,
-            ":table"  => $table,
-        ];
+        $params = [$schema, $table];
         $sth = $this->pdo->prepare($sql);
         $sth->execute($params);
         $rows = $sth->fetchAll(PDO::FETCH_ASSOC);
