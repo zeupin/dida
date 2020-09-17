@@ -15,12 +15,23 @@ namespace Dida\Db\Query;
 abstract class Query
 {
     /*
-     * Traits
+     * 构造SQL查询
      */
-    use FromTrait;
     use WhereTrait;
     use JoinTrait;
-    use ActionTrait;
+
+    /*
+     * 执行：增删改查
+     */
+    use InsertTrait;
+    use UpdateTrait;
+    use DeleteTrait;
+    use SelectTrait;
+
+    /*
+     * 执行：聚合函数
+     */
+    use AggregateTrait;
 
     /**
      * 版本号
@@ -70,17 +81,6 @@ abstract class Query
      * @var string
      */
     protected $tablePrefix;
-
-    /**
-     * join的数据表
-     *
-     * [
-     *   [join类型, 表, 别名, [on条件1, on条件2, ...]],
-     * ]
-     *
-     * @var array
-     */
-    protected $joins = [];
 
     /**
      * __construct
@@ -163,32 +163,5 @@ abstract class Query
         }
 
         return $sql;
-    }
-
-    /**
-     * SET子句
-     *
-     * @param array $row 数据
-     *
-     * @return array|false 成功返回array，失败返回false
-     */
-    protected function clauseSET(array $row)
-    {
-        // 如果$row为[]，直接抛异常
-        if (!$row) {
-            throw new \Exception("SET clause can not be blank.");
-        }
-
-        // 生成
-        $sql = [];
-        $params = [];
-        foreach ($row as $field => $value) {
-            $sql[] = "{$this->left_quote}$field{$this->right_quote} = ?";
-            $params[] = $value;
-        }
-        return [
-            'sql'    => "SET " . implode(', ', $sql),
-            'params' => $params,
-        ];
     }
 }
