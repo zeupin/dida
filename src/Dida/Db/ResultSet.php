@@ -55,6 +55,9 @@ class ResultSet
     /**
      * 初始化
      *
+     * $options
+     *     fetchmode    fetch模式，参见PDO::setFetchMode()
+     *
      * @param string        $errCode
      * @param string        $errMsg
      * @param \PDOStatement $pdostatement
