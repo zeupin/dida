@@ -38,7 +38,7 @@ SQL;
         $params = array_merge($_set["params"], $_where["params"]);
 
         // 执行
-        $rs = $this->db->execWrite($sql, $params);
+        $rs = $this->driver->execWrite($sql, $params);
 
         // 返回 Dida\Db\ResultSet
         return $rs;
@@ -76,7 +76,7 @@ VALUES
 SQL;
 
         // 执行
-        $rs = $this->db->execWrite($sql, $params);
+        $rs = $this->driver->execWrite($sql, $params);
 
         // 返回 Dida\Db\ResultSet
         return $rs;
@@ -102,7 +102,7 @@ SQL;
         $params = $_where["params"];
 
         // 执行
-        $rs = $this->db->execWrite($sql, $params);
+        $rs = $this->driver->execWrite($sql, $params);
 
         // 返回 Dida\Db\ResultSet
         return $rs;
@@ -159,7 +159,7 @@ SQL;
         $params = $_where["params"];
 
         // 执行
-        $rs = $this->db->execRead($sql, $params);
+        $rs = $this->driver->execRead($sql, $params);
 
         // 返回 Dida\Db\ResultSet
         return $rs;
@@ -209,7 +209,7 @@ SQL;
         $params = $_where["params"];
 
         // 执行
-        $rs = $this->db->execRead($sql, $params);
+        $rs = $this->driver->execRead($sql, $params);
 
         // 如果出错，返回false
         if ($rs->fail()) {
