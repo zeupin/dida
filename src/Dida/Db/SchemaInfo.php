@@ -74,6 +74,7 @@ abstract class SchemaInfo
      * 返回指定schema的所有数据表的名字
      *
      * @param string $schema 指定的schema
+     * @param string $prefix 数据表前缀
      *
      * @return array 一维数组
      *
@@ -81,12 +82,13 @@ abstract class SchemaInfo
      *     schema  数据库名
      *     table   数据表名
      */
-    abstract public function getTableNames($schema);
+    abstract public function getTableNames($schema, $prefix = '');
 
     /**
      * 返回指定schema的所有数据表的元信息
      *
      * @param string $schema 指定的schema
+     * @param string $prefix 数据表前缀
      *
      * @return array 二维数组
      *
@@ -94,7 +96,7 @@ abstract class SchemaInfo
      *     schema  数据库名
      *     table   数据表名
      */
-    abstract public function getTables($schema);
+    abstract public function getTables($schema, $prefix = '');
 
     /**
      * 返回指定table的所有字段的名字
