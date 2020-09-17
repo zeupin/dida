@@ -24,10 +24,10 @@ date_default_timezone_set(Config::get("app.timezone"));
  * 注册服务
  * ------------------------------------------------------------
  */
-ServiceBus::set('Request', new Dida\Http\Request);
-ServiceBus::set('Response', new Dida\Http\Response);
-ServiceBus::set('Session', new Dida\Http\Session);
-ServiceBus::set('Cookie', new Dida\Http\Cookie);
+ServiceBus::set('Request', Dida\Http\Request::class);
+ServiceBus::set('Response', Dida\Http\Response::class);
+ServiceBus::set('Session', Dida\Http\Session::class);
+ServiceBus::set('Cookie', Dida\Http\Cookie::class);
 
 /*
  * ------------------------------------------------------------
