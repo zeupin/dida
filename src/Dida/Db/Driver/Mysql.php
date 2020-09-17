@@ -38,15 +38,15 @@ class Mysql extends Driver
     /**
      * 返回一个Table
      *
-     * @param string      $name   数据表名
-     * @param string      $prefix 数据表名前缀
-     * @param \Dida\Db\Db $db     当前db的实例
+     * @param string $name   数据表名
+     * @param string $prefix 数据表名前缀
+     * @param string $as     别名。如果无别名，设置为''
      *
-     * @return \Dida\Db\Mysql\Table
+     * @return \Dida\Db\Mysql\Query
      */
-    public function table($name, $prefix, $db)
+    public function table($name, $prefix, $as)
     {
-        $table = new \Dida\Db\Mysql\Table($name, $prefix, $db);
+        $table = new \Dida\Db\Mysql\Query($this, $name, $prefix, $as);
         return $table;
     }
 }

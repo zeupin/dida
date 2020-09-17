@@ -12,7 +12,7 @@ namespace Dida\Db\Mysql;
 /**
  * Mysql数据表操作
  */
-class Table extends \Dida\Db\Query\Table
+class Query extends \Dida\Db\Query\Query
 {
     /**
      * 版本号
