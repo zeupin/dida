@@ -83,20 +83,6 @@ abstract class Query
     protected $tablePrefix;
 
     /**
-     * __construct
-     */
-    public function __construct($driver, $name, $prefix, $as)
-    {
-        $this->driver = $driver;
-        $this->mainTable = $prefix . $name;
-        $this->tablePrefix = $prefix;
-        $this->mainTableAs = $as;
-
-        // 设置标识符引用字符
-        $this->setIdentifierQuote();
-    }
-
-    /**
      * 设置标识符引用字符
      *
      * 1. 对Mysql，左右标识引用字符分别为 ``
@@ -109,6 +95,20 @@ abstract class Query
      * @return void
      */
     abstract protected function setIdentifierQuote();
+
+    /**
+     * __construct
+     */
+    public function __construct($driver, $name, $prefix, $as)
+    {
+        $this->driver = $driver;
+        $this->mainTable = $prefix . $name;
+        $this->tablePrefix = $prefix;
+        $this->mainTableAs = $as;
+
+        // 设置标识符引用字符
+        $this->setIdentifierQuote();
+    }
 
     /**
      * 为标识名加上引用符
