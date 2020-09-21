@@ -95,6 +95,11 @@ trait WhereTrait
      */
     public function where($field, $op = '=', $value = null)
     {
+        // 如果$field为''或[]
+        if (!$field) {
+            return $this;
+        }
+
         // 如果$field是字符串
         if (is_string($field)) {
             $op = strtoupper($op);

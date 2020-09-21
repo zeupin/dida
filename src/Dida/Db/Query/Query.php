@@ -133,10 +133,11 @@ abstract class Query
             return $identifier;
         }
 
-        // 如果名称中已有转义符，则不转义
-        if (strpos($identifier, $this->left_quote) !== false || strpos($identifier, $this->right_quote) !== false) {
+        // 仅对单词字符转义，其它情况直接返回原字符串
+        $r = "/^[a-zA-Z_][a-zA-Z0-9_.]{1,}$/";
+        if (!preg_match($r, $identifier)) {
             return $identifier;
-        }
+        };
 
         // 开始转义
         $a = explode('.', $identifier);
