@@ -24,10 +24,11 @@ trait InsertTrait
         $params = [];
 
         // 准备SQL语句
+        $_table = $this->sqlMainTable();
         $_fields = [];
         $_values = [];
         foreach ($row as $field => $value) {
-            $_fields[] = "{$this->left_quote}$field{$this->right_quote}";
+            $_fields[] =  $this->quoteIdentifier($field);
             $_values[] = '?';
             $params[] = $value;
         }
@@ -36,7 +37,7 @@ trait InsertTrait
 
         // SQL
         $sql = <<<SQL
-INSERT INTO {$this->left_quote}$this->mainTable{$this->right_quote}
+INSERT INTO $_table
     ($_fields)
 VALUES
     ($_values)

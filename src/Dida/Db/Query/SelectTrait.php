@@ -22,6 +22,9 @@ trait SelectTrait
      */
     public function select($fieldlist = '*', $where = '', $limit = '')
     {
+        // 主表
+        $_table = $this->sqlMainTable();
+
         // 字段列表
         if (is_string($fieldlist)) {
             $_fields = $fieldlist;
@@ -40,7 +43,8 @@ trait SelectTrait
         }
 
         // where子句
-        $_where = $this->clauseWHERE($where);
+        $this->where($where);
+        $_where = $this->clauseWHERE();
 
         // limit子句
         $_limit = '';
@@ -53,7 +57,7 @@ trait SelectTrait
 SELECT
     $_fields
 FROM
-    {$this->left_quote}$this->mainTable{$this->right_quote}
+    $_table
 {$_where["sql"]}
 $_limit
 SQL;
