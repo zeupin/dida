@@ -38,7 +38,10 @@ class ArrayEx
     }
 
     /**
-     * 从指定数组中挑出给定的数据, 组成一个新数组返回
+     * 从指定数组中挑出给定的数据, 组成一个新数组返回。
+     *
+     * 1. 如果指定的某个key不存在，则返回的数组中，对应的值为null。
+     * 2. 如果只是过滤某个数组，应该用allow()或者disallow()方法。
      *
      * @param array $array
      * @param array $keys
@@ -107,10 +110,10 @@ class ArrayEx
     }
 
     /**
-     * 只允许白名单中的元素，非白名单的元素全部都删除
+     * 只允许白名单中的元素，其余元素全部都删除
      *
      * @param array $array
-     * @param array $keys
+     * @param array $keys  keys的白名单
      *
      * @return array
      */
@@ -128,7 +131,7 @@ class ArrayEx
      * 删除在黑名单中的元素，其它的保留
      *
      * @param array $array
-     * @param array $keys
+     * @param array $keys  keys的黑名单
      *
      * @return array
      */
