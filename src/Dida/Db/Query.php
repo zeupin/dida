@@ -7,7 +7,15 @@
  * Gitee: <https://gitee.com/zeupin/dida>
  */
 
-namespace Dida\Db\Query;
+namespace Dida\Db;
+
+use \Dida\Db\Query\WhereTrait;
+use \Dida\Db\Query\JoinTrait;
+use \Dida\Db\Query\InsertTrait;
+use \Dida\Db\Query\UpdateTrait;
+use \Dida\Db\Query\DeleteTrait;
+use \Dida\Db\Query\SelectTrait;
+use \Dida\Db\Query\AggregateTrait;
 
 /**
  * Query
