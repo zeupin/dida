@@ -44,9 +44,9 @@ class Mysql extends Driver
      *
      * @return \Dida\Db\Mysql\Query
      */
-    public function table($name, $prefix, $as)
+    public function table($name, $as)
     {
-        $table = new \Dida\Db\Mysql\Query($this, $name, $prefix, $as);
+        $table = new \Dida\Db\Mysql\Query($this, $name, $as);
         return $table;
     }
 }

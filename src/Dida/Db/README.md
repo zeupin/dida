@@ -23,7 +23,7 @@ class Model
 ### 2.  `$this->db->table()`
 
 ```php
-// 创建一个查询 \Dida\Db\Query\Query
+// 创建一个查询 \Dida\Db\Query
 $q = $this->db->table("表名","前缀","别名");
 ```
 

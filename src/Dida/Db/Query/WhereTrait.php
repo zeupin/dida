@@ -91,7 +91,7 @@ trait WhereTrait
      * @param string       $op    运算符
      * @param mixed        $value 值
      *
-     * @return \Dida\Db\Query\Query $this
+     * @return \Dida\Db\Query $this
      */
     public function where($field, $op = '=', $value = null)
     {
@@ -145,7 +145,7 @@ trait WhereTrait
      * @param string $field  字段
      * @param mixed  $values 值
      *
-     * @return \Dida\Db\Query\Query $this
+     * @return \Dida\Db\Query $this
      */
     public function whereIn($field, array $values)
     {
@@ -168,7 +168,7 @@ trait WhereTrait
      * @param mixed  $value 值
      * @param string $op    运算符
      *
-     * @return \Dida\Db\Query\Query $this
+     * @return \Dida\Db\Query $this
      */
     public function whereBetween($field, $value1, $value2)
     {
@@ -189,7 +189,7 @@ trait WhereTrait
      * @param string $sql    SQL
      * @param array  $params 参数
      *
-     * @return \Dida\Db\Query\Query $this
+     * @return \Dida\Db\Query $this
      */
     public function whereRaw($sql, array $params)
     {
@@ -205,7 +205,7 @@ trait WhereTrait
     /**
      * 设置 $this->wherLogic
      *
-     * @return \Dida\Db\Query\Query $this
+     * @return \Dida\Db\Query $this
      */
     public function whereLogic($logic)
     {
@@ -225,7 +225,7 @@ trait WhereTrait
     /**
      * 设置 $this->wherLogic = 'OR'
      *
-     * @return \Dida\Db\Query\Query $this
+     * @return \Dida\Db\Query $this
      */
     public function whereOr()
     {
@@ -235,7 +235,7 @@ trait WhereTrait
     /**
      * 设置 $this->wherLogic = 'AND'
      *
-     * @return \Dida\Db\Query\Query $this
+     * @return \Dida\Db\Query $this
      */
     public function whereAnd()
     {

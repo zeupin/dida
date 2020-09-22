@@ -30,7 +30,7 @@ trait JoinTrait
      * @param string|array $on
      * @param array        $params
      *
-     * @return \Dida\Db\Query\Query $this
+     * @return \Dida\Db\Query $this
      */
     public function join($table, $as, $on, array $params = [])
     {
@@ -44,7 +44,7 @@ trait JoinTrait
      * @param string|array $on
      * @param array        $params
      *
-     * @return \Dida\Db\Query\Query $this
+     * @return \Dida\Db\Query $this
      */
     public function innerJoin($table, $as, $on, array $params = [])
     {
@@ -58,7 +58,7 @@ trait JoinTrait
      * @param string|array $on
      * @param array        $params
      *
-     * @return \Dida\Db\Query\Query $this
+     * @return \Dida\Db\Query $this
      */
     public function leftJoin($table, $as, $on, array $params = [])
     {
@@ -72,7 +72,7 @@ trait JoinTrait
      * @param string|array $on
      * @param array        $params
      *
-     * @return \Dida\Db\Query\Query $this
+     * @return \Dida\Db\Query $this
      */
     public function rightJoin($table, $as, $on, array $params = [])
     {

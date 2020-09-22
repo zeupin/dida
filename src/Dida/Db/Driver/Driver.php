@@ -11,7 +11,7 @@ namespace Dida\Db\Driver;
 
 use \PDO;
 use \Dida\Db\ResultSet;
-use \Dida\Db\Query\Query;
+use \Dida\Db\Query;
 
 abstract class Driver
 {
@@ -25,7 +25,7 @@ abstract class Driver
      *
      * @var array
      */
-    protected $conf;
+    public $conf;
 
     /**
      * 生成的PDO实例
@@ -51,6 +51,9 @@ abstract class Driver
 
     /**
      * 初始化
+     *
+     * 1. console模式下，如果出现报错 PHP Fatal error:  Uncaught PDOException: could not find driver in ...
+     *    检查一下dsn是否正确。不能用 --dsn='...'，要用 --dsn="..."，要注意，不然PDO无法识别。
      *
      * @return bool 成功返回true，失败返回false
      */
@@ -105,13 +108,12 @@ abstract class Driver
     /**
      * 返回table实例
      *
-     * @param string $name   数据表名
-     * @param string $prefix 数据表名前缀
-     * @param string $as     别名。如果没有别名，设置为''
+     * @param string $name 数据表名
+     * @param string $as   别名。如果没有别名，设置为''
      *
-     * @return \Dida\Db\Query\Query
+     * @return \Dida\Db\Query
      */
-    abstract public function table($name, $prefix, $as);
+    abstract public function table($name, $as);
 
     /**
      * 执行通用代码

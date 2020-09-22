@@ -28,7 +28,7 @@ trait InsertTrait
         $_fields = [];
         $_values = [];
         foreach ($row as $field => $value) {
-            $_fields[] =  $this->quoteIdentifier($field);
+            $_fields[] = $this->quoteIdentifier($field);
             $_values[] = '?';
             $params[] = $value;
         }
