@@ -173,6 +173,8 @@ class Config
      * 优化：
      * 1. 假如有99个配置项，里面有db组的2个配置项，那么找到db.的配置项后，
      *    就直接结束循环，不搜列举更多配置项。
+     *
+     * @param string $group 组名
      */
     public static function getItemsByGroup($group)
     {
@@ -214,6 +216,10 @@ class Config
     /**
      * 把指定组的所有配置项进行聚拢，是 groupExpand()函数的逆过程。
      *
+     * @param string $group 组名
+     *
+     * @return array
+     *
      * @example   对于如下配置项：
      * [
      *   "db" => 0,
@@ -246,6 +252,10 @@ class Config
 
     /**
      * 删除指定组的全部配置项。
+     *
+     * @param string $group 组名
+     *
+     * @return void
      */
     public static function groupClear($group)
     {

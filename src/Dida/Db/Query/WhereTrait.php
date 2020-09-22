@@ -164,9 +164,9 @@ trait WhereTrait
     /**
      * WHERE: BETWEEN
      *
-     * @param string $field 字段
-     * @param mixed  $value 值
-     * @param string $op    运算符
+     * @param string $field  字段
+     * @param mixed  $value1 值
+     * @param mixed  $value2 值
      *
      * @return \Dida\Db\Query $this
      */

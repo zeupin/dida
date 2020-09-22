@@ -48,6 +48,9 @@ class Console
 
     /**
      * echo一个值，不换行。可选输出样式。
+     *
+     * @param string $msg   要显示的字符串
+     * @param string $style 样式
      */
     public static function pr($msg, $style = null)
     {
@@ -56,6 +59,9 @@ class Console
 
     /**
      * echo一个值，输出完后换行。可选输出样式。
+     *
+     * @param string $msg   要显示的字符串
+     * @param string $style 样式
      */
     public static function prln($msg, $style = null)
     {
@@ -99,6 +105,8 @@ class Console
 
     /**
      * 输出一个err类字符串
+     *
+     * @param string $msg 要显示的字符串
      */
     public static function err($msg)
     {
@@ -107,6 +115,8 @@ class Console
 
     /**
      * 输出一个notice类字符串
+     *
+     * @param string $msg 要显示的字符串
      */
     public static function notice($msg)
     {
@@ -115,6 +125,8 @@ class Console
 
     /**
      * 输出一个info类字符串
+     *
+     * @param string $msg 要显示的字符串
      */
     public static function info($msg)
     {

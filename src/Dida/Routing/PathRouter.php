@@ -38,6 +38,8 @@ class PathRouter extends Router
     /**
      * 匹配路由表
      *
+     * @param string $pathinfo
+     *
      * @return bool 匹配成功，返回true。匹配失败，返回false
      */
     public function match($pathinfo)

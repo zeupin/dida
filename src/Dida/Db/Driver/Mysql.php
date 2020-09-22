@@ -38,9 +38,8 @@ class Mysql extends Driver
     /**
      * 返回一个Table
      *
-     * @param string $name   数据表名
-     * @param string $prefix 数据表名前缀
-     * @param string $as     别名。如果无别名，设置为''
+     * @param string $name 数据表名
+     * @param string $as   别名。如果无别名，设置为''
      *
      * @return \Dida\Db\Mysql\Query
      */

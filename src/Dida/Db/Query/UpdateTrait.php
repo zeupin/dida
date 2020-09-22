@@ -48,8 +48,8 @@ trait UpdateTrait
     /**
      * UPDATE操作
      *
-     * @param array        $row   要更新的数据项
-     * @param array|string $where 条件。参见 $this->clauseWHERE()。
+     * @param array        $row    要更新的数据项
+     * @param array|string $wheres 条件。参见 $this->clauseWHERE()。
      *
      * @return \Dida\Db\ResultSet
      */

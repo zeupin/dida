@@ -36,6 +36,7 @@ class Crypt
      *
      * @param string      $srcData 要加密的数据
      * @param string|null $key     密钥
+     * @param string|null $iv      初始向量
      *
      * @return string|false 成功返回加密后的值，失败返回false
      */
@@ -65,6 +66,7 @@ class Crypt
      *
      * @param string      $encData 要解密的数据
      * @param string|null $key     密钥
+     * @param string|null $iv      初始向量
      *
      * @return string|false 成功返回解密后的值，失败返回false
      */
