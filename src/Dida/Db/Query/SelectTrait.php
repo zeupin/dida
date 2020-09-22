@@ -32,9 +32,9 @@ trait SelectTrait
             $_fields = [];
             foreach ($fieldlist as $as => $field) {
                 if (is_int($as)) {
-                    $_fields[] = "{$this->left_quote}$field{$this->right_quote}";
+                    $_fields[] = $this->quoteIdentifier($field);
                 } else {
-                    $_fields[] = "{$this->left_quote}$field{$this->right_quote} AS {$this->left_quote}$as{$this->right_quote}";
+                    $_fields[] = $this->quoteIdentifier($field) . ' AS ' . $this->quoteIdentifier($as);
                 }
             }
             $_fields = implode(", ", $_fields);
