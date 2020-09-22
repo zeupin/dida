@@ -98,16 +98,48 @@ abstract class Query
 
     /**
      * __construct
+     *
+     * @param \Dida\Db\Driver\Driver $driver
+     * @param string                 $name   主表表名
+     * @param string                 $as     主表别名
+     * @param string|null            $prefix 表名前缀
+     *
+     * @return void
      */
-    public function __construct($driver, $name, $prefix, $as)
+    public function __construct($driver, $name = '', $as = '', $prefix = null)
     {
         $this->driver = $driver;
-        $this->mainTable = $prefix . $name;
-        $this->tablePrefix = $prefix;
-        $this->mainTableAs = $as;
 
-        // 设置标识符引用字符
+        // 调用driver实现的抽象方法，设置标识符引用字符
         $this->setIdentifierQuote();
+
+        // 设置表名前缀
+        if ($prefix === null) {
+            // 如果prefix为null，则从驱动的配置中读取prefix
+            $this->tablePrefix = $driver->conf["prefix"];
+        } else {
+            // 如果prefix不为null，则将其设置为tablePrefix
+            $this->tablePrefix = $prefix;
+        }
+
+        // 如果设置了主表
+        if ($name) {
+            $this->setMainTable($name, $as);
+        }
+    }
+
+    /**
+     * 设置主表
+     *
+     * @param string $name
+     * @param string $as
+     *
+     * @return Query $this
+     */
+    public function setMainTable($name, $as = '')
+    {
+        $this->mainTable = $this->tablePrefix . $name;
+        $this->mainTableAs = $as;
     }
 
     /**
@@ -134,6 +166,7 @@ abstract class Query
         }
 
         // 仅对单词字符转义，其它情况直接返回原字符串
+        //      <---1---><------2-------->
         $r = "/^[a-zA-Z_][a-zA-Z0-9_.]{1,}$/";
         if (!preg_match($r, $identifier)) {
             return $identifier;
@@ -144,6 +177,8 @@ abstract class Query
         foreach ($a as &$i) {
             $i = $this->left_quote . $i . $this->right_quote;
         }
+
+        // 返回
         return implode('.', $a);
     }
 
