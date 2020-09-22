@@ -91,7 +91,7 @@ class Session
      *
      * @return bool 成功返回true, 失败返回false
      */
-    public function unset()
+    public function removeAll()
     {
         return session_unset();
     }
