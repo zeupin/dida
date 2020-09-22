@@ -108,7 +108,26 @@ class Arguments
      */
     public function hasOption($optionName)
     {
-        return array_key_exists($optionName, $this->optionset);
+        return array_key_exists($optionName, $this->options);
+    }
+
+    /**
+     * 检查指定的多个option是否全部存在
+     *
+     * @param array $optNames options的名字(包括前面的'-'或'--')
+     *
+     * @return bool
+     */
+    public function hasOptions(array $optNames)
+    {
+        foreach ($optnames as $name) {
+            // 如果任何一个option不存在，直接返回false
+            if (!array_key_exists($name, $this->options)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -137,7 +156,7 @@ class Arguments
     public function getOption($optionName)
     {
         if ($this->hasOption($optionName)) {
-            return $this->optionset[$optionName];
+            return $this->options[$optionName];
         } else {
             return false;
         }
