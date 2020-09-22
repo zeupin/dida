@@ -41,6 +41,13 @@ class Db
     protected $conf;
 
     /**
+     * 全局缺省配置项
+     */
+    protected $defaultConf = [
+        'prefix' => '',
+    ];
+
+    /**
      * 保存的driver实例
      *
      * @var \Dida\Db\Driver\Driver
@@ -57,7 +64,7 @@ class Db
     public function __construct(array $conf)
     {
         // 保存到本地
-        $this->conf = $conf;
+        $this->conf = array_merge($this->defaultConf, $conf);
 
         // 检查driver
         if (!array_key_exists("driver", $conf)) {
@@ -105,17 +112,16 @@ class Db
     }
 
     /**
-     * 返回 driver->table($name, $prefix, $db)
+     * 调用 driver->table($name, $db)
      *
-     * @param string $name   数据表名
-     * @param string $prefix 数据表名前缀
-     * @param string $as     别名
+     * @param string $name 数据表名
+     * @param string $as   别名
      *
      * @return \Dida\Db\Query\Table
      */
-    public function table($name, $prefix = '', $as = '')
+    public function table($name, $as = '')
     {
-        return $this->driver->table($name, $prefix, $as);
+        return $this->driver->table($name, $as);
     }
 
     /**
