@@ -68,6 +68,7 @@ class Database
             $tables = $info->getTables($schema);
 
             foreach ($tables as $table => $tableinfo) {
+                $this->outputTableColumns($schema, $table);
                 $this->outputSelect($schema, $table);
                 $this->outputUpdate1($schema, $table);
                 $this->outputUpdate2($schema, $table);
@@ -77,6 +78,36 @@ class Database
                 $this->outputInsert2($schema, $table);
             }
         }
+    }
+
+    /**
+     * 输出 ColumnList
+     */
+    public function outputTableColumns($schema, $table)
+    {
+        $info = $this->schemainfo;
+
+        // 获取字段列表
+        $columns = $info->getColumns($schema, $table);
+
+        // 字段列表
+        $columnlist = array_keys($columns);
+        foreach ($columnlist as &$column) {
+            $column = "'$column'";
+        }
+        $columnlist = implode(', ', $columnlist);
+
+        // 生成字段列表
+        $file = "$schema.$table.columnlist.php";
+        $path = $this->outputDir . DS . $file;
+        $content = <<<TEXT
+<?php
+\${$table}_cols = [$columnlist];
+
+TEXT;
+
+        // 输出
+        file_put_contents($path, $content);
     }
 
     /**
@@ -105,7 +136,7 @@ class Database
         $s = implode("\n", $s);
 
         $file = "$schema.$table.SELECT.sql";
-        $path = "$this->outputDir" . DS . "$file";
+        $path = $this->outputDir . DS . $file;
         if (file_exists($path)) {
             unlink($path);
         }
@@ -136,7 +167,7 @@ class Database
         $s = implode("\n", $s);
 
         $file = "$schema.$table.UPDATE1.sql";
-        $path = "$this->outputDir" . DS . "$file";
+        $path = $this->outputDir . DS . $file;
         if (file_exists($path)) {
             unlink($path);
         }
@@ -167,7 +198,7 @@ class Database
         $s = implode("\n", $s);
 
         $file = "$schema.$table.UPDATE2.sql";
-        $path = "$this->outputDir" . DS . "$file";
+        $path = $this->outputDir . DS . $file;
         if (file_exists($path)) {
             unlink($path);
         }
@@ -198,7 +229,7 @@ class Database
         $s = implode("\n", $s);
 
         $file = "$schema.$table.DELETE1.sql";
-        $path = "$this->outputDir" . DS . "$file";
+        $path = $this->outputDir . DS . $file;
         if (file_exists($path)) {
             unlink($path);
         }
@@ -228,7 +259,7 @@ class Database
         $s = implode("\n", $s);
 
         $file = "$schema.$table.DELETE2.sql";
-        $path = "$this->outputDir" . DS . "$file";
+        $path = $this->outputDir . DS . $file;
         if (file_exists($path)) {
             unlink($path);
         }
@@ -265,7 +296,7 @@ class Database
         $s = implode("\n", $s);
 
         $file = "$schema.$table.INSERT1.sql";
-        $path = "$this->outputDir" . DS . "$file";
+        $path = $this->outputDir . DS . $file;
         if (file_exists($path)) {
             unlink($path);
         }
@@ -303,7 +334,7 @@ class Database
         $s = implode("\n", $s);
 
         $file = "$schema.$table.INSERT2.sql";
-        $path = "$this->outputDir" . DS . "$file";
+        $path = $this->outputDir . DS . $file;
         if (file_exists($path)) {
             unlink($path);
         }
