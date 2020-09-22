@@ -11,6 +11,10 @@ namespace Dida\Console;
 
 /**
  * 命令行的参数数组, 提供解析、调用功能。
+ *
+ * 1. 命令名 参数1 参数2 参数N -选项1=值 --选项2=值
+ * 2. 参数parameter，选项option。
+ * 3. 选项以"-"开头，名称包含前导"-"。例如 --user=...，选项名为"--user"，而不是仅仅"user"。
  */
 class Arguments
 {
@@ -90,7 +94,7 @@ class Arguments
      *
      * @return bool
      */
-    public function parameterExists($index)
+    public function hasParameter($index)
     {
         return array_key_exists($index, $this->parameters);
     }
@@ -102,7 +106,7 @@ class Arguments
      *
      * @return bool
      */
-    public function optionExists($optionName)
+    public function hasOption($optionName)
     {
         return array_key_exists($optionName, $this->optionset);
     }
@@ -116,7 +120,7 @@ class Arguments
      */
     public function getParameter($index)
     {
-        if ($this->parameterExists($index)) {
+        if ($this->hasParameter($index)) {
             return $this->parameters[$index];
         } else {
             return false;
@@ -132,7 +136,7 @@ class Arguments
      */
     public function getOption($optionName)
     {
-        if ($this->optionExists($optionName)) {
+        if ($this->hasOption($optionName)) {
             return $this->optionset[$optionName];
         } else {
             return false;
