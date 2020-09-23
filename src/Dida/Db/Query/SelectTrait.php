@@ -42,6 +42,8 @@ trait SelectTrait
             throw new \Exception('"$fieldlist" paramater type is invalid.');
         }
 
+        $_join = $this->clauseJOIN();
+
         // where子句
         $this->where($where);
         $_where = $this->clauseWHERE();
@@ -58,12 +60,13 @@ SELECT
     $_fields
 FROM
     $_table
+{$_join["sql"]}
 {$_where["sql"]}
 $_limit
 SQL;
 
         // 构造params
-        $params = $_where["params"];
+        $params = array_merge($_join["params"], $_where["params"]);
 
         // 执行
         $rs = $this->driver->execRead($sql, $params);
