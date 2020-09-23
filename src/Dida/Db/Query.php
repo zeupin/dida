@@ -9,6 +9,7 @@
 
 namespace Dida\Db;
 
+use \Dida\Db\Query\TableTrait;
 use \Dida\Db\Query\WhereTrait;
 use \Dida\Db\Query\JoinTrait;
 use \Dida\Db\Query\InsertTrait;
@@ -25,6 +26,7 @@ abstract class Query
     /*
      * 构造SQL查询
      */
+    use TableTrait;
     use WhereTrait;
     use JoinTrait;
 
@@ -123,10 +125,10 @@ abstract class Query
 
         // 设置表名前缀
         if ($prefix === null) {
-            // 如果prefix为null，则从驱动的配置中读取prefix
+            // 如果prefix为null，则从配置文件中读取prefix
             $this->tablePrefix = $driver->conf["prefix"];
         } else {
-            // 如果prefix不为null，则将其设置为tablePrefix
+            // 如果prefix不为null，则使用此prefix
             $this->tablePrefix = $prefix;
         }
 
@@ -188,24 +190,5 @@ abstract class Query
 
         // 返回
         return implode('.', $a);
-    }
-
-    /**
-     * 返回主表的SQL表达式
-     *
-     * @return string
-     */
-    public function sqlMainTable()
-    {
-        $table = $this->quoteIdentifier($this->mainTable);
-        $as = $this->quoteIdentifier($this->mainTableAs);
-
-        if ($this->mainTableAs) {
-            $sql = "$table AS $as";
-        } else {
-            $sql = $table;
-        }
-
-        return $sql;
     }
 }
