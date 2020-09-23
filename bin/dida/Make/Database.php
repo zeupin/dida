@@ -81,7 +81,11 @@ class Database
     }
 
     /**
-     * 输出 ColumnList
+     * 输出数据表的字段列表 ColumnList
+     *
+     * 生成两种格式：
+     * 1. 纯字段名列表
+     * 2. 字段名 => 字段名
      */
     public function outputTableColumns($schema, $table)
     {
@@ -92,17 +96,28 @@ class Database
 
         // 字段列表
         $columnlist = array_keys($columns);
+
+        // 字段列
+        $names = [];
+        $pairs = [];
+
+        // 序列
         foreach ($columnlist as &$column) {
-            $column = "'$column'";
+            $names[] = "'$column'";
+            $pairs[] = "    '$column' => '$column',\n";
         }
-        $columnlist = implode(', ', $columnlist);
+
+        $names = implode(',', $names);
+        $pairs = implode("", $pairs);
 
         // 生成字段列表
         $file = "$schema.$table.columnlist.php";
         $path = $this->outputDir . DS . $file;
         $content = <<<TEXT
 <?php
-\${$table}_cols = [$columnlist];
+\${$table}_cols = [$names];
+
+\${$table}_cols = [\n$pairs];
 
 TEXT;
 
@@ -282,16 +297,13 @@ TEXT;
         $params = [];
         foreach ($columns as $column => $columninfo) {
             $fields[] = "    `$table`.`$column`";
-            $params[] = "    ?";
+            $params[] = "?";
         }
         $fields = implode(",\n", $fields);
         $s[] = $fields;
         $s[] = '    )';
         $s[] = "VALUES";
-        $s[] = "    (";
-        $params = implode(",\n", $params);
-        $s[] = $params;
-        $s[] = '    )';
+        $s[] = '    (' . implode(", ", $params) . ')';
         $s[] = ';';
         $s = implode("\n", $s);
 
