@@ -138,9 +138,9 @@ class Debug
      *
      * @return string
      */
-    public static function formatArray12(array $array)
+    public static function formatArray(array $array)
     {
-        // 把$array的第1个作为判断标准
+        // 根据$array的第1个item是否是数组类型，来判断是一维数组还是二维数组
         $row = reset($array);
         if (is_array($row)) {
             return self::formatArray2($array);
