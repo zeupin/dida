@@ -9,6 +9,8 @@
 
 namespace Dida\Db;
 
+use \Dida\Debug\Debug;
+
 /**
  * Query
  */
@@ -750,6 +752,11 @@ abstract class Query
      */
     public function fields($fields)
     {
+        // 如果为空，直接忽略
+        if (!$fields) {
+            return $this;
+        }
+
         // 如果是字符串，直接保存
         if (is_string($fields)) {
             $this->_fields[] = $fields;
@@ -1287,45 +1294,24 @@ SQL;
     /**
      * SELECT操作
      *
-     * @param array|string $fieldlist 字段列表
-     * @param array|string $where     条件。参见 $this->clauseWHERE()。
-     * @param string       $limit     LIMIT子句
+     * @param array|string $fields 字段列表
+     * @param array|string $where  条件。参见 $this->clauseWHERE()。
+     * @param string       $limit  LIMIT子句
      *
      * @return \Dida\Db\ResultSet
      */
-    public function select($fieldlist = '*', $where = '', $limit = '')
+    public function select($fields = '', $where = '', $limit = '')
     {
-        // 字段列表
-        if (is_string($fieldlist)) {
-            $_fields = $fieldlist;
-        } elseif (is_array($fieldlist)) {
-            $_fields = [];
-            foreach ($fieldlist as $as => $field) {
-                if (is_int($as)) {
-                    $_fields[] = $this->quoteIdentifier($field);
-                } else {
-                    $_fields[] = $this->quoteIdentifier($field) . ' AS ' . $this->quoteIdentifier($as);
-                }
-            }
-            $_fields = implode(", ", $_fields);
-        } else {
-            throw new \Exception('"$fieldlist" paramater type is invalid.');
-        }
-
-        // $_join = $this->clauseJOIN();
-        // where子句
+        // 参数处理
+        $this->fields($fields);
         $this->where($where);
-        // $_where = $this->clauseWHERE();
-        // limit子句
-        // $_limit = '';
-        // if ($limit) {
-        //     $_limit = "LIMIT $limit";
-        // }
-        // 生成SQL语句
-        $st = $this->buildSELECT();
+        $this->limit($limit);
+
+        // build
+        $sp = $this->buildSELECT();
 
         // 执行
-        $rs = $this->driver->execRead($st['sql'], $st['params']);
+        $rs = $this->driver->execRead($sp['sql'], $sp['params']);
 
         // 返回 Dida\Db\ResultSet
         return $rs;
