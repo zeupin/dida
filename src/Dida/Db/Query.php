@@ -158,6 +158,8 @@ abstract class Query
 
     /**
      * 要UPDATE/INSERT的数据行
+     *
+     * @var array
      */
     protected $_record = [];
 
@@ -356,7 +358,7 @@ abstract class Query
         $tpl = 'INSERT %s %s';
         $parts = [
             'table',
-            'record',
+            'values',
         ];
         return $this->buildSQL($tpl, $parts);
     }
@@ -619,7 +621,7 @@ abstract class Query
     }
 
     /**
-     * SET子句
+     * SET 子句
      *
      * @param array $row 数据
      *
@@ -627,32 +629,60 @@ abstract class Query
      */
     protected function clauseSET()
     {
-        // 如果rowItems为[]，直接抛异常
-        if (!$this->dataItems) {
-            throw new \Exception("The data for SET clause is not set.");
+        // 如果_record为[]，直接抛异常
+        if (!$this->_record) {
+            throw new \Exception("The record for UPDATE is not set.");
         }
 
         // 生成
         $sql = [];
         $params = [];
-        foreach ($this->dataItems as $field => $value) {
+        foreach ($this->_record as $field => $value) {
             $sql[] = $this->quoteIdentifier($field) . '=?';
             $params[] = $value;
         }
 
         // 返回
         return [
-            'sql'    => "SET " . implode(', ', $sql),
+            'sql'    => "\nSET " . implode(', ', $sql),
             'params' => $params,
         ];
     }
 
+    /**
+     * VALUES 子句
+     *
+     * @param array $row 数据
+     *
+     * @return array ['sql'=>..., 'params'=>[...]]
+     */
     protected function clauseVALUES()
     {
+        // 如果_record为[]，直接抛异常
+        if (!$this->_record) {
+            throw new \Exception("The record for INSERT is not set.");
+        }
+
+        // 初始化
+        $fields = [];
+        $marks = [];
+        $params = [];
+
+        // 生成
+        foreach ($this->_record as $field => $value) {
+            $fields[] = $this->quoteIdentifier($field);
+            $marks[] = '?';
+            $params[] = $value;
+        }
+
+        // 处理
+        $fields = implode(', ', $fields);
+        $marks = implode(',', $marks);
+
         // 返回
         return [
-            'sql'    => '',
-            'params' => [],
+            'sql'    => "($fields) VALUES ($marks)",
+            'params' => $params,
         ];
     }
 
@@ -741,6 +771,19 @@ abstract class Query
             'sql'    => "($sql)",
             'params' => $params,
         ];
+    }
+
+    /**
+     * 生成N个形参?
+     *
+     * @param int $num
+     *
+     * @return string
+     */
+    protected function makeMarks($num)
+    {
+        $m = str_repeat('?,', $num);
+        return substr($m, 0, -1);
     }
 
     /**
