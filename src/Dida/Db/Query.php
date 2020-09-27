@@ -832,7 +832,21 @@ abstract class Query
         // 如果是数组
         if (is_array($fields)) {
             $this->_fields = array_merge($this->_fields, $fields);
+            return $this;
         }
+    }
+
+    /**
+     * 强制设置Query的查询字段fields
+     *
+     * @param array $fields
+     *
+     * @return \Dida\Db\Query $this
+     */
+    public function initFields(array $fields = [])
+    {
+        $this->_fields = $fields;
+        return $this;
     }
 
     /**
@@ -1402,5 +1416,104 @@ abstract class Query
 
         // 成功，返回count
         return intval($rs->getColumn("count"));
+    }
+
+    /**
+     * 分页显示
+     *
+     * @param int         $page
+     * @param int         $pagesize
+     * @param string|null $uniquekey 主键或者唯一键，以便优化总数查询
+     *
+     * @return array|false 成功返回如下数组结构，失败返回false
+     *
+     * [
+     *     'page'     => 1,    // 当前页
+     *     'pagesize' => 10,   // 每页显示条数
+     *     'count'    => 99,   // 记录总个数
+     *     'pages'    => 10,   // 总页数
+     *     'prevpage' => null, // 上一页。无上页则为null
+     *     'nextpage' => 2,    // 下一页。无下页则为null
+     *     'data'     => [[...], [...], ...], // 本页的记录
+     * ]
+     */
+    public function pager($page = 1, $pagesize = 10, $uniquekey = null)
+    {
+        // 如果参数不合法，直接返回false
+        if ($page < 1 || $pagesize < 1) {
+            return false;
+        }
+
+        // 暂存$this->_fields
+        $tempfields = $this->_fields;
+
+        // 如果设置了 $uniquekey
+        if (is_string($uniquekey)) {
+            $this->fields($uniquekey);
+        }
+
+        // build
+        $sp = $this->buildCOUNT();
+
+        // 执行
+        $rs = $this->driver->execRead($sp['sql'], $sp['params']);
+
+        // 如果出错，返回false
+        if ($rs->fail()) {
+            return false;
+        }
+
+        // 成功，返回记录总条数
+        $count = intval($rs->getColumn("count"));
+
+        // 总页数
+        $pages = ceil($count / $pagesize);
+
+        // 恢复$this->_fields
+        $this->_fields = $tempfields;
+
+        // 设置分页
+        $from = ($page - 1) * $pagesize;
+        $limit = $from . ',' . $pagesize;
+        $this->limit($limit);
+
+        $sp = $this->buildSELECT();
+
+        // 执行
+        $rs = $this->driver->execRead($sp['sql'], $sp['params']);
+
+        // 如果出错，返回false
+        if ($rs->fail()) {
+            return false;
+        }
+
+        // 生成data
+        $data = $rs->getRows();
+        $datacount = count($data);
+
+        // 上一页
+        if ($page > 1) {
+            $prevpage = $page - 1;
+        } else {
+            $prevpage = null; // 没有上一页
+        }
+
+        // 下一页
+        if (($from + $datacount) < $count) {
+            $nextpage = $page + 1;
+        } else {
+            $nextpage = null; // 没有下一页
+        }
+
+        // 返回
+        return [
+            'page'     => $page,
+            'pagesize' => $pagesize,
+            'count'    => $count,
+            'pages'    => $pages,
+            'prevpage' => $prevpage,
+            'nextpage' => $nextpage,
+            'data'     => $data,
+        ];
     }
 }
