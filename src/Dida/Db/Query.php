@@ -348,6 +348,29 @@ abstract class Query
     }
 
     /**
+     * 构建 COUNT 语句
+     *
+     * @return array 生成的结果
+     *               ['sql'=>..., 'params'=>[...]]
+     */
+    protected function buildCOUNT()
+    {
+        $tpl = 'SELECT count(%s) AS `count` FROM %s %s %s %s %s %s %s';
+        $parts = [
+            'fields',
+            'table',
+            'join',
+            'where',
+            'groupby',
+            'having',
+            'orderby',
+            'offset',
+            'limit',
+        ];
+        return $this->buildSQL($tpl, $parts);
+    }
+
+    /**
      * 构建 INSERT 语句
      *
      * @return array 生成的结果
@@ -1359,42 +1382,18 @@ abstract class Query
      *
      * @return int|false 成功返回count，失败返回false
      */
-    public function count($fieldlist = '*', array $where = [])
+    public function count($fields = '*', array $where = [])
     {
-        // 字段列表
-        if (is_string($fieldlist)) {
-            $_fields = $fieldlist;
-        } elseif (is_array($fieldlist)) {
-            $_fields = [];
-            foreach ($fieldlist as $as => $field) {
-                if (is_int($as)) {
-                    $_fields[] = "{$this->left_quote}$field{$this->right_quote}";
-                } else {
-                    $_fields[] = "{$this->left_quote}$field{$this->right_quote} AS {$this->left_quote}$as{$this->right_quote}";
-                }
-            }
-            $_fields = implode(", ", $_fields);
-        } else {
-            throw new \Exception("Invalid '\$fieldlist' paramater type.");
-        }
+        // 参数处理
+        $this->fields($fields);
+        $this->where($where);
+        $this->limit($limit);
 
-        // where子句
-        $_where = $this->clauseWHERE($where);
-
-        // 构造sql
-        $sql = <<<SQL
-SELECT
-    COUNT($_fields) AS {$this->left_quote}count{$this->right_quote}
-FROM
-    {$this->left_quote}$this->mainTable{$this->right_quote}
-{$_where["sql"]}
-SQL;
-
-        // 构造params
-        $params = $_where["params"];
+        // build
+        $sp = $this->buildCOUNT();
 
         // 执行
-        $rs = $this->driver->execRead($sql, $params);
+        $rs = $this->driver->execRead($sp['sql'], $sp['params']);
 
         // 如果出错，返回false
         if ($rs->fail()) {
