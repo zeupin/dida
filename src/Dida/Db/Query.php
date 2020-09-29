@@ -85,6 +85,13 @@ abstract class Query
     ];
 
     /**
+     * DISTINCT
+     *
+     * @var bool
+     */
+    protected $_distinct = false;
+
+    /**
      * 字段列表
      *
      * @var array
@@ -278,6 +285,9 @@ abstract class Query
                 case 'table':
                     $this->clause["table"] = $this->clauseTABLE();
                     break;
+                case 'distinct':
+                    $this->clause["distinct"] = $this->clauseDISTINCT();
+                    break;
                 case 'fields':
                     $this->clause["fields"] = $this->clauseFIELDS();
                     break;
@@ -329,8 +339,9 @@ abstract class Query
      */
     protected function buildSELECT()
     {
-        $tpl = 'SELECT %s FROM %s %s %s %s %s %s %s';
+        $tpl = 'SELECT%s %s FROM %s %s %s %s %s %s %s';
         $parts = [
+            'distinct',
             'fields',
             'table',
             'join',
@@ -430,6 +441,25 @@ abstract class Query
     {
         return [
             'sql'    => $this->sqlMainTable(),
+            'params' => [],
+        ];
+    }
+
+    /**
+     * 返回 DISTINCT 子句
+     *
+     * @return array 生成的结果 ['sql'=>..., 'params'=>[...]]
+     */
+    public function clauseDISTINCT()
+    {
+        if ($this->_distinct) {
+            $sql = ' DISTINCT';
+        } else {
+            $sql = '';
+        }
+
+        return [
+            'sql'    => $sql,
             'params' => [],
         ];
     }
@@ -804,6 +834,16 @@ abstract class Query
     {
         $m = str_repeat('?,', $num);
         return substr($m, 0, -1);
+    }
+
+    /**
+     * 设置DISTINCT
+     *
+     * @param bool $v
+     */
+    public function distinct($v = true)
+    {
+        $this->_distinct = $v;
     }
 
     /**
