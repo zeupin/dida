@@ -56,7 +56,7 @@ class ResultSet
      * 初始化
      *
      * $options
-     *     fetchmode    fetch模式，参见PDO::setFetchMode()
+     *     fetchmode    fetch模式，参见 PDOStatement::setFetchMode()
      *
      * @param string        $errCode
      * @param string        $errMsg
@@ -150,6 +150,50 @@ class ResultSet
     public function fetchAll()
     {
         return $this->pdostatement->fetchAll();
+    }
+
+    /**
+     * fetch() 以关联数组形式返回
+     *
+     * @return array|false
+     */
+    public function fetchByAssoc()
+    {
+        $this->pdostatement->setFetchMode(\PDO::FETCH_ASSOC);
+        $this->pdostatement->fetch();
+    }
+
+    /**
+     * fetchAll() 以关联数组形式返回
+     *
+     * @return array|false
+     */
+    public function fetchAllByAssoc()
+    {
+        $this->pdostatement->setFetchMode(\PDO::FETCH_ASSOC);
+        $this->pdostatement->fetchAll();
+    }
+
+    /**
+     * fetch() 以索引数组形式返回
+     *
+     * @return array|false
+     */
+    public function fetchByNum()
+    {
+        $this->pdostatement->setFetchMode(\PDO::FETCH_NUM);
+        $this->pdostatement->fetch();
+    }
+
+    /**
+     * fetchAll() 以索引数组形式返回
+     *
+     * @return array|false
+     */
+    public function fetchAllByNum()
+    {
+        $this->pdostatement->setFetchMode(\PDO::FETCH_NUM);
+        $this->pdostatement->fetchAll();
     }
 
     /**
