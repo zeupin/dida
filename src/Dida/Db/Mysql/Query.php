@@ -24,7 +24,7 @@ class Query extends \Dida\Db\Query
      */
     protected function setIdentifierQuote()
     {
-        $this->left_quote = '`';
-        $this->right_quote = '`';
+        $this->quote_left = '`';
+        $this->quote_right = '`';
     }
 }

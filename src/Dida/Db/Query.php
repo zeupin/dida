@@ -33,7 +33,7 @@ abstract class Query
      *
      * @see setIdentifierQuote()
      */
-    protected $left_quote = '';
+    protected $quote_left = '';
 
     /**
      * 标识引用符，右
@@ -42,7 +42,7 @@ abstract class Query
      *
      * @see setIdentifierQuote()
      */
-    protected $right_quote = '';
+    protected $quote_right = '';
 
     /**
      * 主数据表
@@ -170,9 +170,6 @@ abstract class Query
      * 2. 对Sqlite，左右标识引用字符分别为 ""
      * 3. 对Access，左右标识引用字符分别为 []
      *
-     * @param string $left_quote
-     * @param string $right_quote
-     *
      * @return void
      */
     abstract protected function setIdentifierQuote();
@@ -242,7 +239,7 @@ abstract class Query
     protected function quoteIdentifier($identifier)
     {
         // 如果无需转义
-        if ($this->left_quote === '' && $this->right_quote === '') {
+        if ($this->quote_left === '' && $this->quote_right === '') {
             return $identifier;
         }
 
@@ -256,7 +253,7 @@ abstract class Query
         // 开始转义
         $a = explode('.', $identifier);
         foreach ($a as &$i) {
-            $i = $this->left_quote . $i . $this->right_quote;
+            $i = $this->quote_left . $i . $this->quote_right;
         }
 
         // 返回
