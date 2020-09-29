@@ -133,23 +133,31 @@ class ResultSet
     /**
      * 参见PHP官方文档的 PDOStatement::fetch()
      *
+     * @param int $fetch_style
+     * @param int $cursor_orientation
+     * @param int $cursor_offset
+     *
      * @return mixed|false 成功返回结果
      *                     失败返回false
      */
-    public function fetch()
+    public function fetch($fetch_style = null, $cursor_orientation = \PDO::FETCH_ORI_NEXT, $cursor_offset = 0)
     {
-        return $this->pdostatement->fetch();
+        return $this->pdostatement->fetch($fetch_style, $cursor_orientation, $cursor_offset);
     }
 
     /**
      * 参见PHP官方文档的 PDOStatement::fetchAll()
      *
+     * @param int   $fetch_style
+     * @param int   $fetch_argument
+     * @param array $ctor_args
+     *
      * @return mixed|false 成功返回结果
      *                     失败返回false
      */
-    public function fetchAll()
+    public function fetchAll($fetch_style = null, $fetch_argument = null, array $ctor_args = [])
     {
-        return $this->pdostatement->fetchAll();
+        return $this->pdostatement->fetchAll($fetch_style, $fetch_argument, $ctor_args);
     }
 
     /**
@@ -159,8 +167,7 @@ class ResultSet
      */
     public function fetchByAssoc()
     {
-        $this->pdostatement->setFetchMode(\PDO::FETCH_ASSOC);
-        $this->pdostatement->fetch();
+        $this->pdostatement->fetch(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -170,8 +177,7 @@ class ResultSet
      */
     public function fetchAllByAssoc()
     {
-        $this->pdostatement->setFetchMode(\PDO::FETCH_ASSOC);
-        $this->pdostatement->fetchAll();
+        $this->pdostatement->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -181,8 +187,7 @@ class ResultSet
      */
     public function fetchByNum()
     {
-        $this->pdostatement->setFetchMode(\PDO::FETCH_NUM);
-        $this->pdostatement->fetch();
+        $this->pdostatement->fetch(\PDO::FETCH_NUM);
     }
 
     /**
@@ -192,8 +197,7 @@ class ResultSet
      */
     public function fetchAllByNum()
     {
-        $this->pdostatement->setFetchMode(\PDO::FETCH_NUM);
-        $this->pdostatement->fetchAll();
+        $this->pdostatement->fetchAll(\PDO::FETCH_NUM);
     }
 
     /**
