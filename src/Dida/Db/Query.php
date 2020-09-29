@@ -355,7 +355,7 @@ abstract class Query
      */
     protected function buildCOUNT()
     {
-        $tpl = 'SELECT count(%s) AS `count` FROM %s %s %s %s %s %s %s';
+        $tpl = 'SELECT count(%s) FROM %s %s %s %s %s %s %s';
         $parts = [
             'fields',
             'table',
@@ -1414,8 +1414,14 @@ abstract class Query
             return false;
         }
 
+        // 行数据
+        $row = $rs->fetchByNum();
+        if ($row === false) {
+            return false;
+        }
+
         // 成功，返回count
-        return intval($rs->getColumn("count"));
+        return intval($row[0]);
     }
 
     /**
