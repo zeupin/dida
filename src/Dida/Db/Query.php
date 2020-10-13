@@ -22,6 +22,8 @@ abstract class Query
     const VERSION = '20200916';
 
     /**
+     * 指定driver
+     *
      * @var \Dida\Db\Driver\Driver
      */
     protected $driver;
@@ -239,7 +241,7 @@ abstract class Query
      *    例：t_users.username，会分段转义输出 `t_users`.`username`
      *    例：`t_users`.username，因为含有"`"，所以会原样输出 `t_users`.username
      *
-     * @var string $identifier 标识符
+     * @param string $identifier 标识符
      *
      * @return string
      */
@@ -1083,6 +1085,8 @@ abstract class Query
     /**
      * 设置 $this->wherLogic
      *
+     * @param string $logic 逻辑连接符，如：AND OR XOR
+     *
      * @return \Dida\Db\Query $this
      */
     public function whereLogic($logic)
@@ -1101,24 +1105,24 @@ abstract class Query
     }
 
     /**
-     * 设置 $this->wherLogic = 'OR'
+     * 设置wherLogic为OR
      *
      * @return \Dida\Db\Query $this
      */
     public function whereOr()
     {
-        $this->_whereLogic('OR');
+        $this->whereLogic('OR');
         return $this;
     }
 
     /**
-     * 设置 $this->wherLogic = 'AND'
+     * 设置wherLogic为AND
      *
      * @return \Dida\Db\Query $this
      */
     public function whereAnd()
     {
-        $this->_whereLogic('AND');
+        $this->whereLogic('AND');
         return $this;
     }
 
@@ -1267,6 +1271,8 @@ abstract class Query
     /**
      * 设置 $this->wherLogic
      *
+     * @param string $logic 逻辑连接符，如：AND OR XOR
+     *
      * @return \Dida\Db\Query $this
      */
     public function havingLogic($logic)
@@ -1285,24 +1291,24 @@ abstract class Query
     }
 
     /**
-     * 设置 $this->wherLogic = 'OR'
+     * 设置havingLogic为OR
      *
      * @return \Dida\Db\Query $this
      */
     public function havingOr()
     {
-        $this->_havingLogic('OR');
+        $this->havingLogic('OR');
         return $this;
     }
 
     /**
-     * 设置 $this->wherLogic = 'AND'
+     * 设置havingLogic为AND
      *
      * @return \Dida\Db\Query $this
      */
     public function havingAnd()
     {
-        $this->_havingLogic('AND');
+        $this->havingLogic('AND');
         return $this;
     }
 
@@ -1435,9 +1441,8 @@ abstract class Query
     /**
      * COUNT
      *
-     * @param array|string $fieldlist 字段列表。从性能原因考虑，这个参数最好设置为表的主键。
-     * @param array|string $where     条件。参见 $this->clauseWHERE()。
-     * @param string       $limit     LIMIT子句
+     * @param array|string $fields 字段列表。从性能原因考虑，这个参数最好设置为表的主键。
+     * @param array|string $where  条件。参见 $this->clauseWHERE()。
      *
      * @return int|false 成功返回count，失败返回false
      */
@@ -1446,7 +1451,6 @@ abstract class Query
         // 参数处理
         $this->fields($fields);
         $this->where($where);
-        $this->limit($limit);
 
         // build
         $sp = $this->buildCOUNT();
