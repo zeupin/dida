@@ -13,8 +13,9 @@ namespace Dida\Console;
  * 命令行的参数数组, 提供解析、调用功能。
  *
  * 1. 命令名 参数1 参数2 参数N -选项1=值 --选项2=值
- * 2. 参数parameter，选项option。
- * 3. 选项以"-"开头，名称包含前导"-"。例如 --user=...，选项名为"--user"，而不是仅仅"user"。
+ * 2. 参数（parameter），选项（option）。
+ * 3. 选项（option）是以"-"开头，解析出来的名称包含了前导"-"。例如 --user=...，选项名为"--user"，而不是仅仅"user"。
+ * 4. parameters + options 统称 arguments
  */
 class Arguments
 {
