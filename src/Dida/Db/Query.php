@@ -962,6 +962,10 @@ abstract class Query
      * @param mixed        $value 值
      *
      * @return \Dida\Db\Query $this
+     *
+     * 注意事项：
+     * 1. IN 一般会走索引，但是如果IN的取值范围过大时，会导致索引失效，变为全表扫描，对查询效率有影响。
+     * 2. NOT IN 不走索引，效率比较差！尽量避免采用 NOT IN 操作，用其它走索引的方式代替。
      */
     public function where($field, $op = '=', $value = null)
     {
@@ -1011,6 +1015,10 @@ abstract class Query
 
     /**
      * WHERE: IN
+     *
+     * 注意事项：
+     * 1. IN 一般会走索引，但是如果IN的取值范围过大时，会导致索引失效，变为全表扫描，对查询效率有影响。
+     * 2. NOT IN 不走索引，效率比较差！尽量避免采用 NOT IN 操作，用其它走索引的方式代替。
      *
      * @param string $field  字段
      * @param mixed  $values 值
