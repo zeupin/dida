@@ -13,6 +13,9 @@ use \Dida\Routing\Router;
 
 /**
  * 基于path的路由
+ * 
+ * 1. 如果要对类似 "/foo/bar" 和 "/foo/bar/" 进行一致化处理,可以自行去除$pathinfo尾部的"/"
+ *    rtrim($pathinfo)   <-- 注意不要误写为了trim($pathinfo),应为rtrim(...)
  */
 class PathRouter extends Router
 {
