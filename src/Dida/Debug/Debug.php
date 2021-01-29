@@ -20,6 +20,28 @@ class Debug
     const VERSION = '20200909';
 
     /**
+     * Trace
+     *
+     * @param any    $content
+     * @param string $filename
+     *
+     * @return void
+     */
+    public function trace($content, $filename = "php://stdout")
+    {
+        if (is_string($content)) {
+            // 如果是字符串
+        } elseif (is_array($content)) {
+            // 如果是数组
+            $content = self::formatArray($content);
+        } else {
+            // 如果是其它类型
+            $content = var_export($content, true);
+        }
+        file_put_contents($filename, "$content\n");
+    }
+
+    /**
      * 格式化一个一维数组
      *
      * @param array $array 要格式化的一维数组
