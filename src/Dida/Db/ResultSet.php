@@ -140,24 +140,42 @@ class ResultSet
      * @return mixed|false 成功返回结果
      *                     失败返回false
      */
-    public function fetch($fetch_style = null, $cursor_orientation = \PDO::FETCH_ORI_NEXT, $cursor_offset = 0)
+    public function fetch()
     {
-        return $this->pdostatement->fetch($fetch_style, $cursor_orientation, $cursor_offset);
+        switch (func_num_args()) {
+            case 0:
+                return $this->pdostatement->fetch();
+            case 1:
+                return $this->pdostatement->fetch(func_get_arg(0));
+            case 2:
+                return $this->pdostatement->fetch(func_get_arg(0), func_get_arg(1));
+            default:
+                return $this->pdostatement->fetch(func_get_arg(0), func_get_arg(1), func_get_arg(2));
+        }
     }
 
     /**
      * 参见PHP官方文档的 PDOStatement::fetchAll()
      *
      * @param int   $fetch_style
-     * @param int   $fetch_argument
+     * @param mixed $fetch_argument
      * @param array $ctor_args
      *
      * @return mixed|false 成功返回结果
      *                     失败返回false
      */
-    public function fetchAll($fetch_style = null, $fetch_argument = null, array $ctor_args = [])
+    public function fetchAll()
     {
-        return $this->pdostatement->fetchAll($fetch_style, $fetch_argument, $ctor_args);
+        switch (func_num_args()) {
+            case 0:
+                return $this->pdostatement->fetchAll();
+            case 1:
+                return $this->pdostatement->fetchAll(func_get_arg(0));
+            case 2:
+                return $this->pdostatement->fetchAll(func_get_arg(0), func_get_arg(1));
+            default:
+                return $this->pdostatement->fetchAll(func_get_arg(0), func_get_arg(1), func_get_arg(2));
+        }
     }
 
     /**
