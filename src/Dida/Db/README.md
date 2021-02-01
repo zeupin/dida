@@ -1,5 +1,23 @@
 # Db
 
+## 配置文件
+
+### Mysql 配置文件示例
+
+```php
+return [
+    'driver'   => "\\Dida\Db\\Driver\\Mysql",                    // 必填
+    'dsn'      => 'mysql:host=localhost;port=3306;dbname=foo',   // 必填
+    'username' => 'tom',
+    'password' => 'jerry',
+    'options'  => [
+        PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_PERSISTENT         => true
+    ],
+];
+```
+
 ## 常用
 
 ### 1. 在 Model 中创建 db 的引用
