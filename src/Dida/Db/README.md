@@ -2,7 +2,7 @@
 
 ## 常用
 
-### 1. 在Model中创建db的引用
+### 1. 在 Model 中创建 db 的引用
 
 ```php
 class Model
@@ -20,7 +20,7 @@ class Model
 }
 ```
 
-### 2.  `$this->db->table()`
+### 2. `$this->db->table()`
 
 ```php
 // 创建一个查询 \Dida\Db\Query
@@ -29,8 +29,8 @@ $q = $this->db->table("表名","前缀","别名");
 
 ### 3. 查询的一些方法，可以链式操作
 
-* 用法1 `where(字段名, 操作, 值)` 。操作默认为=，值默认为null
-* 用法2 `where(字段数组, 操作)`。操作默认为=
+- 用法 1 `where(字段名, 操作, 值)` 。操作默认为=，值默认为 null
+- 用法 2 `where(字段数组, 操作)`。操作默认为=
 
 ```php
 // 用法1-1：简单查询
@@ -66,17 +66,18 @@ $this->db->table("表名","前缀","别名")->where($input, 'LIKE')->select();
 // ]
 ```
 
-### 4. 修改WHERE条件的拼接逻辑
+### 4. 修改 WHERE 条件的拼接逻辑
 
-* 默认的WHERE条件拼接逻辑为`AND`，可以通过`whereLogic($logic)`修改拼接逻辑。
-* whereLogic()只对其后的where设置有效，对之前的无效。
-    ```php
-    table()->where(条件1)->where(条件2);
-    // 结果： (条件1 AND 条件2)
+- 默认的 WHERE 条件拼接逻辑为`AND`，可以通过`whereLogic($logic)`修改拼接逻辑。
+- whereLogic()只对其后的 where 设置有效，对之前的无效。
 
-    table()->where(条件1)->where(条件2)->whereOr()->where(条件3)->where(条件4);
-    // 结果： ((条件1 AND 条件2) OR 条件3 OR 条件4)
+  ```php
+  table()->where(条件1)->where(条件2);
+  // 结果： (条件1 AND 条件2)
 
-    table()->where(条件1)->where(条件2)->whereOr()->where(条件3)->where(条件4)->whereAnd()->where(条件5);
-    // 结果： (((条件1 AND 条件2) OR 条件3 OR 条件4) AND 条件5)
-    ```
+  table()->where(条件1)->where(条件2)->whereOr()->where(条件3)->where(条件4);
+  // 结果： ((条件1 AND 条件2) OR 条件3 OR 条件4)
+
+  table()->where(条件1)->where(条件2)->whereOr()->where(条件3)->where(条件4)->whereAnd()->where(条件5);
+  // 结果： (((条件1 AND 条件2) OR 条件3 OR 条件4) AND 条件5)
+  ```
