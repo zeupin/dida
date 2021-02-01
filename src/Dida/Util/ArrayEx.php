@@ -144,4 +144,24 @@ class ArrayEx
         }
         return $array;
     }
+
+    /**
+     * 在$array中, 检查$keys列表的每个key是否都存在。
+     * 返回不存在的keys的清单。
+     *
+     * @param array $array
+     * @param array $keys  要检查的keys
+     *
+     * @return array 返回缺失keys的列表。
+     */
+    public static function getMissingKeys(array $array, array $keys)
+    {
+        $missing = [];
+        foreach ($keys as $key) {
+            if (!array_key_exists($key, $array)) {
+                $missing[] = $key;
+            }
+        }
+        return $missing;
+    }
 }
