@@ -19,7 +19,7 @@ class ResultSet
     /**
      * 版本号
      */
-    const VERSION = "20200911";
+    const VERSION = "20210204";
 
     /**
      * 执行类型常量
@@ -46,6 +46,12 @@ class ResultSet
      * @var \PDOStatement PDOStatement实例
      */
     public $pdostatement;
+
+    /**
+     * @var int|false|null DELETE/INSERT/UPDATE 语句影响的行数
+     *                     null=未设置, false=执行失败, int=受影响的行数
+     */
+    public $affectedRows = null;
 
     /**
      * @var string 配置项
@@ -113,21 +119,6 @@ class ResultSet
     public function fail()
     {
         return ($this->errCode !== '00000');
-    }
-
-    /**
-     * 返回受影响的行数
-     *
-     * @return int|false PDO执行成功，返回受影响的行数
-     *                   PDO执行失败，返回false
-     */
-    public function rowCount()
-    {
-        if ($this->errCode === '00000') {
-            return $this->pdostatement->rowCount();
-        } else {
-            return false;
-        }
     }
 
     /**

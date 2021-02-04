@@ -18,7 +18,7 @@ abstract class Driver
     /**
      * 版本号
      */
-    const VERSION = '20200913';
+    const VERSION = '20210204';
 
     /**
      * 配置项
@@ -195,6 +195,13 @@ abstract class Driver
 
         // 标记exectype为写操作
         $resultset->exectype = ResultSet::EXEC_WRITE;
+
+        // 如果执行成功
+        if ($resultset->errCode === '00000') {
+            $resultset->affectedRows = $resultset->pdostatement->rowCount();
+        } else {
+            $resultset->affectedRows = false;
+        }
 
         // 返回，供后面继续调用
         return $resultset;
