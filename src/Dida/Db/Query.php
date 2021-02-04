@@ -1396,6 +1396,27 @@ abstract class Query
     }
 
     /**
+     * 有记录就UPDATE,没有记录就INSERT
+     *
+     * @param array $row 要更新的数据项
+     *
+     * @return \Dida\Db\ResultSet
+     */
+    public function put(array $row)
+    {
+        // 先检查满足WHERE条件的有多少个
+        $that = clone $this;
+        $count = $that->count();
+
+        // 根据情况选择是update还是insert
+        if ($count) {
+            return $this->update($row);
+        } else {
+            return $this->insert($row);
+        }
+    }
+
+    /**
      * DELETE
      *
      * @return \Dida\Db\ResultSet
@@ -1446,11 +1467,15 @@ abstract class Query
      *
      * @return int|false 成功返回count，失败返回false
      */
-    public function count($fields = '*', array $where = [])
+    public function count($fields = null, $where = null)
     {
         // 参数处理
-        $this->fields($fields);
-        $this->where($where);
+        if ($fileds !== null) {
+            $this->fields($fields);
+        }
+        if ($where !== null) {
+            $this->where($where);
+        }
 
         // build
         $sp = $this->buildCOUNT();
