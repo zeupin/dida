@@ -176,7 +176,7 @@ class ResultSet
      */
     public function fetchByAssoc()
     {
-        $this->pdostatement->fetch(\PDO::FETCH_ASSOC);
+        return $this->pdostatement->fetch(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -186,7 +186,7 @@ class ResultSet
      */
     public function fetchAllByAssoc()
     {
-        $this->pdostatement->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->pdostatement->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -196,7 +196,7 @@ class ResultSet
      */
     public function fetchByNum()
     {
-        $this->pdostatement->fetch(\PDO::FETCH_NUM);
+        return $this->pdostatement->fetch(\PDO::FETCH_NUM);
     }
 
     /**
@@ -206,7 +206,7 @@ class ResultSet
      */
     public function fetchAllByNum()
     {
-        $this->pdostatement->fetchAll(\PDO::FETCH_NUM);
+        return $this->pdostatement->fetchAll(\PDO::FETCH_NUM);
     }
 
     /**
