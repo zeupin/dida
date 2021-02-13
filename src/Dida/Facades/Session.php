@@ -18,7 +18,7 @@ use \Dida\Facade;
  * @method static void config(array $conf)
  * @method static bool start()
  * @method static bool destory()
- * @method static bool unset()
+ * @method static bool removeAll()
  * @method static bool has(string $key)
  * @method static mixed|null get(string $key)
  * @method static bool set(string $key, mixed $value)

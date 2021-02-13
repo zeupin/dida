@@ -14,12 +14,12 @@ use \Dida\Facade;
 /*
  * Facade methods for Dida\Console\Console
  *
- * @method static pr($msg, $style = null)
- * @method static prln($msg, $style = null)
+ * @method static pr(string $msg, string $style = null)
+ * @method static prln(string $msg, string $style = null)
  * @method static string ss(string $msg, string $style)
- * @method static err($msg)
- * @method static notice($msg)
- * @method static info($msg)
+ * @method static err(string $msg)
+ * @method static notice(string $msg)
+ * @method static info(string $msg)
  */
 class Console extends Facade
 {

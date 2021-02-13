@@ -14,11 +14,13 @@ use \Dida\Facade;
 /*
  * Facade methods for Dida\Db\Db
  *
- * @method static __construct(array $conf)
- * @method static init()
- * @method static _this()
- * @method static pdo()
- * @method static schemainfo()
+ * @method static void __construct(array $conf)
+ * @method static bool init()
+ * @method static  pdo()
+ * @method static  schemainfo()
+ * @method static  table(string $name, string $as = '')
+ * @method static  execRead(string $sql, array $params = [], array $options = [])
+ * @method static  execWrite(string $sql, array $params = [], array $options = [])
  */
 class Db extends Facade
 {
