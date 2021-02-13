@@ -1029,11 +1029,19 @@ abstract class Query
      */
     public function whereIn($field, array $values)
     {
+        // 如果$values=[],直接返回false
+        if ($values === []) {
+            $this->_whereItems = 'false';
+            return $this;
+        }
+
+        // 如果$values是数组
         $field = $this->quoteIdentifier($field);
-        $marks = substr(str_repeat('?,'), 0, -1);
+        $cnt = count($values);
+        $marks = implode(',', array_fill(0, $cnt, '?'));
         $item = [
             'sql'    => "($field IN ($marks))",
-            'params' => [$value1, $value2],
+            'params' => $values,
         ];
         $this->_whereItems[] = $item;
 
@@ -1215,11 +1223,19 @@ abstract class Query
      */
     public function havingIn($field, array $values)
     {
+        // 如果$values=[],直接返回false
+        if ($values === []) {
+            $this->_havingItems = 'false';
+            return $this;
+        }
+
+        // 如果$values是数组
         $field = $this->quoteIdentifier($field);
-        $marks = substr(str_repeat('?,'), 0, -1);
+        $cnt = count($values);
+        $marks = implode(',', array_fill(0, $cnt, '?'));
         $item = [
             'sql'    => "($field IN ($marks))",
-            'params' => [$value1, $value2],
+            'params' => $values,
         ];
         $this->_havingItems[] = $item;
 
