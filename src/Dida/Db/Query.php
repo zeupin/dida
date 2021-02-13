@@ -491,7 +491,7 @@ abstract class Query
             } elseif ($key === $field) {
                 $r[] = $field;
             } else {
-                $r[] = $field . ' AS ' . $this->quoteIdentifer($key);
+                $r[] = $field . ' AS ' . $this->quoteIdentifier($key);
             }
         }
 
