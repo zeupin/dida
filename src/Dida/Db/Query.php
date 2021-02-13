@@ -404,7 +404,7 @@ abstract class Query
      */
     protected function buildUPDATE()
     {
-        $tpl = 'UPDATE %s SET %s %s %s %s %s %s';
+        $tpl = 'UPDATE %s %s %s %s %s %s %s';
         $parts = [
             'table',
             'set',
