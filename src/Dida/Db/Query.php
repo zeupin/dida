@@ -1552,6 +1552,10 @@ abstract class Query
             return false;
         }
 
+        // 变量
+        $page = $options['page'];
+        $pagesize = $options['pagesize'];
+
         // 为了构造count，要暂存一下$this->_fields
         $tempfields = $this->_fields;
 
