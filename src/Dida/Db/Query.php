@@ -1470,7 +1470,7 @@ abstract class Query
     public function count($fields = null, $where = null)
     {
         // 参数处理
-        if ($fileds !== null) {
+        if ($fields !== null) {
             $this->fields($fields);
         }
         if ($where !== null) {
