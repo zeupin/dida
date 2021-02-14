@@ -14,7 +14,7 @@ abstract class Router
     /**
      * 版本号
      */
-    const VERSION = '20200904';
+    const VERSION = '20210214';
 
     /**
      * 异常代码
@@ -76,6 +76,16 @@ abstract class Router
     ];
 
     /**
+     * @var callback
+     */
+    protected $matchFailCallback = null;
+
+    /**
+     * @var array
+     */
+    protected $matchFailCallbackParameters = [];
+
+    /**
      * 获取 pathinfo
      *
      * @return mixed
@@ -98,48 +108,20 @@ abstract class Router
     }
 
     /**
-     * 匹配路由.
+     * 匹配路由。
+     * 在执行match()之前, 要先用setPathInfo()设置好需要查询的pathinfo
      *
      * 如果匹配成功
      *      $this->matchResult = ['code'=>0, 'msg'=>''];
-     *      $this->routeInfo  = 匹配到的路由;
+     *      $this->routeInfo  = 匹配到的路由记录( [path, callback, parameters] );
+     *
      * 如果匹配失败
      *      $this->matchResult = ['code'=>错误码, 'msg'=>'错误原因'];
      *      $this->routeInfo  = $this->resetRouteInfo();
      *
-     * @param mixed $pathinfo 路径信息
-     *
-     * @return bool 匹配成功,返回true; 匹配失败,返回false.
+     * @return bool 匹配成功,返回true。匹配失败,返回false。
      */
-    abstract public function match($pathinfo);
-
-    /**
-     * 运行一个完整的路由流程
-     * match => check => execute
-     *
-     * @return int 成功, 返回0; 失败, 返回错误码
-     */
-    public function run($pathinfo)
-    {
-        // 如果match()失败
-        if ($this->match($pathinfo) === false) {
-            return Router::MATCH_EXCEPTION;
-        }
-
-        // 如果execute()失败
-        if ($this->execute() === false) {
-            if ($this->checkResult["code"] !== 0) {
-                return Router::CHECK_EXCEPTION;
-            }
-
-            if ($this->executeResult["code"] !== 0) {
-                return Router::EXECUTE_EXCEPTION;
-            }
-        }
-
-        // 顺利完成
-        return Router::SUCCESS;
-    }
+    abstract public function match();
 
     /**
      * 检查routeInfo的callback是否可以执行
@@ -159,7 +141,7 @@ abstract class Router
         if (!$callback) {
             $this->checkResult = [
                 'code' => Router::ERROR_CALLBACK_INVALID,
-                'msg'  => 'Invalid callback.',
+                'msg'  => 'Callback is invalid.',
             ];
             return false;
         }
@@ -177,7 +159,7 @@ abstract class Router
         if (!is_array($callback)) {
             $this->checkResult = [
                 'code' => Router::ERROR_CALLBACK_INVALID_TYPE,
-                'msg'  => 'Invalid callback type.',
+                'msg'  => 'Callback type is invalid.',
             ];
             return false;
         }
@@ -214,7 +196,7 @@ abstract class Router
 
         // 如果action不存在
         if (!method_exists($controller, $action)) {
-            // 如果controller定义了魔术方法__call，可以视为action存在
+            // 如果controller定义了魔术方法__call，视同action存在, 不报错
             if (method_exists($controller, '__call')) {
                 $this->checkResult = [
                     'code' => 0,
@@ -244,7 +226,8 @@ abstract class Router
      *
      * 执行之前,应该先用check()检查callback,确保其能正常执行
      *
-     * @return mixed|false 返回执行结果,出错返回false
+     * @return true|false 执行成功返回true,执行失败返回false。
+     *                    执行结果放到 $this->executeResult;
      */
     public function execute()
     {
@@ -256,8 +239,9 @@ abstract class Router
 
         // 检查通过，则可以视为正常执行
         $this->executeResult = [
-            'code'=> 0,
-            'msg' => '',
+            'code' => 0,
+            'msg'  => '',
+            'data' => null,
         ];
 
         // 提取callback
@@ -278,9 +262,72 @@ abstract class Router
             $params = [$params];
         }
 
-        // 执行
-        // call_user_func_array(): 成功返回执行结果, 有错返回false
-        return call_user_func_array($callback, $params);
+        // 执行。
+        // 调用call_user_func_array(): 成功返回执行结果, 有错返回false。
+        $this->executeResult['data'] = call_user_func_array($callback, $params);
+
+        // 返回
+        return true;
+    }
+
+    /**
+     * 如果匹配失败,执行本函数
+     */
+    public function matchFail()
+    {
+        // 如果没有设置matchFailCallback
+        if ($this->matchFailCallback === null) {
+            return;
+        }
+
+        // 执行matchFailCallback
+        \call_user_func_array($this->matchFailCallback, $this->matchFailCallbackParameters);
+        return;
+    }
+
+    /**
+     * 设置路由失败的回调函数
+     *
+     * @param callback $callback
+     * @param array    $parameters
+     *
+     * @return void
+     */
+    public function setMatchFailCallback(callback $callback, array $parameters = [])
+    {
+        $this->matchFailCallback = $callback;
+        $this->matchFailCallbackParameters = $parameters;
+    }
+
+    /**
+     * 运行一个完整的路由流程
+     * setPathInfo => match => check => execute
+     *
+     * @return int 成功, 返回0; 失败, 返回错误码
+     */
+    public function run($pathinfo)
+    {
+        // 设置路径
+        $this->setPathInfo($pathinfo);
+
+        // 如果match()失败
+        if ($this->match() === false) {
+            return Router::MATCH_EXCEPTION;
+        }
+
+        // 如果execute()失败
+        if ($this->execute() === false) {
+            if ($this->checkResult["code"] !== 0) {
+                return Router::CHECK_EXCEPTION;
+            }
+
+            if ($this->executeResult["code"] !== 0) {
+                return Router::EXECUTE_EXCEPTION;
+            }
+        }
+
+        // 顺利完成
+        return Router::SUCCESS;
     }
 
     /**

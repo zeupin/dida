@@ -41,14 +41,15 @@ class PathRouter extends Router
     /**
      * 匹配路由表
      *
-     * @param string $pathinfo
-     *
      * @return bool 匹配成功，返回true。匹配失败，返回false
      */
-    public function match($pathinfo)
+    public function match()
     {
         // 重置 matchResult
         $this->resetMatchResult();
+
+        // 拿到pathinfo
+        $pathinfo = $this->getPathInfo();
 
         // 检查路由表中是否有匹配项
         if (array_key_exists($pathinfo, $this->routes)) {

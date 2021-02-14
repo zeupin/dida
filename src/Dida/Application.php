@@ -20,58 +20,57 @@ class Application
     /**
      * 版本号
      */
-    const VERSION = '20200902';
+    const VERSION = '20210214';
 
     /**
-     * @var string|null 存放配置文件的目录
+     * @var \Dida\Http\Request
      */
-    protected $confdir = null;
+    protected $_request = null;
 
     /**
-     * 初始化App
-     *
-     * @param string $confdir 配置文件目录
-     *
-     * @throws \Exception
+     * @var \Dida\Http\Response
      */
-    public function __construct($confdir)
-    {
-        // 如果配置目录无效,抛异常
-        if (!file_exists($confdir) || !is_dir($confdir)) {
-            $errmsg = "Invalid configuration directory `$confdir`.";
-            throw new \Exception($errmsg);
-        }
+    protected $_response = null;
 
-        // 把路径标准化
-        $confdir = realpath($confdir);
+    /**
+     * @var \Dida\Http\Cookie
+     */
+    protected $_cookie = null;
 
-        // 形式检查一下confdir里面是否存在几个必须的配置文件。
-        // 如果不存在的话,在这里就抛异常。
-        // 1. bootstrap.php 启动配置文件
-        // 2. app.php       App配置文件
-        $requiredfiles = ["bootstrap.php", "app.php"];
-        foreach ($requiredfiles as $filename) {
-            $file = $confdir . DS . $filename;
-            if (!file_exists($file) || !is_file($file)) {
-                $errmsg = "Missing a required configuration file: $file.";
-                throw new \Exception($errmsg);
-            }
-        }
+    /**
+     * @var \Dida\Http\Session
+     */
+    protected $_session = null;
 
-        // 保存配置文件目录
-        $this->confdir = $confdir;
-    }
+    /**
+     * @var \Dida\Routing\Router
+     */
+    protected $_router = null;
 
     /**
      * 运行
      */
     public function run()
     {
-        // 注册App实例
-        ServiceBus::set('App', $this);
+        // 如果没有设置_router,直接返回
+        if ($this->_router === null) {
+            exit;
+        }
 
-        // 载入 bootstrap.php
-        require $this->confdir . DS . "bootstrap.php";
+        // 路由
+        if ($this->_router->match()) {
+            // 如果路由成功,则执行
+            if ($this->_router->execute()) {
+                // 执行成功
+            } else {
+                // 执行失败
+            }
+            exit;
+        } else {
+            // 如果路由失败
+            $this->_router->matchFail();
+            exit;
+        }
     }
 
     /**
@@ -81,5 +80,66 @@ class Application
      */
     public function end()
     {
+        exit;
+    }
+
+    /**
+     * @return \Dida\Http\Request
+     */
+    public function request()
+    {
+        if ($this->_request === null) {
+            $this->_request = new \Dida\Http\Request;
+        }
+        return $this->_request;
+    }
+
+    /**
+     * @return \Dida\Http\Response
+     */
+    public function response()
+    {
+        if ($this->_response === null) {
+            $this->_response = new \Dida\Http\Response;
+        }
+        return $this->_response;
+    }
+
+    /**
+     * @return \Dida\Http\Cookie
+     */
+    public function cookie()
+    {
+        if ($this->_cookie === null) {
+            $this->_cookie = new \Dida\Http\Cookie;
+        }
+        return $this->_cookie;
+    }
+
+    /**
+     * @return \Dida\Http\Session
+     */
+    public function session()
+    {
+        if ($this->_session === null) {
+            $this->_session = new \Dida\Http\Session;
+        }
+        return $this->_session;
+    }
+
+    /**
+     * 设置Router
+     */
+    public function setRouter($router)
+    {
+        $this->_router = $router;
+    }
+
+    /**
+     * 获取Router
+     */
+    public function getRouter()
+    {
+        return $this->_router;
     }
 }
