@@ -64,6 +64,17 @@ class ServiceBus
      * @param string|\Closure|object $service
      *
      * @return int 成功返回0,失败返回错误码
+     *
+     * @example
+     * ServiceBus::set('Request', \Dida\Http\Request::class);
+     * @example
+     * ServiceBus::set("Db", function () use ($foo, $bar) {
+     *     $conf = require __DIR__ . "/conf/mysql.php";
+     *     $db = new \Dida\Db\Db($conf);
+     *     return $db;
+     * });
+     * @example
+     * ServiceBus::set("App", $app);
      */
     public static function set($name, $service)
     {
