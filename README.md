@@ -61,6 +61,36 @@ return [
 
 更多 Db 的使用, 请参见 `src/Dida/Db/README.md`
 
+### 注册服务
+
+```php
+/*
+ * ------------------------------------------------------------
+ * 注册服务
+ * ------------------------------------------------------------
+ */
+
+// Http
+ServiceBus::set('Request', \Dida\Http\Request::class);
+ServiceBus::set('Response', \Dida\Http\Response::class);
+ServiceBus::set('Session', \Dida\Http\Session::class);
+ServiceBus::set('Cookie', \Dida\Http\Cookie::class);
+
+// Db
+ServiceBus::set("Db", function () {
+    $conf = require __DIR__ . "/conf/mysql.php";
+    $db = new Dida\Db\Db($conf);
+    return $db;
+});
+
+// Router
+ServiceBus::set('Router', function () {
+    $router = new \Dida\Routing\PathRouter;
+    $router->loadRoutes(__DIR__ . "/conf/routes.php");
+    return $router;
+});
+```
+
 ## 项目支持和商业合作
 
 如您觉得 Dida 框架不错，欢迎您使用 **付费技术支持、项目开发、技术合作、小额捐助** 等方式来支持本项目的持续开发和改进。
