@@ -23,31 +23,6 @@ class Application
     const VERSION = '20210214';
 
     /**
-     * @var \Dida\Http\Request
-     */
-    protected $_Request = null;
-
-    /**
-     * @var \Dida\Http\Response
-     */
-    protected $_Response = null;
-
-    /**
-     * @var \Dida\Http\Cookie
-     */
-    protected $_Cookie = null;
-
-    /**
-     * @var \Dida\Http\Session
-     */
-    protected $_Session = null;
-
-    /**
-     * @var \Dida\Routing\Router
-     */
-    protected $_Router = null;
-
-    /**
      * 初始化
      * 1. 根据Config参数, 配置app的运行环境
      */
