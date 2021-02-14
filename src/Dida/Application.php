@@ -25,27 +25,27 @@ class Application
     /**
      * @var \Dida\Http\Request
      */
-    protected $_request = null;
+    protected $_Request = null;
 
     /**
      * @var \Dida\Http\Response
      */
-    protected $_response = null;
+    protected $_Response = null;
 
     /**
      * @var \Dida\Http\Cookie
      */
-    protected $_cookie = null;
+    protected $_Cookie = null;
 
     /**
      * @var \Dida\Http\Session
      */
-    protected $_session = null;
+    protected $_Session = null;
 
     /**
      * @var \Dida\Routing\Router
      */
-    protected $_router = null;
+    protected $_Router = null;
 
     /**
      * 运行
@@ -53,14 +53,14 @@ class Application
     public function run()
     {
         // 如果没有设置_router,直接返回
-        if ($this->_router === null) {
+        if ($this->_Router === null) {
             exit;
         }
 
         // 路由
-        if ($this->_router->match()) {
+        if ($this->_Router->match()) {
             // 如果路由成功,则执行
-            if ($this->_router->execute()) {
+            if ($this->_Router->execute()) {
                 // 执行成功
             } else {
                 // 执行失败
@@ -68,7 +68,7 @@ class Application
             exit;
         } else {
             // 如果路由失败
-            $this->_router->matchFail();
+            $this->_Router->matchFail();
             exit;
         }
     }
@@ -86,60 +86,50 @@ class Application
     /**
      * @return \Dida\Http\Request
      */
-    public function request()
+    public function Request()
     {
-        if ($this->_request === null) {
-            $this->_request = new \Dida\Http\Request;
-        }
-        return $this->_request;
+        return ServiceBus::get('Request');
     }
 
     /**
      * @return \Dida\Http\Response
      */
-    public function response()
+    public function Response()
     {
-        if ($this->_response === null) {
-            $this->_response = new \Dida\Http\Response;
-        }
-        return $this->_response;
+        return ServiceBus::get('Response');
     }
 
     /**
      * @return \Dida\Http\Cookie
      */
-    public function cookie()
+    public function Cookie()
     {
-        if ($this->_cookie === null) {
-            $this->_cookie = new \Dida\Http\Cookie;
-        }
-        return $this->_cookie;
+        return ServiceBus::get('Cookie');
     }
 
     /**
      * @return \Dida\Http\Session
      */
-    public function session()
+    public function Session()
     {
-        if ($this->_session === null) {
-            $this->_session = new \Dida\Http\Session;
-        }
-        return $this->_session;
+        return ServiceBus::get('Session');
     }
 
     /**
-     * 设置Router
+     * @return \Dida\Routing\Router
      */
-    public function setRouter($router)
+    public function Router()
     {
-        $this->_router = $router;
+        return ServiceBus::get('Router');
     }
 
     /**
-     * 获取Router
+     * 获取Db
+     *
+     * @return \Dida\Db\Db
      */
-    public function getRouter()
+    public function Db()
     {
-        return $this->_router;
+        return ServiceBus::get('Db');
     }
 }
