@@ -425,7 +425,7 @@ abstract class Query
      */
     protected function buildDELETE()
     {
-        $tpl = 'DELETE %s %s %s';
+        $tpl = 'DELETE FROM %s %s %s';
         $parts = [
             'table',
             'join',
