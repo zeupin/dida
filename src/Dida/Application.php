@@ -48,10 +48,24 @@ class Application
     protected $_Router = null;
 
     /**
+     * 初始化
+     * 1. 根据Config参数, 配置app的运行环境
+     */
+    public function init()
+    {
+        if (Config::has("app.datetime")) {
+            date_default_timezone_set(Config::get("app.timezone"));
+        }
+    }
+
+    /**
      * 运行
      */
     public function run()
     {
+        // 初始化
+        $this->init();
+
         // 如果没有设置_router,直接返回
         if ($this->_Router === null) {
             exit;
