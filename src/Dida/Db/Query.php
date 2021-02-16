@@ -1539,7 +1539,7 @@ abstract class Query
      *     'data'     => [[...], [...], ...], // 本页的记录
      * ]
      */
-    public function pager(array $options)
+    public function paginate(array $options)
     {
         // 缺省选项
         $defaultOptions = [
