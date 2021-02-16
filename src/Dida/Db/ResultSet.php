@@ -43,6 +43,16 @@ class ResultSet
     public $errMsg;
 
     /**
+     * @var string SQL表达式(供调试用)
+     */
+    public $sql = '';
+
+    /**
+     * @var array SQL参数(供调试用)
+     */
+    public $parameters = [];
+
+    /**
      * @var \PDOStatement PDOStatement实例
      */
     public $pdostatement;

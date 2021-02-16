@@ -153,6 +153,8 @@ abstract class Driver
         // 为输出做准备
         $resultset = new ResultSet();
         $resultset->init($errCode, $errMsg, $sth, $options);
+        $resultset->sql = $sql;
+        $resultset->parameters = $params;
 
         // 返回resultset，供下一步处理
         return $resultset;
