@@ -846,6 +846,7 @@ abstract class Query
     public function distinct($v = true)
     {
         $this->_distinct = $v;
+        return $this;
     }
 
     /**
@@ -1357,6 +1358,7 @@ abstract class Query
     public function limit($limit)
     {
         $this->_limit = $limit;
+        return $this;
     }
 
     /**
@@ -1365,6 +1367,7 @@ abstract class Query
     public function offset($offset)
     {
         $this->_offset = $offset;
+        return $this;
     }
 
     /**
