@@ -341,7 +341,7 @@ abstract class Query
      */
     protected function buildSELECT()
     {
-        $tpl = 'SELECT%s %s FROM %s %s %s %s %s %s %s';
+        $tpl = 'SELECT%s %s FROM %s %s %s %s %s %s %s %s';
         $parts = [
             'distinct',
             'fields',
@@ -1461,12 +1461,18 @@ abstract class Query
      *
      * @return \Dida\Db\ResultSet
      */
-    public function select($fields = '', $where = '', $limit = '')
+    public function select($fields = null, $where = null, $limit = null)
     {
         // 参数处理
-        $this->fields($fields);
-        $this->where($where);
-        $this->limit($limit);
+        if ($fields !== null) {
+            $this->fields($fields);
+        }
+        if ($where !== null) {
+            $this->where($where);
+        }
+        if ($limit !== null) {
+            $this->limit($limit);
+        }
 
         // build
         $sp = $this->buildSELECT();
