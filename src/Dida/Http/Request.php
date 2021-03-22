@@ -137,7 +137,11 @@ class Request
      */
     protected function clientIPInit()
     {
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $ip = '';
+
+        if (isset($_SERVER['HTTP_X_REAL_IP'])) {
+            $ip = $_SERVER['HTTP_X_REAL_IP'];
+        } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
         } elseif (isset($_SERVER['HTTP_CLIENT_IP'])) {
             $ip = $_SERVER['HTTP_CLIENT_IP'];
@@ -147,8 +151,6 @@ class Request
             $ip = $_SERVER['HTTP_X_CLUSTER_CLIENT_IP'];
         } elseif (isset($_SERVER['REMOTE_ADDR'])) {
             $ip = $_SERVER['REMOTE_ADDR'];
-        } else {
-            $ip = false; // ip未定义
         }
 
         $this->clientIP = $ip;
@@ -425,7 +427,7 @@ class Request
     /**
      * 获取客户端IP。
      *
-     * @return string|false 正常,返回客户端ip; 获取失败,返回false
+     * @return string 正常,返回客户端ip; 获取失败,返回空串
      */
     public function getClientIP()
     {
