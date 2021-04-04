@@ -11,6 +11,7 @@
     "php": "^5.5 || ^7.0",
     "ext-json": "*",
     "ext-mbstring": "*",
+    "dida/config": "^1.0",
     "psr/container": "^1.0"
   },
   "require-dev": {
