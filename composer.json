@@ -13,6 +13,7 @@
     "ext-mbstring": "*",
     "dida/config": "^1.0",
     "dida/db": "^0.1.2",
+    "dida/eventbus": "^0.1.0",
     "dida/servicebus": "^1.0",
     "dida/utils": "^1.0",
     "psr/container": "^1.0"
